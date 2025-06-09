@@ -8,6 +8,9 @@
   * `generator/` — OpenAPI 3.1.0 spec generation logic
   * `utils/` — shared utilities and type inference
 * CLI interface: `src/cli.py`
+  * `tvgen scan --market <market>` - perform a basic scan
+  * `tvgen generate --market <market> --output specs/<market>.yaml` - create spec
+  * `tvgen validate --spec <file>` - validate a spec file
 * Tests: `tests/`
 * OpenAPI specs: `specs/`
 * Legacy scripts (deprecated) live in the project root and must be removed
@@ -73,7 +76,7 @@ GitHub Actions in `.github/workflows/ci.yml` will:
 * Lint (`flake8 .`)
 * Type-check (`mypy src/`)
 * Run tests (`pytest -q`)
-* Generate spec (`src.cli generate`)
+* Generate spec (`tvgen generate`)
 * Validate spec (`openapi-spec-validator specs/*.yaml`)
 * Optionally auto-commit or open a PR if `specs/*.yaml` changed
 
@@ -99,7 +102,6 @@ A nightly or weekly scheduled job can re-run the same steps to keep specs up-to-
 
 ## ✅ Available Codex Actions
 
-* `analyze_tradingview_api()`
 * `generate_openapi_spec()`
 * `run_tests()`
 * `format_code()`
