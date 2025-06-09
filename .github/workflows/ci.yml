@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 3 * * 1'
 
 jobs:
   build:
@@ -13,10 +17,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 mypy pytest -r requirements.txt
+          pip install black flake8 mypy pytest openapi-spec-validator -r requirements.txt
+      - name: Format
+        run: black --check .
       - name: Lint
         run: flake8 src tests
       - name: Type check
         run: mypy src
       - name: Test
         run: pytest
+      - name: Validate OpenAPI
+        run: openapi-spec-validator ./specs/*.yaml

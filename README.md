@@ -13,7 +13,7 @@ pip install -r requirements.txt
 Generate an OpenAPI spec from collected field data:
 
 ```bash
-python -m src.cli generate-openapi results_dir openapi.yaml
+python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml
 ```
 
 ## Tests
