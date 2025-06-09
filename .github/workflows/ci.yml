@@ -17,14 +17,22 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install black flake8 mypy pytest openapi-spec-validator -r requirements.txt
+          pip install black flake8 mypy pytest openapi-spec-validator requests_mock -r requirements.txt
       - name: Format
         run: black --check .
       - name: Lint
-        run: flake8 src tests
+        run: flake8 .
       - name: Type check
         run: mypy src
       - name: Test
         run: pytest
+      - name: Generate spec
+        run: python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml
       - name: Validate OpenAPI
-        run: openapi-spec-validator ./specs/*.yaml
+        run: openapi-spec-validator specs/openapi_crypto.yaml
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: |
+          github.event_name == 'push' || github.event_name == 'schedule'
+        with:
+          commit_message: "Auto-update specs"
+          file_pattern: specs/*.yaml

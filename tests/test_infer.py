@@ -2,9 +2,9 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # noqa: E402
 
-from utils.infer import infer_type
+from src.utils.infer import infer_type
 
 
 def test_infer_type_number():

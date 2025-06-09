@@ -1,11 +1,11 @@
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict, Iterable
 
 import pandas as pd
 import yaml
 
-from utils.infer import infer_type
+from src.utils.infer import infer_type
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,8 @@ class OpenAPIGenerator:
     """Generate a simple OpenAPI spec from collected field data."""
 
     def __init__(self, results_dir: Path) -> None:
+        """Create generator using directory with scan results."""
+
         self.results_dir = results_dir
 
     def collect_market_fields(self, market_dir: Path):
@@ -29,7 +31,7 @@ class OpenAPIGenerator:
                 field_types[field] = "string"
         return fields, field_types
 
-    def generate(self, output: Path) -> None:
+    def generate(self, output: Path, market: str | None = None) -> None:
         openapi: Dict[str, Any] = {
             "openapi": "3.1.0",
             "info": {
@@ -42,7 +44,13 @@ class OpenAPIGenerator:
             "components": {"schemas": {}},
         }
 
-        for market_path in self.results_dir.iterdir():
+        markets: Iterable[Path]
+        if market:
+            markets = [self.results_dir / market]
+        else:
+            markets = [p for p in self.results_dir.iterdir() if p.is_dir()]
+
+        for market_path in markets:
             if not market_path.is_dir():
                 continue
             market = market_path.name
