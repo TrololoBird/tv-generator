@@ -9,13 +9,15 @@
 - Tests are under `tests/`.
 
 ## Development Workflow
-1. Install dependencies: `pip install -r requirements.txt`.
+
+1. Install dependencies: `pip install -r requirements.txt`
 2. Format the code with `black .` and lint with `flake8`.
 3. Type-check using `mypy src/`.
 4. Run tests with `pytest`.
-5. Rebuild specs using `python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml` (adjust market as needed).
-6. Validate the spec with `openapi-spec-validator specs/openapi_crypto.yaml`.
+5. Use `python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml` (adjust market as needed).
+6. Validate the spec with `openapi-spec-validator specs/openapi_crypto.yaml`
 7. Commit changes with semantic versioning updates noted in `CHANGELOG.md`.
+
 
 ## CI
 GitHub Actions in `.github/workflows/ci.yml` will lint with flake8, type-check with mypy, and run pytest. Ensure all checks pass before pushing.
