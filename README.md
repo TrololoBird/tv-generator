@@ -13,19 +13,19 @@ pip install -r requirements.txt
 ### Scan a market
 
 ```bash
-python -m src.cli scan --market crypto
+tvgen scan --market crypto
 ```
 
 ### Generate an OpenAPI spec
 
 ```bash
-python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml
+tvgen generate --market crypto --output specs/openapi_crypto.yaml
 ```
 
 ### Validate a spec
 
 ```bash
-python -m src.cli validate --spec specs/openapi_crypto.yaml
+tvgen validate --spec specs/openapi_crypto.yaml
 ```
 
 ## Tests
@@ -36,6 +36,15 @@ pytest
 
 ## CI/CD
 
-The GitHub Actions workflow formats code, lints, runs type checks and unit
-tests, generates the crypto specification and validates it. Any changed files in
-`specs/` are automatically committed back to the repository.
+The GitHub Actions workflow performs the following steps on every push and
+weekly schedule:
+
+1. `black --check .`
+2. `flake8 .`
+3. `mypy src/`
+4. `pytest`
+5. `tvgen generate --market crypto --output specs/openapi_crypto.yaml`
+6. `openapi-spec-validator specs/openapi_crypto.yaml`
+
+If the generated specification changes, the workflow automatically commits the
+updated file back to the repository.

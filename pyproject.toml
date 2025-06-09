@@ -4,7 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tv-generator"
-version = "0.2.0"
+version = "0.3.0"
+
+[project.scripts]
+tvgen = "src.cli:cli"
+
+[tool.setuptools]
+packages = ["src", "src.api", "src.generator", "src.utils"]
+
+[tool.setuptools.package-dir]
+src = "src"
 
 [tool.mypy]
 ignore_missing_imports = true

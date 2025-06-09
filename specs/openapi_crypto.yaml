@@ -17,4 +17,4 @@ components:
         close:
           type: number
         open:
-          type: number
+          type: string

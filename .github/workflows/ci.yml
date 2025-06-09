@@ -27,7 +27,7 @@ jobs:
       - name: Test
         run: pytest
       - name: Generate spec
-        run: python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml
+        run: tvgen generate --market crypto --output specs/openapi_crypto.yaml
       - name: Validate OpenAPI
         run: openapi-spec-validator specs/openapi_crypto.yaml
       - uses: stefanzweifel/git-auto-commit-action@v5

@@ -52,13 +52,13 @@
 6. **Generate OpenAPI spec**
 
    ```bash
-   python -m src.cli generate --market crypto --output specs/openapi_crypto.yaml
+   tvgen generate --market crypto --output specs/openapi_crypto.yaml
    ```
 
 7. **Validate spec**
 
    ```bash
-   openapi-spec-validator specs/openapi_crypto.yaml
+   tvgen validate --spec specs/openapi_crypto.yaml
    ```
 
 8. **Commit changes**
