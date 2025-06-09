@@ -1,13 +1,10 @@
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # noqa: E402
 import yaml
 import requests_mock
 from click.testing import CliRunner
 
 from src.cli import cli
-from src.generator.openapi_generator import OpenAPIGenerator
 
 
 def _create_field_status(path: Path) -> None:
@@ -25,6 +22,13 @@ def test_cli_scan() -> None:
         result = runner.invoke(cli, ["scan", "--market", "crypto"])
         assert result.exit_code == 0
         assert "data" in result.output
+
+
+def test_cli_help() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--help"])
+    assert result.exit_code == 0
+    assert "TradingView" in result.output
 
 
 def test_cli_generate_and_validate(tmp_path: Path) -> None:

@@ -23,9 +23,9 @@ jobs:
       - name: Lint
         run: flake8 .
       - name: Type check
-        run: mypy src
+        run: mypy src/
       - name: Test
-        run: pytest
+        run: pytest -q
       - name: Generate spec
         run: tvgen generate --market crypto --output specs/openapi_crypto.yaml
       - name: Validate OpenAPI
