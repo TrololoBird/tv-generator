@@ -1,9 +1,3 @@
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # noqa: E402
-
-import requests
 import requests_mock
 
 from src.api.tradingview_api import TradingViewAPI

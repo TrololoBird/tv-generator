@@ -1,5 +1,7 @@
 # tv-generator
 
+[![CI](https://github.com/your-org/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/tv-generator/actions/workflows/ci.yml)
+
 Utilities for interacting with the TradingView Screener API and generating an OpenAPI specification.
 
 ## Installation
@@ -8,21 +10,21 @@ Utilities for interacting with the TradingView Screener API and generating an Op
 pip install -r requirements.txt
 ```
 
-## Usage
+## Running
 
-### Scan a market
+Scan a market:
 
 ```bash
 tvgen scan --market crypto
 ```
 
-### Generate an OpenAPI spec
+Generate an OpenAPI spec:
 
 ```bash
 tvgen generate --market crypto --output specs/openapi_crypto.yaml
 ```
 
-### Validate a spec
+Validate a spec file:
 
 ```bash
 tvgen validate --spec specs/openapi_crypto.yaml
@@ -30,21 +32,25 @@ tvgen validate --spec specs/openapi_crypto.yaml
 
 ## Tests
 
+Run the full test suite:
+
 ```bash
-pytest
+pytest -q
 ```
+
+To add tests, place new files under the `tests/` directory. Each test file should start with `test_` and use `pytest` assertions. Command line behaviour can be tested with `click.testing.CliRunner`.
 
 ## CI/CD
 
-The GitHub Actions workflow performs the following steps on every push and
-weekly schedule:
+The GitHub Actions workflow runs on every push and pull request. It performs formatting, linting, type checking, tests, spec generation and validation. If any step fails the workflow fails.
 
-1. `black --check .`
-2. `flake8 .`
-3. `mypy src/`
-4. `pytest`
-5. `tvgen generate --market crypto --output specs/openapi_crypto.yaml`
-6. `openapi-spec-validator specs/openapi_crypto.yaml`
+```text
+black --check .
+flake8 .
+mypy src/
+pytest -q
+tvgen generate --market crypto --output specs/openapi_crypto.yaml
+openapi-spec-validator specs/openapi_crypto.yaml
+```
 
-If the generated specification changes, the workflow automatically commits the
-updated file back to the repository.
+If tests fail locally ensure that dependencies are installed with `pip install -r requirements.txt`.

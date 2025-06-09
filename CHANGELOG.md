@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+- Improved CLI tests and removed path hacks
+- Cleaned repository and added CI badge
+- Updated workflow to use `pytest -q`
+- Documentation improvements
+
 ## 0.3.0
 - Refactored CLI to use `click`
 - Added CLI unit tests
