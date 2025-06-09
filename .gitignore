@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.idea/
+*.log
+# Build
+build/
+dist/
+*.egg
+# Coverage
+htmlcov/
+*.coverage
+.cache
+# OpenAPI
+openapi.yaml
