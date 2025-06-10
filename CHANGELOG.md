@@ -1,4 +1,8 @@
 # Changelog
+## 0.7.5
+- Added request and response schemas to generated OpenAPI paths
+- Updated tests
+- Bumped version
 ## 0.7.4
 - Added boolean type inference and tests
 - Bumped version

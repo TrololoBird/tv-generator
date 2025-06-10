@@ -59,12 +59,54 @@ class OpenAPIGenerator:
                 logger.warning("Skip %s: missing field_status.tsv", market)
                 continue
             columns, types = self.collect_market_fields(market_path)
+            cap = market.capitalize()
             openapi["paths"][f"/{market}/scan"] = {
-                "post": {"summary": f"Scan {market}"}
+                "post": {
+                    "summary": f"Scan {market}",
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": f"#/components/schemas/{cap}ScanRequest"
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "200": {
+                            "description": "Successful response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": (
+                                            f"#/components/schemas/{cap}ScanResponse"
+                                        )
+                                    }
+                                }
+                            },
+                        }
+                    },
+                }
             }
-            openapi["components"]["schemas"][f"{market.capitalize()}Fields"] = {
+            openapi["components"]["schemas"][f"{cap}Fields"] = {
                 "type": "object",
                 "properties": {f: {"type": types[f]} for f in columns},
+            }
+            openapi["components"]["schemas"][f"{cap}ScanRequest"] = {
+                "type": "object",
+                "properties": {
+                    "symbols": {"type": "object"},
+                    "columns": {"type": "array", "items": {"type": "string"}},
+                },
+            }
+            openapi["components"]["schemas"][f"{cap}ScanResponse"] = {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {"$ref": f"#/components/schemas/{cap}Fields"},
+                    }
+                },
             }
 
         with open(output, "w", encoding="utf-8") as f:

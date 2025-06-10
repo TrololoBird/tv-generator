@@ -22,7 +22,19 @@ def test_generate(tmp_path: Path):
 
     data = yaml.safe_load(out.read_text())
     assert "/crypto/scan" in data["paths"]
-    assert "CryptoFields" in data["components"]["schemas"]
+    scan_path = data["paths"]["/crypto/scan"]["post"]
+    assert (
+        scan_path["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+        == "#/components/schemas/CryptoScanRequest"
+    )
+    assert (
+        scan_path["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+        == "#/components/schemas/CryptoScanResponse"
+    )
+    schemas = data["components"]["schemas"]
+    assert "CryptoFields" in schemas
+    assert "CryptoScanRequest" in schemas
+    assert "CryptoScanResponse" in schemas
 
 
 def test_generate_missing_field_status(tmp_path: Path) -> None:
