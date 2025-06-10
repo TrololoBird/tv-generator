@@ -84,6 +84,15 @@ def test_cli_generate_and_validate(tmp_path: Path) -> None:
         assert result.exit_code == 0
         data = yaml.safe_load(out_file.read_text())
         assert "/crypto/scan" in data["paths"]
+        scan = data["paths"]["/crypto/scan"]["post"]
+        assert (
+            scan["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+            == "#/components/schemas/CryptoScanRequest"
+        )
+        assert (
+            scan["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
+            == "#/components/schemas/CryptoScanResponse"
+        )
 
 
 def test_cli_scan_error(tv_api_mock) -> None:
