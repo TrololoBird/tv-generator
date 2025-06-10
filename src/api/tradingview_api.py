@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 
 import requests
 from requests.adapters import HTTPAdapter, Retry
+import requests_cache
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +19,32 @@ class TradingViewAPI:
         session: Optional[requests.Session] = None,
         base_url: str | None = None,
         timeout: int = 10,
+        cache: bool | None = None,
     ) -> None:
-        self.session = session or requests.Session()
+        """Create API wrapper.
+
+        Parameters
+        ----------
+        session : requests.Session | None
+            Custom session instance. If provided, caching settings are ignored.
+        base_url : str | None
+            Override default base URL.
+        timeout : int
+            Request timeout in seconds.
+        cache : bool | None
+            Enable requests caching if True or if ``TV_CACHE`` env var is set.
+        """
+
+        use_cache = bool(os.environ.get("TV_CACHE")) if cache is None else cache
+        if session:
+            self.session = session
+        elif use_cache:
+            expire = int(os.environ.get("TV_CACHE_EXPIRE", 86400))
+            self.session = requests_cache.CachedSession(
+                "tv_api_cache", expire_after=expire
+            )
+        else:
+            self.session = requests.Session()
         retry = Retry(
             total=3,
             backoff_factor=0.5,

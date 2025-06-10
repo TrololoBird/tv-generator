@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tv-generator"
-version = "0.8.3"
+version = "0.8.5"
 dependencies = [
     "click",
     "requests",
@@ -13,6 +13,7 @@ dependencies = [
     "tqdm",
     "openapi-spec-validator",
     "toml",
+    "requests_cache",
 ]
 
 [project.scripts]
