@@ -15,12 +15,15 @@ from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
 from src.generator.openapi_generator import OpenAPIGenerator
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @click.group()
-def cli() -> None:
+@click.option("--verbose", is_flag=True, help="Enable debug logging")
+def cli(verbose: bool) -> None:
     """TradingView command line utilities."""
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level, format="%(levelname)s %(message)s")
 
 
 @cli.command()
@@ -49,7 +52,7 @@ def recommend(symbol: str, market: str) -> None:
         value = fetch_recommendation(symbol, market)
     except Exception as exc:  # pragma: no cover - click handles output
         raise click.ClickException(str(exc))
-    click.echo(json.dumps(value))
+    click.echo(json.dumps(value, indent=2))
 
 
 @cli.command(name="price")
@@ -62,7 +65,7 @@ def price(symbol: str, market: str) -> None:
         value = fetch_stock_value(symbol, market)
     except Exception as exc:  # pragma: no cover - click handles output
         raise click.ClickException(str(exc))
-    click.echo(json.dumps(value))
+    click.echo(json.dumps(value, indent=2))
 
 
 @cli.command()

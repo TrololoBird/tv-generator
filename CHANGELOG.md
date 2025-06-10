@@ -1,4 +1,10 @@
 # Changelog
+## 0.8.0
+- Improved API client configuration and error handling
+- Enhanced OpenAPI generator with dynamic version and stricter schemas
+- Added verbose logging option to CLI
+- Expanded tests for utilities and error cases
+
 ## 0.7.9
 - New CLI commands `metainfo` and extended `scan` options
 - Expanded OpenAPI spec with metainfo endpoint

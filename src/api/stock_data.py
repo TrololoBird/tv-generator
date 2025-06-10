@@ -7,25 +7,22 @@ from src.utils.payload import build_scan_payload
 logger = logging.getLogger(__name__)
 
 
-def fetch_recommendation(symbol: str, market: str = "stocks") -> Any:
-    """Return trading recommendation for a symbol."""
+def _fetch_field(symbol: str, market: str, column: str, error_msg: str) -> Any:
     api = TradingViewAPI()
-    payload = build_scan_payload([symbol], ["Recommend.All"])
+    payload = build_scan_payload([symbol], [column])
     data = api.scan(market, payload)
     try:
         return data["data"][0]["d"][0]
     except (KeyError, IndexError) as exc:
-        logger.error("Recommendation unavailable: %s", exc)
-        raise ValueError("Recommendation unavailable") from exc
+        logger.error("%s for %s in %s: %s", error_msg, symbol, market, exc)
+        raise ValueError(f"{error_msg} for {symbol} in market {market}") from exc
+
+
+def fetch_recommendation(symbol: str, market: str = "stocks") -> Any:
+    """Return trading recommendation for a symbol."""
+    return _fetch_field(symbol, market, "Recommend.All", "Recommendation unavailable")
 
 
 def fetch_stock_value(symbol: str, market: str = "stocks") -> Any:
     """Return current close price for a symbol."""
-    api = TradingViewAPI()
-    payload = build_scan_payload([symbol], ["close"])
-    data = api.scan(market, payload)
-    try:
-        return data["data"][0]["d"][0]
-    except (KeyError, IndexError) as exc:
-        logger.error("Price unavailable: %s", exc)
-        raise ValueError("Price unavailable") from exc
+    return _fetch_field(symbol, market, "close", "Price unavailable")

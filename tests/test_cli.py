@@ -109,6 +109,27 @@ def test_cli_generate_and_validate(tmp_path: Path) -> None:
         )
 
 
+def test_cli_generate_missing_results(tmp_path: Path) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        (Path("results") / "crypto").mkdir(parents=True)
+        out_file = Path("spec.yaml")
+        result = runner.invoke(
+            cli,
+            [
+                "generate",
+                "--market",
+                "crypto",
+                "--output",
+                str(out_file),
+                "--results-dir",
+                str(Path("results")),
+            ],
+        )
+        assert result.exit_code != 0
+        assert "Missing field_status.tsv" in result.output
+
+
 def test_cli_scan_error(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.post(

@@ -1,6 +1,8 @@
 from pathlib import Path
 
+import pytest
 import yaml
+import toml
 from src.generator.openapi_generator import OpenAPIGenerator
 
 
@@ -21,6 +23,8 @@ def test_generate(tmp_path: Path):
     gen.generate(out, market="crypto")
 
     data = yaml.safe_load(out.read_text())
+    version = toml.load(Path("pyproject.toml"))["project"]["version"]
+    assert data["info"]["version"] == version
     assert "/crypto/scan" in data["paths"]
     scan_path = data["paths"]["/crypto/scan"]["post"]
     assert (
@@ -35,6 +39,7 @@ def test_generate(tmp_path: Path):
     assert "CryptoFields" in schemas
     assert "CryptoScanRequest" in schemas
     assert "CryptoScanResponse" in schemas
+    assert "CryptoMetainfoResponse" in schemas
 
 
 def test_generate_missing_field_status(tmp_path: Path) -> None:
@@ -43,10 +48,8 @@ def test_generate_missing_field_status(tmp_path: Path) -> None:
 
     gen = OpenAPIGenerator(tmp_path / "results")
     out = tmp_path / "spec.yaml"
-    gen.generate(out)
-
-    data = yaml.safe_load(out.read_text())
-    assert "/crypto/scan" not in data["paths"]
+    with pytest.raises(RuntimeError):
+        gen.generate(out)
 
 
 def test_generate_multiple_markets(tmp_path: Path) -> None:

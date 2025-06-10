@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Iterable
 
+import toml
+
 import pandas as pd
 import yaml
 from src.utils.infer import infer_type
@@ -24,6 +26,8 @@ class OpenAPIGenerator:
         """Create generator using directory with scan results."""
 
         self.results_dir = results_dir
+        root = Path(__file__).resolve().parents[2]
+        self.version = toml.load(root / "pyproject.toml")["project"]["version"]
 
     def collect_market_fields(self, market_dir: Path):
         df = pd.read_csv(market_dir / "field_status.tsv", sep="\t")
@@ -64,14 +68,17 @@ class OpenAPIGenerator:
                 },
             }
         }
-        openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {"type": "object"}
+        openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {
+            "type": "object",
+            "properties": {"fields": {"type": "array", "items": {"type": "string"}}},
+        }
 
     def generate(self, output: Path, market: str | None = None) -> None:
         openapi: Dict[str, Any] = {
             "openapi": "3.1.0",
             "info": {
                 "title": "Unofficial TradingView Scanner API",
-                "version": "1.0.0",
+                "version": self.version,
                 "description": "Auto-generated from collected field data.",
             },
             "servers": [{"url": "https://scanner.tradingview.com"}],
@@ -91,8 +98,7 @@ class OpenAPIGenerator:
             market = market_path.name
             field_file = market_path / "field_status.tsv"
             if not field_file.exists():
-                logger.warning("Skip %s: missing field_status.tsv", market)
-                continue
+                raise RuntimeError(f"Missing field_status.tsv for market {market}")
             columns, types = self.collect_market_fields(market_path)
             cap = market.capitalize()
             openapi["paths"][f"/{market}/scan"] = {
@@ -135,9 +141,27 @@ class OpenAPIGenerator:
             openapi["components"]["schemas"][f"{cap}ScanRequest"] = {
                 "type": "object",
                 "properties": {
-                    "symbols": {"type": "object"},
+                    "symbols": {
+                        "type": "object",
+                        "properties": {
+                            "tickers": {
+                                "type": "array",
+                                "items": {"type": "string"},
+                            },
+                            "query": {
+                                "type": "object",
+                                "properties": {
+                                    "types": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                    }
+                                },
+                            },
+                        },
+                    },
                     "columns": {"type": "array", "items": {"type": "string"}},
                 },
+                "required": ["symbols", "columns"],
             }
             openapi["components"]["schemas"][f"{cap}ScanResponse"] = {
                 "type": "object",
