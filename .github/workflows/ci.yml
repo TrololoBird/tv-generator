@@ -24,7 +24,7 @@ jobs:
       - name: Lint
         run: flake8 .
       - name: Type check
-        run: mypy src/
+        run: mypy --strict src/
       - name: Test
         run: pytest -q
       - name: Generate spec

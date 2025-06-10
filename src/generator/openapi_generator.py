@@ -4,6 +4,7 @@ from typing import Any, Dict, Iterable
 
 import pandas as pd
 import yaml
+from src.utils.infer import infer_type
 
 
 class _IndentedDumper(yaml.SafeDumper):
@@ -12,8 +13,6 @@ class _IndentedDumper(yaml.SafeDumper):
     def increase_indent(self, flow: bool = False, indentless: bool = False):
         return super().increase_indent(flow, False)
 
-
-from src.utils.infer import infer_type
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +91,32 @@ class OpenAPIGenerator:
                                     }
                                 }
                             },
-                        }
+                        },
+                        "400": {"description": "Bad Request"},
+                        "500": {"description": "Server Error"},
+                    },
+                }
+            }
+
+            openapi["paths"][f"/{market}/metainfo"] = {
+                "post": {
+                    "summary": f"Get {market} metainfo",
+                    "responses": {
+                        "200": {
+                            "description": "Successful response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": (
+                                            f"#/components/schemas/"
+                                            f"{cap}MetainfoResponse"
+                                        )
+                                    }
+                                }
+                            },
+                        },
+                        "400": {"description": "Bad Request"},
+                        "500": {"description": "Server Error"},
                     },
                 }
             }
@@ -115,6 +139,9 @@ class OpenAPIGenerator:
                         "items": {"$ref": f"#/components/schemas/{cap}Fields"},
                     }
                 },
+            }
+            openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {
+                "type": "object"
             }
 
         output.parent.mkdir(parents=True, exist_ok=True)

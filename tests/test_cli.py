@@ -17,7 +17,10 @@ def _create_field_status(path: Path) -> None:
 def test_cli_scan(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.post("https://scanner.tradingview.com/crypto/scan", json={"data": []})
-    result = runner.invoke(cli, ["scan", "--market", "crypto"])
+    result = runner.invoke(
+        cli,
+        ["scan", "--market", "crypto", "--symbols", "BTCUSD", "--columns", "close"],
+    )
     assert result.exit_code == 0
     assert "data" in result.output
 
@@ -42,6 +45,17 @@ def test_cli_price(tv_api_mock) -> None:
     result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
     assert result.exit_code == 0
     assert "1.0" in result.output
+
+
+def test_cli_metainfo(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        json={"fields": []},
+    )
+    result = runner.invoke(cli, ["metainfo", "--market", "crypto"])
+    assert result.exit_code == 0
+    assert "fields" in result.output
 
 
 def test_cli_help() -> None:
@@ -126,6 +140,17 @@ def test_cli_price_error(tv_api_mock) -> None:
     result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
     assert result.exit_code != 0
     assert "unavailable" in result.output
+
+
+def test_cli_metainfo_error(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        status_code=500,
+    )
+    result = runner.invoke(cli, ["metainfo", "--market", "crypto"])
+    assert result.exit_code != 0
+    assert "500" in result.output
 
 
 def test_cli_validate_missing_file() -> None:

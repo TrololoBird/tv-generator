@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+from datetime import datetime
 
 
 def infer_type(value: pd.Series | str | int | float | bool | None) -> str:
@@ -16,8 +17,21 @@ def infer_type(value: pd.Series | str | int | float | bool | None) -> str:
     if isinstance(value, str) and value.lower() in {"true", "false"}:
         return "boolean"
 
+    if isinstance(value, str):
+        try:
+            datetime.fromisoformat(value.replace("Z", "+00:00"))
+            return "string"
+        except ValueError:
+            pass
+
+    if isinstance(value, int) or (isinstance(value, str) and value.isdigit()):
+        return "integer"
+
     try:
-        float(str(value))
-        return "number"
+        num = float(str(value))
     except (ValueError, TypeError):
         return "string"
+
+    if num.is_integer():
+        return "integer"
+    return "number"
