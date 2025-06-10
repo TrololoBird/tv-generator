@@ -9,5 +9,15 @@ def test_build_scan_payload_basic():
 
 
 def test_build_scan_payload_filters():
-    payload = build_scan_payload(["A"], ["close"], {"foo": "bar"})
+    payload = build_scan_payload(
+        ["A"],
+        ["close"],
+        {"foo": "bar"},
+        {"baz": 1},
+        {"sortBy": "close"},
+        {"from": 0},
+    )
     assert payload["filter"] == {"foo": "bar"}
+    assert payload["filter2"] == {"baz": 1}
+    assert payload["sort"] == {"sortBy": "close"}
+    assert payload["range"] == {"from": 0}

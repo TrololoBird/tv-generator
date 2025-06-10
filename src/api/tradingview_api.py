@@ -74,3 +74,42 @@ class TradingViewAPI:
         except ValueError as exc:
             logger.error("Invalid JSON: %s", r.text)
             raise ValueError("Invalid JSON received from TradingView") from exc
+
+    def search(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """POST /{scope}/search."""
+        url = self._url(scope, "search")
+        logger.debug("POST %s", url)
+        r = self.session.post(url, json=payload, timeout=self.timeout)
+        logger.debug("Response status %s", r.status_code)
+        r.raise_for_status()
+        try:
+            return r.json()
+        except ValueError as exc:
+            logger.error("Invalid JSON: %s", r.text)
+            raise ValueError("Invalid JSON received from TradingView") from exc
+
+    def history(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """POST /{scope}/history."""
+        url = self._url(scope, "history")
+        logger.debug("POST %s", url)
+        r = self.session.post(url, json=payload, timeout=self.timeout)
+        logger.debug("Response status %s", r.status_code)
+        r.raise_for_status()
+        try:
+            return r.json()
+        except ValueError as exc:
+            logger.error("Invalid JSON: %s", r.text)
+            raise ValueError("Invalid JSON received from TradingView") from exc
+
+    def summary(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """POST /{scope}/summary."""
+        url = self._url(scope, "summary")
+        logger.debug("POST %s", url)
+        r = self.session.post(url, json=payload, timeout=self.timeout)
+        logger.debug("Response status %s", r.status_code)
+        r.raise_for_status()
+        try:
+            return r.json()
+        except ValueError as exc:
+            logger.error("Invalid JSON: %s", r.text)
+            raise ValueError("Invalid JSON received from TradingView") from exc

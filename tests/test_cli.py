@@ -19,7 +19,17 @@ def test_cli_scan(tv_api_mock) -> None:
     tv_api_mock.get("https://scanner.tradingview.com/crypto/scan", json={"data": []})
     result = runner.invoke(
         cli,
-        ["scan", "--symbols", "BTCUSD", "--columns", "close", "--scope", "crypto"],
+        [
+            "scan",
+            "--symbols",
+            "BTCUSD",
+            "--columns",
+            "close",
+            "--scope",
+            "crypto",
+            "--filter",
+            "{}",
+        ],
     )
     assert result.exit_code == 0
     assert "data" in result.output
@@ -59,6 +69,66 @@ def test_cli_metainfo(tv_api_mock) -> None:
     )
     assert result.exit_code == 0
     assert "fields" in result.output
+
+
+def test_cli_search(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/search",
+        json={"result": []},
+    )
+    result = runner.invoke(
+        cli,
+        [
+            "search",
+            "--payload",
+            "{}",
+            "--scope",
+            "crypto",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "result" in result.output
+
+
+def test_cli_history(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/history",
+        json={"bars": []},
+    )
+    result = runner.invoke(
+        cli,
+        [
+            "history",
+            "--payload",
+            "{}",
+            "--scope",
+            "stocks",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "bars" in result.output
+
+
+def test_cli_summary(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/forex/summary",
+        json={"summary": []},
+    )
+    result = runner.invoke(
+        cli,
+        [
+            "summary",
+            "--payload",
+            "{}",
+            "--scope",
+            "forex",
+        ],
+    )
+    assert result.exit_code == 0
+    assert "summary" in result.output
 
 
 def test_scan_cli_missing_scope():
