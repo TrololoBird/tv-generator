@@ -1,5 +1,3 @@
-import pytest
-
 from src.utils.payload import build_scan_payload
 
 
