@@ -4,6 +4,7 @@ from typing import Any, Dict, Iterable
 
 import pandas as pd
 import yaml
+from src.utils.infer import infer_type
 
 
 class _IndentedDumper(yaml.SafeDumper):
@@ -12,8 +13,6 @@ class _IndentedDumper(yaml.SafeDumper):
     def increase_indent(self, flow: bool = False, indentless: bool = False):
         return super().increase_indent(flow, False)
 
-
-from src.utils.infer import infer_type
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +107,10 @@ class OpenAPIGenerator:
                             "content": {
                                 "application/json": {
                                     "schema": {
-                                        "$ref": f"#/components/schemas/{cap}MetainfoResponse"
+                                        "$ref": (
+                                            f"#/components/schemas/"
+                                            f"{cap}MetainfoResponse"
+                                        )
                                     }
                                 }
                             },
