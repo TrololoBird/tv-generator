@@ -8,9 +8,10 @@ Utilities for interacting with the TradingView Screener API and generating an Op
 
 ```bash
 pip install -r requirements.txt
+pip install -e .  # installs the `tvgen` command
 ```
 
-## Running
+## Usage
 
 Scan a market:
 
@@ -32,17 +33,19 @@ tvgen validate --spec specs/openapi_crypto.yaml
 
 ## Tests
 
-Run the full test suite:
+Run the full suite:
 
 ```bash
 pytest -q
 ```
 
-To add tests, place new files under the `tests/` directory. Each test file should start with `test_` and use `pytest` assertions. Command line behaviour can be tested with `click.testing.CliRunner`.
+To add new tests create a `test_*.py` file under `tests/`. Use `pytest` assertions and `click.testing.CliRunner` for CLI behaviour.
+
+If tests fail locally ensure dependencies are installed with `pip install -r requirements.txt` and the package installed in editable mode with `pip install -e .`.
 
 ## CI/CD
 
-The GitHub Actions workflow runs on every push and pull request. It performs formatting, linting, type checking, tests, spec generation and validation. If any step fails the workflow fails.
+The GitHub Actions workflow runs formatting, linting, type checking, tests, spec generation and validation on every push and PR. It fails immediately if any step fails.
 
 ```text
 black --check .
@@ -52,5 +55,3 @@ pytest -q
 tvgen generate --market crypto --output specs/openapi_crypto.yaml
 openapi-spec-validator specs/openapi_crypto.yaml
 ```
-
-If tests fail locally ensure that dependencies are installed with `pip install -r requirements.txt`.

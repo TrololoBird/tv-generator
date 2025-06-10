@@ -1,5 +1,7 @@
 # Changelog
-
+## 0.5.0
+- Fixed test imports and added path fixture
+- Regenerated specs and updated documentation
 ## 0.4.0
 - Improved CLI tests and removed path hacks
 - Cleaned repository and added CI badge
