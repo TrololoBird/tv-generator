@@ -29,6 +29,24 @@ def test_scan_and_metainfo(tv_api_mock, scope):
     assert api.scan(scope, {}) == {"data": []}
     assert api.metainfo(scope, {"query": ""}) == {"fields": []}
 
+    tv_api_mock.post(
+        f"https://scanner.tradingview.com/{scope}/search",
+        json={"items": []},
+    )
+    assert api.search(scope, {}) == {"items": []}
+
+    tv_api_mock.post(
+        f"https://scanner.tradingview.com/{scope}/history",
+        json={"bars": []},
+    )
+    assert api.history(scope, {}) == {"bars": []}
+
+    tv_api_mock.post(
+        f"https://scanner.tradingview.com/{scope}/summary",
+        json={"summary": []},
+    )
+    assert api.summary(scope, {}) == {"summary": []}
+
 
 def test_scan_error(tv_api_mock):
     tv_api_mock.get(

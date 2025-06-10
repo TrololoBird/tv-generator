@@ -17,6 +17,17 @@ from src.generator.openapi_generator import OpenAPIGenerator
 
 logger = logging.getLogger(__name__)
 
+SCOPES = [
+    "crypto",
+    "forex",
+    "futures",
+    "america",
+    "bond",
+    "cfd",
+    "coin",
+    "stocks",
+]
+
 
 @click.group()
 @click.option("--verbose", is_flag=True, help="Enable debug logging")
@@ -40,16 +51,33 @@ def cli(verbose: bool) -> None:
 @click.option(
     "--scope",
     required=True,
-    type=click.Choice(
-        ["crypto", "forex", "futures", "america", "bond", "cfd", "coin", "stocks"]
-    ),
+    type=click.Choice(SCOPES),
     help="Market scope",
 )
-def scan(symbols: str, columns: str, scope: str) -> None:
+@click.option("--filter", "filter_", help="JSON filter")
+@click.option("--filter2", help="Secondary JSON filter")
+@click.option("--sort", help="Sort JSON")
+@click.option("--range", "range_", help="Range JSON")
+def scan(
+    symbols: str,
+    columns: str,
+    scope: str,
+    filter_: str | None,
+    filter2: str | None,
+    sort: str | None,
+    range_: str | None,
+) -> None:
     """Perform a basic scan request and print JSON."""
 
     api = TradingViewAPI()
-    payload = build_scan_payload(symbols.split(","), columns.split(","))
+    payload = build_scan_payload(
+        symbols.split(","),
+        columns.split(","),
+        json.loads(filter_) if filter_ else None,
+        json.loads(filter2) if filter2 else None,
+        json.loads(sort) if sort else None,
+        json.loads(range_) if range_ else None,
+    )
     try:
         result = api.scan(scope, payload=payload)
     except Exception as exc:  # requests errors etc.
@@ -88,9 +116,7 @@ def price(symbol: str, market: str) -> None:
 @click.option(
     "--scope",
     required=True,
-    type=click.Choice(
-        ["crypto", "forex", "futures", "america", "bond", "cfd", "coin", "stocks"]
-    ),
+    type=click.Choice(SCOPES),
     help="Market scope",
 )
 def metainfo(query: str, scope: str) -> None:
@@ -99,6 +125,48 @@ def metainfo(query: str, scope: str) -> None:
     api = TradingViewAPI()
     try:
         data = api.metainfo(scope, {"query": query})
+    except Exception as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(data, indent=2))
+
+
+@cli.command()
+@click.option("--payload", required=True, help="JSON payload")
+@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
+def search(payload: str, scope: str) -> None:
+    """Call /{scope}/search with the given payload."""
+
+    api = TradingViewAPI()
+    try:
+        data = api.search(scope, json.loads(payload))
+    except Exception as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(data, indent=2))
+
+
+@cli.command()
+@click.option("--payload", required=True, help="JSON payload")
+@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
+def history(payload: str, scope: str) -> None:
+    """Call /{scope}/history with the given payload."""
+
+    api = TradingViewAPI()
+    try:
+        data = api.history(scope, json.loads(payload))
+    except Exception as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(data, indent=2))
+
+
+@cli.command()
+@click.option("--payload", required=True, help="JSON payload")
+@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
+def summary(payload: str, scope: str) -> None:
+    """Call /{scope}/summary with the given payload."""
+
+    api = TradingViewAPI()
+    try:
+        data = api.summary(scope, json.loads(payload))
     except Exception as exc:  # pragma: no cover - click handles output
         raise click.ClickException(str(exc))
     click.echo(json.dumps(data, indent=2))

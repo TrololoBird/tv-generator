@@ -1,4 +1,9 @@
 # Changelog
+## 0.8.2
+- Added scan filtering options and new CLI commands `search`, `history`, `summary`
+- Extended API client with corresponding endpoints
+- Improved payload builder to support additional parameters
+- Version bump and updated tests
 ## 0.8.1
 - Support multiple API scopes and updated CLI options
 - Tests expanded for new scopes
