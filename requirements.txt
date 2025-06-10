@@ -1,7 +1,6 @@
 requests
 pandas
 PyYAML
-tqdm
 openapi-spec-validator
 requests_mock
 click
