@@ -38,6 +38,34 @@ class OpenAPIGenerator:
                 field_types[field] = "string"
         return fields, field_types
 
+    def _add_metainfo_path(
+        self, openapi: dict[str, Any], market: str, cap: str
+    ) -> None:
+        """Add /{market}/metainfo endpoint to OpenAPI spec."""
+
+        openapi["paths"][f"/{market}/metainfo"] = {
+            "post": {
+                "summary": f"Get {market} metainfo",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": (
+                                        f"#/components/schemas/{cap}MetainfoResponse"
+                                    )
+                                }
+                            }
+                        },
+                    },
+                    "400": {"description": "Bad Request"},
+                    "500": {"description": "Server Error"},
+                },
+            }
+        }
+        openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {"type": "object"}
+
     def generate(self, output: Path, market: str | None = None) -> None:
         openapi: Dict[str, Any] = {
             "openapi": "3.1.0",
@@ -98,28 +126,8 @@ class OpenAPIGenerator:
                 }
             }
 
-            openapi["paths"][f"/{market}/metainfo"] = {
-                "post": {
-                    "summary": f"Get {market} metainfo",
-                    "responses": {
-                        "200": {
-                            "description": "Successful response",
-                            "content": {
-                                "application/json": {
-                                    "schema": {
-                                        "$ref": (
-                                            f"#/components/schemas/"
-                                            f"{cap}MetainfoResponse"
-                                        )
-                                    }
-                                }
-                            },
-                        },
-                        "400": {"description": "Bad Request"},
-                        "500": {"description": "Server Error"},
-                    },
-                }
-            }
+            self._add_metainfo_path(openapi, market, cap)
+
             openapi["components"]["schemas"][f"{cap}Fields"] = {
                 "type": "object",
                 "properties": {f: {"type": types[f]} for f in columns},
@@ -139,9 +147,6 @@ class OpenAPIGenerator:
                         "items": {"$ref": f"#/components/schemas/{cap}Fields"},
                     }
                 },
-            }
-            openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {
-                "type": "object"
             }
 
         output.parent.mkdir(parents=True, exist_ok=True)
