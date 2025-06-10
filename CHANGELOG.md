@@ -1,4 +1,8 @@
 # Changelog
+## 0.8.7
+* Refactored CLI exception handling for specific error types
+* Added logging of CLI errors
+* Version bump
 ## 0.8.6
 * Enhanced API retries and JSON handling
 * Expanded OpenAPI generator with additional endpoints

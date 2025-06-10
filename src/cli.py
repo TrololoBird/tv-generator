@@ -8,7 +8,9 @@ from pathlib import Path
 
 import click
 import yaml
+import requests
 from openapi_spec_validator import validate_spec
+from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
 
 from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
@@ -86,7 +88,11 @@ def scan(
     )
     try:
         result = api.scan(scope, payload=payload)
-    except Exception as exc:  # requests errors etc.
+    except requests.exceptions.RequestException as exc:
+        logger.error("Scan request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:
+        logger.error("Scan failed: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(result, indent=2))
 
@@ -99,7 +105,13 @@ def recommend(symbol: str, market: str) -> None:
 
     try:
         value = fetch_recommendation(symbol, market)
-    except Exception as exc:  # pragma: no cover - click handles output
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Recommendation request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:  # pragma: no cover - click handles output
+        logger.error("Recommendation unavailable: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(value, indent=2))
 
@@ -112,7 +124,13 @@ def price(symbol: str, market: str) -> None:
 
     try:
         value = fetch_stock_value(symbol, market)
-    except Exception as exc:  # pragma: no cover - click handles output
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Price request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:  # pragma: no cover - click handles output
+        logger.error("Price unavailable: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(value, indent=2))
 
@@ -131,7 +149,13 @@ def metainfo(query: str, scope: str) -> None:
     api = TradingViewAPI()
     try:
         data = api.metainfo(scope, {"query": query})
-    except Exception as exc:  # pragma: no cover - click handles output
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Metainfo request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:  # pragma: no cover - click handles output
+        logger.error("Metainfo error: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(data, indent=2))
 
@@ -145,7 +169,13 @@ def search(payload: str, scope: str) -> None:
     api = TradingViewAPI()
     try:
         data = api.search(scope, json.loads(payload))
-    except Exception as exc:  # pragma: no cover - click handles output
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Search request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:  # pragma: no cover - click handles output
+        logger.error("Search error: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(data, indent=2))
 
@@ -159,7 +189,13 @@ def history(payload: str, scope: str) -> None:
     api = TradingViewAPI()
     try:
         data = api.history(scope, json.loads(payload))
-    except Exception as exc:  # pragma: no cover - click handles output
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("History request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:  # pragma: no cover - click handles output
+        logger.error("History error: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(data, indent=2))
 
@@ -173,7 +209,13 @@ def summary(payload: str, scope: str) -> None:
     api = TradingViewAPI()
     try:
         data = api.summary(scope, json.loads(payload))
-    except Exception as exc:  # pragma: no cover - click handles output
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Summary request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    except ValueError as exc:  # pragma: no cover - click handles output
+        logger.error("Summary error: %s", exc)
         raise click.ClickException(str(exc))
     click.echo(json.dumps(data, indent=2))
 
@@ -199,7 +241,8 @@ def generate(market: str, output: Path, results_dir: Path) -> None:
     genr = OpenAPIGenerator(results_dir)
     try:
         genr.generate(output, market=market)
-    except Exception as exc:
+    except (RuntimeError, FileNotFoundError, ValueError) as exc:
+        logger.error("Spec generation failed: %s", exc)
         raise click.ClickException(f"Failed to generate spec: {exc}")
     click.echo(f"Specification written to {output}")
 
@@ -221,7 +264,8 @@ def validate(spec_file: Path) -> None:
         validate_spec(spec)
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
-    except Exception as exc:
+    except (yaml.YAMLError, OpenAPISpecValidatorError, ValueError) as exc:
+        logger.error("Specification validation failed: %s", exc)
         raise click.ClickException(f"Validation failed: {exc}")
     click.echo("Specification is valid")
 
