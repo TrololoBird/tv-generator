@@ -1,4 +1,8 @@
 # Changelog
+## 0.7.2
+- Added `--results-dir` option to `generate` command
+- Updated tests for new option
+- Bumped version
 ## 0.7.1
 - Fixed `pyproject.toml` dependency format for editable installs
 

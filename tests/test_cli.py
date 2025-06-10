@@ -56,6 +56,7 @@ def test_generate_help() -> None:
     result = runner.invoke(cli, ["generate", "--help"])
     assert result.exit_code == 0
     assert "--market" in result.output
+    assert "--results-dir" in result.output
 
 
 def test_cli_generate_and_validate(tmp_path: Path) -> None:
@@ -73,6 +74,8 @@ def test_cli_generate_and_validate(tmp_path: Path) -> None:
                 "crypto",
                 "--output",
                 str(out_file),
+                "--results-dir",
+                str(Path("results")),
             ],
         )
         assert result.exit_code == 0
