@@ -64,12 +64,22 @@ def price(symbol: str, market: str) -> None:
 @cli.command()
 @click.option("--market", required=True, help="Market directory to use")
 @click.option(
-    "--output", type=click.Path(path_type=Path), required=True, help="Output YAML file"
+    "--output",
+    type=click.Path(path_type=Path),
+    required=True,
+    help="Output YAML file",
 )
-def generate(market: str, output: Path) -> None:
+@click.option(
+    "--results-dir",
+    type=click.Path(path_type=Path),
+    default="results",
+    show_default=True,
+    help="Directory with scan results",
+)
+def generate(market: str, output: Path, results_dir: Path) -> None:
     """Generate OpenAPI spec for a market from collected results."""
 
-    genr = OpenAPIGenerator(Path("results"))
+    genr = OpenAPIGenerator(results_dir)
     try:
         genr.generate(output, market=market)
     except Exception as exc:
