@@ -1,3 +1,4 @@
+import pytest
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 
 
@@ -22,9 +23,6 @@ def test_fetch_stock_value_error(tv_api_mock):
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )
-    try:
+    with pytest.raises(ValueError) as exc:
         fetch_stock_value("AAPL")
-    except ValueError as exc:
-        assert "unavailable" in str(exc)
-    else:
-        assert False, "Expected error"
+    assert "unavailable" in str(exc.value)

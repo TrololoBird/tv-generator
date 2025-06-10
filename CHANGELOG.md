@@ -1,4 +1,7 @@
 # Changelog
+## 0.7.3
+- Improved stock data error test using `pytest.raises`
+- Bumped version
 ## 0.7.2
 - Added `--results-dir` option to `generate` command
 - Updated tests for new option
