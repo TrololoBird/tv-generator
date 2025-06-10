@@ -1,4 +1,9 @@
 # Changelog
+## 0.7.7
+- Fix spec update workflow
+- Run daily spec generation
+- Bumped version
+
 ## 0.7.6
 - Improved OpenAPI generator to create output directories automatically
 - Added CLI error handling tests

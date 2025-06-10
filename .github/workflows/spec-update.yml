@@ -5,7 +5,7 @@ name: Update Specs
 on:
   workflow_dispatch: {}  # yamllint disable-line rule:truthy
   schedule:
-    - cron: '0 2 * * 1'
+    - cron: '0 2 * * *'
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Actionlint
-        uses: rhysd/actionlint@v1
+        uses: rhysd/actionlint@v1.7.7
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
