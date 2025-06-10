@@ -1,4 +1,7 @@
 # Changelog
+## 0.7.1
+- Fixed `pyproject.toml` dependency format for editable installs
+
 ## 0.7.0
 - Added commands for stock recommendations and prices
 - Integrated external data helpers
