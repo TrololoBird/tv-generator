@@ -6,3 +6,4 @@ openapi-spec-validator
 requests_mock
 click
 toml
+requests_cache

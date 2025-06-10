@@ -13,6 +13,12 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+Optionally install `requests-cache` to enable persistent HTTP caching:
+
+```bash
+pip install requests-cache
+```
+
 For development and running the test suite you will also need some tooling:
 
 ```bash
@@ -55,6 +61,12 @@ Fetch recommendation or price for a symbol:
 ```bash
 tvgen recommend --symbol AAPL
 tvgen price --symbol AAPL
+```
+
+Set `TV_CACHE=1` to cache HTTP responses locally:
+
+```bash
+TV_CACHE=1 tvgen scan --market crypto --symbols BTCUSD --columns close
 ```
 
 ## Tests

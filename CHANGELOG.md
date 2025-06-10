@@ -1,4 +1,11 @@
 # Changelog
+## 0.8.5
+- Optional HTTP caching via `requests-cache`
+- Version bump
+## 0.8.4
+- Updated Slack notification action version in spec update workflow
+- Bumped package version
+
 ## 0.8.3
 - Fixed Slack notification action version in spec update workflow
 - Bumped package version
