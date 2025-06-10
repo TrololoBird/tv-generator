@@ -1,4 +1,7 @@
 # Changelog
+## 0.8.3
+- Fixed Slack notification action version in spec update workflow
+- Bumped package version
 ## 0.8.2
 - Added scan filtering options and new CLI commands `search`, `history`, `summary`
 - Extended API client with corresponding endpoints
