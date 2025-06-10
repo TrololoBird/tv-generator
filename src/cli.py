@@ -11,6 +11,7 @@ import yaml
 from openapi_spec_validator import validate_spec
 
 from src.api.tradingview_api import TradingViewAPI
+from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.generator.openapi_generator import OpenAPIGenerator
 
 logging.basicConfig(level=logging.INFO)
@@ -32,6 +33,32 @@ def scan(market: str) -> None:
     except Exception as exc:  # requests errors etc.
         raise click.ClickException(str(exc))
     click.echo(json.dumps(result, indent=2))
+
+
+@cli.command()
+@click.option("--symbol", required=True, help="Ticker symbol")
+@click.option("--market", default="stocks", show_default=True, help="Market name")
+def recommend(symbol: str, market: str) -> None:
+    """Fetch trading recommendation for a symbol."""
+
+    try:
+        value = fetch_recommendation(symbol, market)
+    except Exception as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(value))
+
+
+@cli.command(name="price")
+@click.option("--symbol", required=True, help="Ticker symbol")
+@click.option("--market", default="stocks", show_default=True, help="Market name")
+def price(symbol: str, market: str) -> None:
+    """Fetch last close price for a symbol."""
+
+    try:
+        value = fetch_stock_value(symbol, market)
+    except Exception as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(value))
 
 
 @cli.command()

@@ -1,4 +1,9 @@
 # Changelog
+## 0.7.0
+- Added commands for stock recommendations and prices
+- Integrated external data helpers
+- Added click to dependencies and bumped version
+
 
 ## 0.6.0
 - Improved CLI error handling and messages

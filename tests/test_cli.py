@@ -22,6 +22,28 @@ def test_cli_scan(tv_api_mock) -> None:
     assert "data" in result.output
 
 
+def test_cli_recommend(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={"data": [{"d": ["buy"]}]},
+    )
+    result = runner.invoke(cli, ["recommend", "--symbol", "AAPL"])
+    assert result.exit_code == 0
+    assert "buy" in result.output
+
+
+def test_cli_price(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={"data": [{"d": [1.0]}]},
+    )
+    result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
+    assert result.exit_code == 0
+    assert "1.0" in result.output
+
+
 def test_cli_help() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["--help"])

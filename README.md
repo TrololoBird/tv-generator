@@ -39,6 +39,13 @@ Validate a spec file:
 tvgen validate --spec specs/openapi_crypto.yaml
 ```
 
+Fetch recommendation or price for a symbol:
+
+```bash
+tvgen recommend --symbol AAPL
+tvgen price --symbol AAPL
+```
+
 ## Tests
 
 Run the full test suite:
