@@ -92,7 +92,29 @@ class OpenAPIGenerator:
                                     }
                                 }
                             },
-                        }
+                        },
+                        "400": {"description": "Bad Request"},
+                        "500": {"description": "Server Error"},
+                    },
+                }
+            }
+
+            openapi["paths"][f"/{market}/metainfo"] = {
+                "post": {
+                    "summary": f"Get {market} metainfo",
+                    "responses": {
+                        "200": {
+                            "description": "Successful response",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": f"#/components/schemas/{cap}MetainfoResponse"
+                                    }
+                                }
+                            },
+                        },
+                        "400": {"description": "Bad Request"},
+                        "500": {"description": "Server Error"},
                     },
                 }
             }
@@ -115,6 +137,9 @@ class OpenAPIGenerator:
                         "items": {"$ref": f"#/components/schemas/{cap}Fields"},
                     }
                 },
+            }
+            openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {
+                "type": "object"
             }
 
         output.parent.mkdir(parents=True, exist_ok=True)

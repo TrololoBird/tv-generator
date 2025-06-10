@@ -25,3 +25,13 @@ def test_scan_error(tv_api_mock):
     api = TradingViewAPI()
     with pytest.raises(Exception):
         api.scan("crypto", {})
+
+
+def test_metainfo_error(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        status_code=404,
+    )
+    api = TradingViewAPI()
+    with pytest.raises(Exception):
+        api.metainfo("crypto")

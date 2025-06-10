@@ -47,3 +47,18 @@ def test_generate_missing_field_status(tmp_path: Path) -> None:
 
     data = yaml.safe_load(out.read_text())
     assert "/crypto/scan" not in data["paths"]
+
+
+def test_generate_multiple_markets(tmp_path: Path) -> None:
+    crypto_dir = tmp_path / "results" / "crypto"
+    stocks_dir = tmp_path / "results" / "stocks"
+    _create_field_status(crypto_dir / "field_status.tsv")
+    _create_field_status(stocks_dir / "field_status.tsv")
+
+    gen = OpenAPIGenerator(tmp_path / "results")
+    out = tmp_path / "spec.yaml"
+    gen.generate(out)
+
+    data = yaml.safe_load(out.read_text())
+    assert "/crypto/scan" in data["paths"]
+    assert "/stocks/scan" in data["paths"]

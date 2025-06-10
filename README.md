@@ -16,7 +16,12 @@ pip install -e .
 For development and running the test suite you will also need some tooling:
 
 ```bash
-pip install black flake8 mypy pytest openapi-spec-validator requests_mock
+pip install black flake8 mypy pytest openapi-spec-validator requests_mock pre-commit
+```
+Then install the git hooks:
+
+```bash
+pre-commit install
 ```
 
 ## Running
@@ -24,7 +29,13 @@ pip install black flake8 mypy pytest openapi-spec-validator requests_mock
 Scan a market:
 
 ```bash
-tvgen scan --market crypto
+tvgen scan --market crypto --symbols BTCUSD --columns close
+```
+
+Fetch market metadata:
+
+```bash
+tvgen metainfo --market crypto
 ```
 
 Generate an OpenAPI spec and save it to `specs/`:
@@ -79,6 +90,7 @@ The [`spec-update.yml`](.github/workflows/spec-update.yml) workflow runs weekly 
 Most CI issues are caused by formatting, lint or type errors. Before pushing run:
 
 ```bash
+pre-commit run --all-files
 black .
 flake8 .
 mypy src/

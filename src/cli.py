@@ -12,6 +12,7 @@ from openapi_spec_validator import validate_spec
 
 from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
+from src.utils.payload import build_scan_payload
 from src.generator.openapi_generator import OpenAPIGenerator
 
 logging.basicConfig(level=logging.INFO)
@@ -24,12 +25,15 @@ def cli() -> None:
 
 @cli.command()
 @click.option("--market", required=True, help="Market to scan")
-def scan(market: str) -> None:
+@click.option("--symbols", multiple=True, help="Ticker symbols")
+@click.option("--columns", multiple=True, help="Fields to request")
+def scan(market: str, symbols: tuple[str, ...], columns: tuple[str, ...]) -> None:
     """Perform a basic scan request and print JSON."""
 
     api = TradingViewAPI()
+    payload = build_scan_payload(symbols, columns)
     try:
-        result = api.scan(market, payload={})
+        result = api.scan(market, payload=payload)
     except Exception as exc:  # requests errors etc.
         raise click.ClickException(str(exc))
     click.echo(json.dumps(result, indent=2))
@@ -59,6 +63,19 @@ def price(symbol: str, market: str) -> None:
     except Exception as exc:  # pragma: no cover - click handles output
         raise click.ClickException(str(exc))
     click.echo(json.dumps(value))
+
+
+@cli.command()
+@click.option("--market", required=True, help="Market name")
+def metainfo(market: str) -> None:
+    """Fetch market metainfo."""
+
+    api = TradingViewAPI()
+    try:
+        data = api.metainfo(market)
+    except Exception as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(data, indent=2))
 
 
 @cli.command()

@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 from .tradingview_api import TradingViewAPI
+from src.utils.payload import build_scan_payload
 
 logger = logging.getLogger(__name__)
 
@@ -9,10 +10,7 @@ logger = logging.getLogger(__name__)
 def fetch_recommendation(symbol: str, market: str = "stocks") -> Any:
     """Return trading recommendation for a symbol."""
     api = TradingViewAPI()
-    payload = {
-        "symbols": {"tickers": [symbol], "query": {"types": []}},
-        "columns": ["Recommend.All"],
-    }
+    payload = build_scan_payload([symbol], ["Recommend.All"])
     data = api.scan(market, payload)
     try:
         return data["data"][0]["d"][0]
@@ -24,10 +22,7 @@ def fetch_recommendation(symbol: str, market: str = "stocks") -> Any:
 def fetch_stock_value(symbol: str, market: str = "stocks") -> Any:
     """Return current close price for a symbol."""
     api = TradingViewAPI()
-    payload = {
-        "symbols": {"tickers": [symbol], "query": {"types": []}},
-        "columns": ["close"],
-    }
+    payload = build_scan_payload([symbol], ["close"])
     data = api.scan(market, payload)
     try:
         return data["data"][0]["d"][0]

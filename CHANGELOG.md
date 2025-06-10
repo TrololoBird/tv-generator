@@ -1,4 +1,9 @@
 # Changelog
+## 0.7.9
+- New CLI commands `metainfo` and extended `scan` options
+- Expanded OpenAPI spec with metainfo endpoint
+- Added pre-commit and stricter CI checks
+
 ## 0.7.8
 - Fix YAML indentation for generated specs
 - Bumped version
