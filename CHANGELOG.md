@@ -1,4 +1,9 @@
 # Changelog
+## 0.7.6
+- Improved OpenAPI generator to create output directories automatically
+- Added CLI error handling tests
+- Added fetch recommendation error test
+- Bumped version
 ## 0.7.5
 - Added request and response schemas to generated OpenAPI paths
 - Updated tests

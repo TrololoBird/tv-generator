@@ -109,6 +109,7 @@ class OpenAPIGenerator:
                 },
             }
 
+        output.parent.mkdir(parents=True, exist_ok=True)
         with open(output, "w", encoding="utf-8") as f:
             yaml.dump(openapi, f, sort_keys=False)
         logger.info("OpenAPI spec saved to %s", output)
