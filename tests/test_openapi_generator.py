@@ -23,3 +23,15 @@ def test_generate(tmp_path: Path):
     data = yaml.safe_load(out.read_text())
     assert "/crypto/scan" in data["paths"]
     assert "CryptoFields" in data["components"]["schemas"]
+
+
+def test_generate_missing_field_status(tmp_path: Path) -> None:
+    market_dir = tmp_path / "results" / "crypto"
+    market_dir.mkdir(parents=True)
+
+    gen = OpenAPIGenerator(tmp_path / "results")
+    out = tmp_path / "spec.yaml"
+    gen.generate(out)
+
+    data = yaml.safe_load(out.read_text())
+    assert "/crypto/scan" not in data["paths"]

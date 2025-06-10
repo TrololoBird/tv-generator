@@ -31,9 +31,3 @@ jobs:
         run: tvgen generate --market crypto --output specs/openapi_crypto.yaml
       - name: Validate OpenAPI
         run: openapi-spec-validator specs/openapi_crypto.yaml
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        if: |
-          github.event_name == 'push' || github.event_name == 'schedule'
-        with:
-          commit_message: "Auto-update specs"
-          file_pattern: specs/*.yaml
