@@ -12,3 +12,10 @@ def test_infer_type_string():
 
 def test_infer_type_nan():
     assert infer_type(None) == "string"
+
+
+def test_infer_type_boolean():
+    assert infer_type(True) == "boolean"
+    assert infer_type(False) == "boolean"
+    assert infer_type("true") == "boolean"
+    assert infer_type("False") == "boolean"
