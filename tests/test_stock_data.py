@@ -26,3 +26,13 @@ def test_fetch_stock_value_error(tv_api_mock):
     with pytest.raises(ValueError) as exc:
         fetch_stock_value("AAPL")
     assert "unavailable" in str(exc.value)
+
+
+def test_fetch_recommendation_error(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={},
+    )
+    with pytest.raises(ValueError) as exc:
+        fetch_recommendation("AAPL")
+    assert "unavailable" in str(exc.value)

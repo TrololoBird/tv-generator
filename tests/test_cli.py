@@ -106,6 +106,28 @@ def test_cli_scan_error(tv_api_mock) -> None:
     assert "500" in result.output
 
 
+def test_cli_recommend_error(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={},
+    )
+    result = runner.invoke(cli, ["recommend", "--symbol", "AAPL"])
+    assert result.exit_code != 0
+    assert "unavailable" in result.output
+
+
+def test_cli_price_error(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={},
+    )
+    result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
+    assert result.exit_code != 0
+    assert "unavailable" in result.output
+
+
 def test_cli_validate_missing_file() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["validate", "--spec", "missing.yaml"])
