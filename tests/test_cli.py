@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import yaml
-import requests_mock
 from click.testing import CliRunner
 
 from src.cli import cli
@@ -15,13 +14,12 @@ def _create_field_status(path: Path) -> None:
         f.write("open\tok\tabc\n")
 
 
-def test_cli_scan() -> None:
+def test_cli_scan(tv_api_mock) -> None:
     runner = CliRunner()
-    with requests_mock.Mocker() as m:
-        m.post("https://scanner.tradingview.com/crypto/scan", json={"data": []})
-        result = runner.invoke(cli, ["scan", "--market", "crypto"])
-        assert result.exit_code == 0
-        assert "data" in result.output
+    tv_api_mock.post("https://scanner.tradingview.com/crypto/scan", json={"data": []})
+    result = runner.invoke(cli, ["scan", "--market", "crypto"])
+    assert result.exit_code == 0
+    assert "data" in result.output
 
 
 def test_cli_help() -> None:
@@ -29,6 +27,13 @@ def test_cli_help() -> None:
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
     assert "TradingView" in result.output
+
+
+def test_generate_help() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, ["generate", "--help"])
+    assert result.exit_code == 0
+    assert "--market" in result.output
 
 
 def test_cli_generate_and_validate(tmp_path: Path) -> None:

@@ -8,6 +8,7 @@ Utilities for interacting with the TradingView Screener API and generating an Op
 
 ```bash
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Running
@@ -37,6 +38,8 @@ Run the full test suite:
 ```bash
 pytest -q
 ```
+The tests rely on the package being installed in editable mode so that modules
+can be imported correctly.
 
 To add tests, place new files under the `tests/` directory. Each test file should start with `test_` and use `pytest` assertions. Command line behaviour can be tested with `click.testing.CliRunner`.
 

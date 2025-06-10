@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+- Fixed packaging configuration for editable installs
+- Added editable install and spec validation to CI
+- Expanded tests with shared HTTP mocking fixture
+
 ## 0.4.0
 - Improved CLI tests and removed path hacks
 - Cleaned repository and added CI badge
