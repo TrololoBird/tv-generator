@@ -3,7 +3,7 @@ from src.api.stock_data import fetch_recommendation, fetch_stock_value
 
 
 def test_fetch_recommendation(tv_api_mock):
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={"data": [{"d": ["strong_buy"]}]},
     )
@@ -11,7 +11,7 @@ def test_fetch_recommendation(tv_api_mock):
 
 
 def test_fetch_stock_value(tv_api_mock):
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={"data": [{"d": [150.0]}]},
     )
@@ -19,7 +19,7 @@ def test_fetch_stock_value(tv_api_mock):
 
 
 def test_fetch_stock_value_error(tv_api_mock):
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )
@@ -29,7 +29,7 @@ def test_fetch_stock_value_error(tv_api_mock):
 
 
 def test_fetch_recommendation_error(tv_api_mock):
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )

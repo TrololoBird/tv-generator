@@ -1,4 +1,8 @@
 # Changelog
+## 0.8.1
+- Support multiple API scopes and updated CLI options
+- Tests expanded for new scopes
+
 ## 0.8.0
 - Improved API client configuration and error handling
 - Enhanced OpenAPI generator with dynamic version and stricter schemas
