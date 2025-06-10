@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+- Improved CLI error handling and messages
+- Expanded unit tests with additional edge cases
+- Updated CI workflow commands
+- Documentation updates and version bump
 ## 0.5.0
 - Fixed packaging configuration for editable installs
 - Added editable install and spec validation to CI

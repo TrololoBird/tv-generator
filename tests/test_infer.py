@@ -8,3 +8,7 @@ def test_infer_type_number():
 
 def test_infer_type_string():
     assert infer_type("abc") == "string"
+
+
+def test_infer_type_nan():
+    assert infer_type(None) == "string"
