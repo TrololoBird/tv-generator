@@ -5,16 +5,6 @@ info:
   description: Auto-generated from collected field data.
 servers:
 - url: https://scanner.tradingview.com
-paths:
-  /crypto/scan:
-    post:
-      summary: Scan crypto
+paths: {}
 components:
-  schemas:
-    CryptoFields:
-      type: object
-      properties:
-        close:
-          type: number
-        open:
-          type: string
+  schemas: {}
