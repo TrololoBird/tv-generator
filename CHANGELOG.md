@@ -1,4 +1,7 @@
 # Changelog
+## 0.7.4
+- Added boolean type inference and tests
+- Bumped version
 ## 0.7.3
 - Improved stock data error test using `pytest.raises`
 - Bumped version
