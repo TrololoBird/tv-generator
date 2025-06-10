@@ -27,16 +27,31 @@ def cli(verbose: bool) -> None:
 
 
 @cli.command()
-@click.option("--market", required=True, help="Market to scan")
-@click.option("--symbols", multiple=True, help="Ticker symbols")
-@click.option("--columns", multiple=True, help="Fields to request")
-def scan(market: str, symbols: tuple[str, ...], columns: tuple[str, ...]) -> None:
+@click.option(
+    "--symbols",
+    required=True,
+    help="Comma-separated tickers",
+)
+@click.option(
+    "--columns",
+    required=True,
+    help="Comma-separated fields",
+)
+@click.option(
+    "--scope",
+    required=True,
+    type=click.Choice(
+        ["crypto", "forex", "futures", "america", "bond", "cfd", "coin", "stocks"]
+    ),
+    help="Market scope",
+)
+def scan(symbols: str, columns: str, scope: str) -> None:
     """Perform a basic scan request and print JSON."""
 
     api = TradingViewAPI()
-    payload = build_scan_payload(symbols, columns)
+    payload = build_scan_payload(symbols.split(","), columns.split(","))
     try:
-        result = api.scan(market, payload=payload)
+        result = api.scan(scope, payload=payload)
     except Exception as exc:  # requests errors etc.
         raise click.ClickException(str(exc))
     click.echo(json.dumps(result, indent=2))
@@ -69,13 +84,21 @@ def price(symbol: str, market: str) -> None:
 
 
 @cli.command()
-@click.option("--market", required=True, help="Market name")
-def metainfo(market: str) -> None:
-    """Fetch market metainfo."""
+@click.option("--query", required=True, help="Search query or market identifier")
+@click.option(
+    "--scope",
+    required=True,
+    type=click.Choice(
+        ["crypto", "forex", "futures", "america", "bond", "cfd", "coin", "stocks"]
+    ),
+    help="Market scope",
+)
+def metainfo(query: str, scope: str) -> None:
+    """Fetch metainfo for given scope via /{scope}/metainfo."""
 
     api = TradingViewAPI()
     try:
-        data = api.metainfo(market)
+        data = api.metainfo(scope, {"query": query})
     except Exception as exc:  # pragma: no cover - click handles output
         raise click.ClickException(str(exc))
     click.echo(json.dumps(data, indent=2))

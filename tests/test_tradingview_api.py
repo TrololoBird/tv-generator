@@ -2,23 +2,36 @@ import pytest
 from src.api.tradingview_api import TradingViewAPI
 
 
-def test_scan_and_metainfo(tv_api_mock):
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/scan",
+@pytest.mark.parametrize(
+    "scope",
+    [
+        "crypto",
+        "forex",
+        "futures",
+        "america",
+        "bond",
+        "cfd",
+        "coin",
+        "stocks",
+    ],
+)
+def test_scan_and_metainfo(tv_api_mock, scope):
+    tv_api_mock.get(
+        f"https://scanner.tradingview.com/{scope}/scan",
         json={"data": []},
     )
     tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/metainfo",
+        f"https://scanner.tradingview.com/{scope}/metainfo",
         json={"fields": []},
     )
 
     api = TradingViewAPI()
-    assert api.scan("crypto", {}) == {"data": []}
-    assert api.metainfo("crypto") == {"fields": []}
+    assert api.scan(scope, {}) == {"data": []}
+    assert api.metainfo(scope, {"query": ""}) == {"fields": []}
 
 
 def test_scan_error(tv_api_mock):
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/crypto/scan",
         status_code=404,
     )
@@ -28,7 +41,7 @@ def test_scan_error(tv_api_mock):
 
 
 def test_scan_invalid_json(tv_api_mock):
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/crypto/scan",
         text="not-json",
     )
@@ -44,4 +57,10 @@ def test_metainfo_error(tv_api_mock):
     )
     api = TradingViewAPI()
     with pytest.raises(Exception):
-        api.metainfo("crypto")
+        api.metainfo("crypto", {"query": ""})
+
+
+def test_scan_invalid_scope():
+    api = TradingViewAPI()
+    with pytest.raises(ValueError):
+        api.scan("invalid", {})

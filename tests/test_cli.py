@@ -16,10 +16,10 @@ def _create_field_status(path: Path) -> None:
 
 def test_cli_scan(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.post("https://scanner.tradingview.com/crypto/scan", json={"data": []})
+    tv_api_mock.get("https://scanner.tradingview.com/crypto/scan", json={"data": []})
     result = runner.invoke(
         cli,
-        ["scan", "--market", "crypto", "--symbols", "BTCUSD", "--columns", "close"],
+        ["scan", "--symbols", "BTCUSD", "--columns", "close", "--scope", "crypto"],
     )
     assert result.exit_code == 0
     assert "data" in result.output
@@ -27,7 +27,7 @@ def test_cli_scan(tv_api_mock) -> None:
 
 def test_cli_recommend(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={"data": [{"d": ["buy"]}]},
     )
@@ -38,7 +38,7 @@ def test_cli_recommend(tv_api_mock) -> None:
 
 def test_cli_price(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={"data": [{"d": [1.0]}]},
     )
@@ -53,9 +53,19 @@ def test_cli_metainfo(tv_api_mock) -> None:
         "https://scanner.tradingview.com/crypto/metainfo",
         json={"fields": []},
     )
-    result = runner.invoke(cli, ["metainfo", "--market", "crypto"])
+    result = runner.invoke(
+        cli,
+        ["metainfo", "--query", "test", "--scope", "crypto"],
+    )
     assert result.exit_code == 0
     assert "fields" in result.output
+
+
+def test_scan_cli_missing_scope():
+    runner = CliRunner()
+    result = runner.invoke(cli, ["scan", "--symbols", "AAPL", "--columns", "close"])
+    assert result.exit_code != 0
+    assert "Missing option '--scope'" in result.output
 
 
 def test_cli_help() -> None:
@@ -132,18 +142,20 @@ def test_cli_generate_missing_results(tmp_path: Path) -> None:
 
 def test_cli_scan_error(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/crypto/scan",
         status_code=500,
     )
-    result = runner.invoke(cli, ["scan", "--market", "crypto"])
+    result = runner.invoke(
+        cli, ["scan", "--symbols", "BTCUSD", "--columns", "close", "--scope", "crypto"]
+    )
     assert result.exit_code != 0
     assert "500" in result.output
 
 
 def test_cli_recommend_error(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )
@@ -154,7 +166,7 @@ def test_cli_recommend_error(tv_api_mock) -> None:
 
 def test_cli_price_error(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.post(
+    tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )
@@ -169,7 +181,7 @@ def test_cli_metainfo_error(tv_api_mock) -> None:
         "https://scanner.tradingview.com/crypto/metainfo",
         status_code=500,
     )
-    result = runner.invoke(cli, ["metainfo", "--market", "crypto"])
+    result = runner.invoke(cli, ["metainfo", "--query", "t", "--scope", "crypto"])
     assert result.exit_code != 0
     assert "500" in result.output
 

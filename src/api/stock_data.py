@@ -7,15 +7,15 @@ from src.utils.payload import build_scan_payload
 logger = logging.getLogger(__name__)
 
 
-def _fetch_field(symbol: str, market: str, column: str, error_msg: str) -> Any:
+def _fetch_field(symbol: str, scope: str, column: str, error_msg: str) -> Any:
     api = TradingViewAPI()
     payload = build_scan_payload([symbol], [column])
-    data = api.scan(market, payload)
+    data = api.scan(scope, payload)
     try:
         return data["data"][0]["d"][0]
     except (KeyError, IndexError) as exc:
-        logger.error("%s for %s in %s: %s", error_msg, symbol, market, exc)
-        raise ValueError(f"{error_msg} for {symbol} in market {market}") from exc
+        logger.error("%s for %s in %s: %s", error_msg, symbol, scope, exc)
+        raise ValueError(f"{error_msg} for {symbol} in market {scope}") from exc
 
 
 def fetch_recommendation(symbol: str, market: str = "stocks") -> Any:
