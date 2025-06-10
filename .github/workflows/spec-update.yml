@@ -55,6 +55,6 @@ jobs:
           branch: 'auto/spec-update'
       - name: Notify on failure
         if: failure()
-        uses: actions/notify-slack@v3
+        uses: actions/notify-slack@v2
         with:
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
