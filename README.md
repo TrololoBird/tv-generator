@@ -6,9 +6,17 @@ Utilities for interacting with the TradingView Screener API and generating an Op
 
 ## Installation
 
+Install runtime requirements and the package in editable mode:
+
 ```bash
 pip install -r requirements.txt
 pip install -e .
+```
+
+For development and running the test suite you will also need some tooling:
+
+```bash
+pip install black flake8 mypy pytest openapi-spec-validator requests_mock
 ```
 
 ## Running
@@ -19,7 +27,7 @@ Scan a market:
 tvgen scan --market crypto
 ```
 
-Generate an OpenAPI spec:
+Generate an OpenAPI spec and save it to `specs/`:
 
 ```bash
 tvgen generate --market crypto --output specs/openapi_crypto.yaml
@@ -56,4 +64,18 @@ tvgen generate --market crypto --output specs/openapi_crypto.yaml
 openapi-spec-validator specs/openapi_crypto.yaml
 ```
 
-If tests fail locally ensure that dependencies are installed with `pip install -r requirements.txt`.
+
+## Troubleshooting CI failures
+
+Most CI issues are caused by formatting, lint or type errors. Before pushing run:
+
+```bash
+black .
+flake8 .
+mypy src/
+pytest -q
+tvgen generate --market crypto --output specs/openapi_crypto.yaml
+openapi-spec-validator specs/openapi_crypto.yaml
+```
+
+Ensure all commands succeed locally to avoid pipeline failures.

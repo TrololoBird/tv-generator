@@ -59,3 +59,21 @@ def test_cli_generate_and_validate(tmp_path: Path) -> None:
         assert result.exit_code == 0
         data = yaml.safe_load(out_file.read_text())
         assert "/crypto/scan" in data["paths"]
+
+
+def test_cli_scan_error(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/scan",
+        status_code=500,
+    )
+    result = runner.invoke(cli, ["scan", "--market", "crypto"])
+    assert result.exit_code != 0
+    assert "500" in result.output
+
+
+def test_cli_validate_missing_file() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, ["validate", "--spec", "missing.yaml"])
+    assert result.exit_code != 0
+    assert "No such file" in result.output
