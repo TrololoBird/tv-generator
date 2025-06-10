@@ -1,4 +1,7 @@
 # Changelog
+## 0.7.8
+- Fix YAML indentation for generated specs
+- Bumped version
 ## 0.7.7
 - Fix spec update workflow
 - Run daily spec generation

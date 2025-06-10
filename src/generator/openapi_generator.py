@@ -5,6 +5,14 @@ from typing import Any, Dict, Iterable
 import pandas as pd
 import yaml
 
+
+class _IndentedDumper(yaml.SafeDumper):
+    """YAML dumper that indents sequences properly."""
+
+    def increase_indent(self, flow: bool = False, indentless: bool = False):
+        return super().increase_indent(flow, False)
+
+
 from src.utils.infer import infer_type
 
 logger = logging.getLogger(__name__)
@@ -111,5 +119,12 @@ class OpenAPIGenerator:
 
         output.parent.mkdir(parents=True, exist_ok=True)
         with open(output, "w", encoding="utf-8") as f:
-            yaml.dump(openapi, f, sort_keys=False)
+            yaml.dump(
+                openapi,
+                f,
+                sort_keys=False,
+                indent=2,
+                explicit_start=True,
+                Dumper=_IndentedDumper,
+            )
         logger.info("OpenAPI spec saved to %s", output)
