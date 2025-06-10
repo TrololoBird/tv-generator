@@ -53,9 +53,9 @@ jobs:
           title: 'Update OpenAPI specifications'
           body: 'Automated update of generated specifications.'
           branch: 'auto/spec-update'
-      - name: Notify on failure
-        if: failure()
-        uses: Ilshidur/action-slack@v2
-        with:
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'
+          - name: Notify on failure
+  if: failure()
+  uses: Ilshidur/action-slack@v1
+  with:
+    webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+    msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'
