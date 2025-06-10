@@ -30,7 +30,13 @@ SCOPES = [
 
 
 @click.group()
-@click.option("--verbose", is_flag=True, help="Enable debug logging")
+@click.option(
+    "--verbose",
+    "--debug",
+    "verbose",
+    is_flag=True,
+    help="Enable debug logging",
+)
 def cli(verbose: bool) -> None:
     """TradingView command line utilities."""
     level = logging.DEBUG if verbose else logging.INFO

@@ -40,6 +40,10 @@ def test_generate(tmp_path: Path):
     assert "CryptoScanRequest" in schemas
     assert "CryptoScanResponse" in schemas
     assert "CryptoMetainfoResponse" in schemas
+    assert "filter" in schemas["CryptoScanRequest"]["properties"]
+    # new endpoints
+    for ep in ["search", "history", "summary"]:
+        assert f"/crypto/{ep}" in data["paths"]
 
 
 def test_generate_missing_field_status(tmp_path: Path) -> None:

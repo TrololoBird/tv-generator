@@ -132,6 +132,41 @@ class OpenAPIGenerator:
                 }
             }
 
+            # additional endpoints
+            for ep_name, req, resp in [
+                ("search", "SearchRequest", "SearchResponse"),
+                ("history", "HistoryRequest", "HistoryResponse"),
+                ("summary", "SummaryRequest", "SummaryResponse"),
+            ]:
+                openapi["paths"][f"/{market}/{ep_name}"] = {
+                    "post": {
+                        "summary": f"{ep_name.capitalize()} {market}",
+                        "requestBody": {
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": f"#/components/schemas/{cap}{req}"
+                                    }
+                                }
+                            }
+                        },
+                        "responses": {
+                            "200": {
+                                "description": "Successful response",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": f"#/components/schemas/{cap}{resp}"
+                                        }
+                                    }
+                                },
+                            },
+                            "400": {"description": "Bad Request"},
+                            "500": {"description": "Server Error"},
+                        },
+                    }
+                }
+
             self._add_metainfo_path(openapi, market, cap)
 
             openapi["components"]["schemas"][f"{cap}Fields"] = {
@@ -160,6 +195,10 @@ class OpenAPIGenerator:
                         },
                     },
                     "columns": {"type": "array", "items": {"type": "string"}},
+                    "filter": {"type": "object"},
+                    "filter2": {"type": "object"},
+                    "sort": {"type": "object"},
+                    "range": {"type": "object"},
                 },
                 "required": ["symbols", "columns"],
             }
@@ -173,6 +212,16 @@ class OpenAPIGenerator:
                 },
             }
 
+            # simple request/response schemas for other endpoints
+            for req in ["SearchRequest", "HistoryRequest", "SummaryRequest"]:
+                openapi["components"]["schemas"][f"{cap}{req}"] = {
+                    "type": "object",
+                }
+            for resp in ["SearchResponse", "HistoryResponse", "SummaryResponse"]:
+                openapi["components"]["schemas"][f"{cap}{resp}"] = {
+                    "type": "object",
+                }
+
         output.parent.mkdir(parents=True, exist_ok=True)
         with open(output, "w", encoding="utf-8") as f:
             yaml.dump(
@@ -180,7 +229,7 @@ class OpenAPIGenerator:
                 f,
                 sort_keys=False,
                 indent=2,
-                explicit_start=True,
+                explicit_start=False,
                 Dumper=_IndentedDumper,
             )
         logger.info("OpenAPI spec saved to %s", output)

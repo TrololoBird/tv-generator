@@ -1,4 +1,11 @@
 # Changelog
+## 0.8.6
+* Enhanced API retries and JSON handling
+* Expanded OpenAPI generator with additional endpoints
+* Added optional filter fields to scan request schema
+* Added `--debug` CLI option
+* Removed unused dependency `tqdm`
+* Version bump
 ## 0.8.5
 - Optional HTTP caching via `requests-cache`
 - Version bump
