@@ -32,6 +32,12 @@ jobs:
           pip install requests_mock yamllint \
             types-requests types-PyYAML types-toml
           pip install -e .
+      - name: Prepare field status files
+        run: |
+          for market in crypto forex stocks futures; do
+            mkdir -p "results/$market"
+            echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > "results/$market/field_status.tsv"
+          done
       - name: Generate specs for all markets
         run: |
           for market in crypto forex stocks futures; do
