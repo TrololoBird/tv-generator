@@ -71,3 +71,10 @@ def test_generate_multiple_markets(tmp_path: Path) -> None:
     data = yaml.safe_load(out.read_text())
     assert "/crypto/scan" in data["paths"]
     assert "/stocks/scan" in data["paths"]
+
+
+def test_generate_missing_market_dir(tmp_path: Path) -> None:
+    gen = OpenAPIGenerator(tmp_path / "results")
+    out = tmp_path / "spec.yaml"
+    with pytest.raises(FileNotFoundError):
+        gen.generate(out, market="crypto")

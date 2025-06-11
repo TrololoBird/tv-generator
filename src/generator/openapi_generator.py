@@ -94,7 +94,7 @@ class OpenAPIGenerator:
 
         for market_path in markets:
             if not market_path.is_dir():
-                continue
+                raise FileNotFoundError(market_path.name)
             market = market_path.name
             field_file = market_path / "field_status.tsv"
             if not field_file.exists():
