@@ -1,5 +1,4 @@
 import pandas as pd
-import pandas as pd
 from src.utils.infer import infer_type
 
 

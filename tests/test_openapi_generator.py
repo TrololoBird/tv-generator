@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-import toml
 from unittest import mock
 from src.generator.openapi_generator import OpenAPIGenerator
 

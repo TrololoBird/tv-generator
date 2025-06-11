@@ -26,7 +26,15 @@ def test_build_scan_payload_filters():
 
 def test_build_scan_payload_invalid_filter_type():
     with pytest.raises(TypeError) as exc:
-        build_scan_payload(["A"], ["close"], ["not", "a", "dict"])  # type: ignore[arg-type]
+        build_scan_payload(
+            ["A"],
+            ["close"],
+            [  # type: ignore[arg-type]
+                "not",
+                "a",
+                "dict",
+            ],
+        )
     assert "filter must be a dict" in str(exc.value)
 
 
