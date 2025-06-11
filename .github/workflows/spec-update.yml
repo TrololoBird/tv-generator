@@ -8,6 +8,7 @@ on:
     - cron: '0 2 * * *'
 
 permissions:
+  contents: write
   pull-requests: write
 
 jobs:
@@ -79,6 +80,7 @@ jobs:
           title: 'Update OpenAPI specifications'
           body: 'Automated update of generated specifications.'
           branch: 'auto/spec-update'
+          token: ${{ secrets.GITHUB_TOKEN }}
         # - name: Notify on failure
         #   if: failure()
         #   uses: Ilshidur/action-slack@2.1.0

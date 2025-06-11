@@ -117,6 +117,7 @@ openapi-spec-validator specs/openapi_crypto.yaml
 ### Automated spec updates
 
 The [`spec-update.yml`](.github/workflows/spec-update.yml) workflow runs weekly to generate and validate the OpenAPI spec. If the specification file changes, a pull request is opened automatically with the updated YAML.
+Ensure the repository grants **Read and write permissions** and enables **Allow GitHub Actions to create and approve pull requests** so the workflow can open pull requests.
 ## Troubleshooting CI failures
 
 Most CI issues are caused by formatting, lint or type errors. Before pushing run:
