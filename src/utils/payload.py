@@ -13,16 +13,34 @@ def build_scan_payload(
 ) -> Dict[str, Any]:
     """Return a scan payload for the given symbols and columns."""
 
+    symbols_list = list(symbols)
+    columns_list = list(columns)
+
+    if not symbols_list:
+        raise ValueError("symbols list cannot be empty")
+    if not columns_list:
+        raise ValueError("columns list cannot be empty")
+    if len(set(columns_list)) != len(columns_list):
+        raise ValueError("columns list contains duplicates")
+
     payload = {
-        "symbols": {"tickers": list(symbols), "query": {"types": []}},
-        "columns": list(columns),
+        "symbols": {"tickers": symbols_list, "query": {"types": []}},
+        "columns": columns_list,
     }
-    if filter_:
+    if filter_ is not None:
+        if not isinstance(filter_, dict):
+            raise TypeError("filter must be a dict")
         payload["filter"] = filter_
-    if filter2:
+    if filter2 is not None:
+        if not isinstance(filter2, dict):
+            raise TypeError("filter2 must be a dict")
         payload["filter2"] = filter2
-    if sort:
+    if sort is not None:
+        if not isinstance(sort, dict):
+            raise TypeError("sort must be a dict")
         payload["sort"] = sort
-    if range_:
+    if range_ is not None:
+        if not isinstance(range_, dict):
+            raise TypeError("range must be a dict")
         payload["range"] = range_
     return payload

@@ -9,6 +9,9 @@
   * `utils/` — shared utilities and type inference
 * CLI interface: `src/cli.py`
   * `tvgen scan --market <market>` - perform a basic scan
+  * `tvgen recommend --symbol <symbol> [--market stocks]` - fetch recommendation
+  * `tvgen price --symbol <symbol> [--market stocks]` - fetch last close price
+  * `tvgen summary --payload <json> --scope <market>` - call /{scope}/summary
   * `tvgen generate --market <market> --output specs/<market>.yaml` - create spec
   * `tvgen validate --spec <file>` - validate a spec file
 * Tests: `tests/`
@@ -89,8 +92,8 @@ A nightly or weekly scheduled job can re-run the same steps to keep specs up-to-
 * **All changes must be submitted via pull request**
 * **Codex must** always:
 
-  * run the OpenAPI generator (`generate_openapi_spec()`)
-  * validate the YAML (`validate_spec()`)
+  * run the OpenAPI generator (`generate_openapi_spec()`) – runs `tvgen generate --market crypto --output specs/openapi_crypto.yaml`
+  * validate the YAML (`validate_spec()`) – runs `tvgen validate --spec specs/openapi_crypto.yaml`
   * run the tests (`run_tests()`)
 * **Codex should**:
 

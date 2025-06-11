@@ -1,4 +1,5 @@
 import pandas as pd
+import pandas as pd
 from src.utils.infer import infer_type
 
 
@@ -14,7 +15,24 @@ def test_infer_type_string():
 
 
 def test_infer_type_nan():
+    assert infer_type(float("nan")) == "string"
+
+
+def test_infer_type_empty_string():
+    assert infer_type("") == "string"
+
+
+def test_infer_type_none_value():
     assert infer_type(None) == "string"
+
+
+def test_infer_type_nan_value():
+    assert infer_type(pd.NA) == "string"
+
+
+def test_infer_type_series_none_only():
+    series = pd.Series([None, None])
+    assert infer_type(series) == "string"
 
 
 def test_infer_type_date():
