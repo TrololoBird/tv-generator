@@ -1,4 +1,6 @@
 # Changelog
+## 0.8.10
+- Version bump
 ## 0.8.9
 - Fixed Slack notification action version in spec update workflow
 - Version bump

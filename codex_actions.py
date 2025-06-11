@@ -1,35 +1,64 @@
 import subprocess
+import sys
 
 
 def generate_openapi_spec():
     """Run the CLI generator for the crypto market."""
-    subprocess.run(
-        [
-            "tvgen",
-            "generate",
-            "--market",
-            "crypto",
-            "--output",
-            "specs/openapi_crypto.yaml",
-        ],
-        check=True,
-    )
+    try:
+        result = subprocess.run(
+            [
+                "tvgen",
+                "generate",
+                "--market",
+                "crypto",
+                "--output",
+                "specs/openapi_crypto.yaml",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        if result.stdout:
+            print(result.stdout)
+    except FileNotFoundError:
+        print("tvgen command not found", file=sys.stderr)
+        raise
+    except subprocess.CalledProcessError as exc:
+        print(exc.stderr, file=sys.stderr)
+        raise
 
 
 def validate_spec():
     """Validate the generated crypto specification."""
-    subprocess.run(
-        ["tvgen", "validate", "--spec", "specs/openapi_crypto.yaml"],
-        check=True,
-    )
+    try:
+        subprocess.run(
+            ["tvgen", "validate", "--spec", "specs/openapi_crypto.yaml"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except FileNotFoundError:
+        print("tvgen command not found", file=sys.stderr)
+        raise
+    except subprocess.CalledProcessError as exc:
+        print(exc.stderr, file=sys.stderr)
+        raise
 
 
 def run_tests():
-    subprocess.run(["pytest", "-q"], check=True)
+    try:
+        subprocess.run(["pytest", "-q"], check=True)
+    except subprocess.CalledProcessError as exc:
+        print(exc.stderr, file=sys.stderr)
+        raise
 
 
 def format_code():
-    subprocess.run(["black", "."], check=True)
+    try:
+        subprocess.run(["black", "."], check=True)
+    except subprocess.CalledProcessError as exc:
+        print(exc.stderr, file=sys.stderr)
+        raise
 
 
 def bump_version():
@@ -62,15 +91,22 @@ def bump_version():
 
 def create_pull_request():
     """Open a pull request using the GitHub CLI."""
-    subprocess.run(
-        [
-            "gh",
-            "pr",
-            "create",
-            "--title",
-            "Update OpenAPI specs",
-            "--body",
-            "Automated specification update",
-        ],
-        check=True,
-    )
+    try:
+        subprocess.run(
+            [
+                "gh",
+                "pr",
+                "create",
+                "--title",
+                "Update OpenAPI specs",
+                "--body",
+                "Automated specification update",
+            ],
+            check=True,
+        )
+    except FileNotFoundError:
+        print("GitHub CLI not found", file=sys.stderr)
+        raise
+    except subprocess.CalledProcessError as exc:
+        print(exc.stderr, file=sys.stderr)
+        raise

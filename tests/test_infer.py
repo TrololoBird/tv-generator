@@ -55,3 +55,9 @@ def test_infer_type_series_mixed():
 
     series2 = pd.Series([1, "a"])
     assert infer_type(series2) == "string"
+
+
+def test_infer_type_large_numbers():
+    assert infer_type(10**12) == "integer"
+    assert infer_type("1e10") == "number"
+    assert infer_type(1e-5) == "number"
