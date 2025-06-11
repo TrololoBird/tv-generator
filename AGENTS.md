@@ -32,6 +32,7 @@ Common flags:
 
    ```bash
    pip install -r requirements.txt
+   pip install types-requests types-PyYAML types-toml
    ```
 
 2. **Format code**
@@ -63,6 +64,8 @@ Common flags:
    ```bash
    tvgen generate --market crypto --output specs/openapi_crypto.yaml
    ```
+   # `tvgen generate` expects a results directory with at least
+   # `results/crypto/field_status.tsv`. Create a minimal file if absent.
 
 7. **Validate spec**
 

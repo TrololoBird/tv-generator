@@ -30,6 +30,12 @@ Then install the git hooks:
 pre-commit install
 ```
 
+Strict type checking requires Python type stubs for third-party libraries:
+
+```bash
+pip install types-requests types-PyYAML types-toml
+```
+
 ## Running
 
 Scan a market:
@@ -75,6 +81,12 @@ Set `TV_CACHE=1` to cache HTTP responses locally:
 
 ```bash
 TV_CACHE=1 tvgen scan --scope crypto --symbols BTCUSD --columns close
+```
+
+Check the installed version:
+
+```bash
+tvgen --version
 ```
 
 ## Tests
