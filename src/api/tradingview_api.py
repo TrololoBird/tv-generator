@@ -68,9 +68,10 @@ class TradingViewAPI:
         }
 
     def _request(
-        self, method: str, url: str, payload: Dict[str, Any]
+        self, scope: str, endpoint: str, method: str, payload: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Internal helper to send a request and parse JSON."""
+        url = self._url(scope, endpoint)
         logger.debug("%s %s", method.upper(), url)
         try:
             r = self.session.request(method, url, json=payload, timeout=self.timeout)
@@ -98,25 +99,20 @@ class TradingViewAPI:
 
     def scan(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Send GET /{scope}/scan and return JSON."""
-        url = self._url(scope, "scan")
-        return self._request("GET", url, payload)
+        return self._request(scope, "scan", "GET", payload)
 
     def metainfo(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch metainfo for scope."""
-        url = self._url(scope, "metainfo")
-        return self._request("POST", url, payload)
+        return self._request(scope, "metainfo", "POST", payload)
 
     def search(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """POST /{scope}/search."""
-        url = self._url(scope, "search")
-        return self._request("POST", url, payload)
+        return self._request(scope, "search", "POST", payload)
 
     def history(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """POST /{scope}/history."""
-        url = self._url(scope, "history")
-        return self._request("POST", url, payload)
+        return self._request(scope, "history", "POST", payload)
 
     def summary(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """POST /{scope}/summary."""
-        url = self._url(scope, "summary")
-        return self._request("POST", url, payload)
+        return self._request(scope, "summary", "POST", payload)

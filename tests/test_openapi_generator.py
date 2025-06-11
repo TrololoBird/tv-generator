@@ -40,7 +40,9 @@ def test_generate(tmp_path: Path):
     assert "CryptoScanRequest" in schemas
     assert "CryptoScanResponse" in schemas
     assert "CryptoMetainfoResponse" in schemas
-    assert "filter" in schemas["CryptoScanRequest"]["properties"]
+    props = schemas["CryptoScanRequest"]["properties"]
+    for name in ["filter", "filter2", "sort", "range"]:
+        assert name in props
     # new endpoints
     for ep in ["search", "history", "summary"]:
         assert f"/crypto/{ep}" in data["paths"]
