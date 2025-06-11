@@ -49,19 +49,14 @@ jobs:
             yamllint "$spec"
             openapi-spec-validator "$spec"
           done
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: specs/openapi_*.yaml
-          message: 'chore: update generated specifications'
-          default_author: github_actions
-      - name: Fetch and rebase before push
+      - name: Fetch and rebase before PR
         run: |
           git fetch origin main
           git rebase origin/main
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
+          add-paths: 'specs/openapi_*.yaml'
           commit-message: 'chore: update generated specifications'
           title: 'Update OpenAPI specifications'
           body: 'Automated update of generated specifications.'
