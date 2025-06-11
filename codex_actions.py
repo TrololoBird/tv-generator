@@ -1,9 +1,20 @@
 import subprocess
 import sys
+from pathlib import Path
 
 
 def generate_openapi_spec():
     """Run the CLI generator for the crypto market."""
+    spec_file = Path("specs/openapi_crypto.yaml")
+    # tvgen generate expects results/crypto/field_status.tsv
+    status_file = Path("results/crypto/field_status.tsv")
+    if not status_file.exists():
+        status_file.parent.mkdir(parents=True, exist_ok=True)
+        status_file.write_text(
+            "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc\n",
+            encoding="utf-8",
+        )
+
     try:
         result = subprocess.run(
             [
@@ -12,7 +23,7 @@ def generate_openapi_spec():
                 "--market",
                 "crypto",
                 "--output",
-                "specs/openapi_crypto.yaml",
+                str(spec_file),
             ],
             check=True,
             capture_output=True,
