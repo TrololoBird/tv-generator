@@ -1,29 +1,20 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = [ "setuptools", "wheel",]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tv-generator"
-version = "0.8.9"
-dependencies = [
-    "click",
-    "requests",
-    "pandas",
-    "PyYAML",
-    "openapi-spec-validator",
-    "toml",
-    "requests_cache",
-]
+version = "0.8.10"
+dependencies = [ "click", "requests", "pandas", "PyYAML", "openapi-spec-validator", "toml", "requests_cache",]
 
 [project.scripts]
 tvgen = "src.cli:cli"
 
 [tool.setuptools]
-packages = ["src", "src.api", "src.generator", "src.utils"]
-
-[tool.setuptools.package-dir]
-src = "src"
+packages = [ "src", "src.api", "src.generator", "src.utils",]
 
 [tool.mypy]
 ignore_missing_imports = true
-ignore_errors = true
+
+[tool.setuptools.package-dir]
+src = "src"
