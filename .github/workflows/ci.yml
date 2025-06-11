@@ -34,10 +34,16 @@ jobs:
         run: mypy --strict src/
       - name: Test
         run: pytest -q
-      - name: Generate spec
+      - name: Generate specs for all markets
         run: |
-          mkdir -p results/crypto
-          echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > results/crypto/field_status.tsv
-          tvgen generate --market crypto --output specs/openapi_crypto.yaml
-      - name: Validate OpenAPI
-        run: openapi-spec-validator specs/openapi_crypto.yaml
+          for market in crypto forex stocks futures; do
+            mkdir -p results/$market
+            echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > results/$market/field_status.tsv
+            tvgen generate --market $market --output specs/openapi_${market}.yaml
+          done
+
+      - name: Validate all generated specs
+        run: |
+          for spec in specs/openapi_*.yaml; do
+            openapi-spec-validator "$spec"
+          done
