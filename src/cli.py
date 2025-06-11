@@ -213,6 +213,64 @@ def summary(payload: str, scope: str) -> None:
 
 
 @cli.command()
+@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
+@click.option("--symbols", default="", help="Comma-separated tickers for scan")
+@click.option(
+    "--results-dir",
+    type=click.Path(path_type=Path),
+    default="results",
+    show_default=True,
+    help="Directory to store results",
+)
+def collect(scope: str, symbols: str, results_dir: Path) -> None:
+    """Fetch metainfo and a sample scan for given scope."""
+
+    api = TradingViewAPI()
+    market_dir = results_dir / scope
+    market_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        meta = api.metainfo(scope, {"query": ""})
+    except (
+        requests.exceptions.RequestException,
+        ValueError,
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Metainfo request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    (market_dir / "metainfo.json").write_text(json.dumps(meta, indent=2))
+
+    fields = []
+    for item in meta.get("fields", []):
+        if isinstance(item, dict) and str(item.get("type", "")).lower() == "string":
+            name = item.get("name") or item.get("id")
+            if name:
+                fields.append(str(name))
+
+    tickers = [s for s in symbols.split(",") if s] or ["AAPL"]
+    payload = build_scan_payload(tickers, fields or ["name"])
+    try:
+        scan_res = api.scan(scope, payload)
+    except (
+        requests.exceptions.RequestException,
+        ValueError,
+    ) as exc:  # pragma: no cover - click handles output
+        logger.error("Scan request failed: %s", exc)
+        raise click.ClickException(str(exc))
+    (market_dir / "scan.json").write_text(json.dumps(scan_res, indent=2))
+
+    values: list[str | int | float | bool | None] = []
+    if scan_res.get("data"):
+        first = scan_res["data"][0].get("d")
+        if isinstance(first, list):
+            values = first
+    with open(market_dir / "field_status.tsv", "w", encoding="utf-8") as fh:
+        fh.write("field\tstatus\tvalue\n")
+        for idx, field in enumerate(fields):
+            val = values[idx] if idx < len(values) else ""
+            fh.write(f"{field}\tok\t{val}\n")
+    click.echo(f"Data saved to {market_dir}")
+
+
+@cli.command()
 @click.option("--market", required=True, help="Market directory to use")
 @click.option(
     "--output",
