@@ -1,4 +1,8 @@
 # Changelog
+## 0.8.8
+* Raise `FileNotFoundError` when market directory missing
+* Added unit test for missing market directory
+* Version bump
 ## 0.8.7
 * Refactored CLI exception handling for specific error types
 * Added logging of CLI errors

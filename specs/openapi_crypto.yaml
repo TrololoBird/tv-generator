@@ -1,10 +1,165 @@
 openapi: 3.1.0
 info:
   title: Unofficial TradingView Scanner API
-  version: 0.8.7
+  version: 0.8.8
   description: Auto-generated from collected field data.
 servers:
   - url: https://scanner.tradingview.com
-paths: {}
+paths:
+  /crypto/scan:
+    post:
+      summary: Scan crypto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CryptoScanRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoScanResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /crypto/search:
+    post:
+      summary: Search crypto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CryptoSearchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoSearchResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /crypto/history:
+    post:
+      summary: History crypto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CryptoHistoryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoHistoryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /crypto/summary:
+    post:
+      summary: Summary crypto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CryptoSummaryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoSummaryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /crypto/metainfo:
+    post:
+      summary: Get crypto metainfo
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoMetainfoResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
 components:
-  schemas: {}
+  schemas:
+    CryptoMetainfoResponse:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+    CryptoFields:
+      type: object
+      properties:
+        close:
+          type: integer
+        open:
+          type: string
+    CryptoScanRequest:
+      type: object
+      properties:
+        symbols:
+          type: object
+          properties:
+            tickers:
+              type: array
+              items:
+                type: string
+            query:
+              type: object
+              properties:
+                types:
+                  type: array
+                  items:
+                    type: string
+        columns:
+          type: array
+          items:
+            type: string
+        filter:
+          type: object
+        filter2:
+          type: object
+        sort:
+          type: object
+        range:
+          type: object
+      required:
+        - symbols
+        - columns
+    CryptoScanResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CryptoFields'
+    CryptoSearchRequest:
+      type: object
+    CryptoHistoryRequest:
+      type: object
+    CryptoSummaryRequest:
+      type: object
+    CryptoSearchResponse:
+      type: object
+    CryptoHistoryResponse:
+      type: object
+    CryptoSummaryResponse:
+      type: object
