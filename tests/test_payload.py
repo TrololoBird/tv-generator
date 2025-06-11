@@ -38,6 +38,21 @@ def test_build_scan_payload_invalid_filter_type():
     assert "filter must be a dict" in str(exc.value)
 
 
+@pytest.mark.parametrize(
+    "kw,value,msg",
+    [
+        ("filter2", [], "filter2 must be a dict"),
+        ("sort", [], "sort must be a dict"),
+        ("range_", [], "range must be a dict"),
+    ],
+)
+def test_build_scan_payload_invalid_types(kw, value, msg):
+    kwargs = {kw: value}  # type: ignore[arg-type]
+    with pytest.raises(TypeError) as exc:
+        build_scan_payload(["A"], ["close"], **kwargs)
+    assert msg in str(exc.value)
+
+
 def test_build_scan_payload_empty_symbols():
     with pytest.raises(ValueError) as exc:
         build_scan_payload([], ["close"])

@@ -35,13 +35,21 @@ pre-commit install
 Scan a market:
 
 ```bash
-tvgen scan --market crypto --symbols BTCUSD --columns close
+tvgen scan --scope crypto --symbols BTCUSD --columns close
+```
+
+Additional scan options are available:
+
+```bash
+tvgen scan --scope crypto \
+  --symbols BTCUSD --columns close \
+  --filter "{}" --filter2 "{}" --sort "{}" --range "{}"
 ```
 
 Fetch market metadata:
 
 ```bash
-tvgen metainfo --market crypto
+tvgen metainfo --scope crypto --query btc
 ```
 
 Generate an OpenAPI spec and save it to `specs/`:
@@ -66,7 +74,7 @@ tvgen price --symbol AAPL
 Set `TV_CACHE=1` to cache HTTP responses locally:
 
 ```bash
-TV_CACHE=1 tvgen scan --market crypto --symbols BTCUSD --columns close
+TV_CACHE=1 tvgen scan --scope crypto --symbols BTCUSD --columns close
 ```
 
 ## Tests

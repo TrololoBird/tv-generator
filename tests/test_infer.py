@@ -32,11 +32,14 @@ def test_infer_type_nan_value():
 def test_infer_type_series_none_only():
     series = pd.Series([None, None])
     assert infer_type(series) == "string"
+    assert infer_type(pd.Series([pd.NA, None])) == "string"
+    assert infer_type(pd.Series([])) == "string"
 
 
 def test_infer_type_date():
     assert infer_type("2023-01-01") == "string"
     assert infer_type("2023-01-01T00:00:00Z") == "string"
+    assert infer_type("2023-01-01T00:00:00+03:00") == "string"
 
 
 def test_infer_type_boolean():

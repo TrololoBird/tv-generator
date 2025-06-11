@@ -8,15 +8,21 @@
   * `generator/` — OpenAPI 3.1.0 spec generation logic
   * `utils/` — shared utilities and type inference
 * CLI interface: `src/cli.py`
-  * `tvgen scan --market <market>` - perform a basic scan
+  * `tvgen scan --scope <market>` - perform a basic scan
   * `tvgen recommend --symbol <symbol> [--market stocks]` - fetch recommendation
   * `tvgen price --symbol <symbol> [--market stocks]` - fetch last close price
+  * `tvgen search --payload <json> --scope <market>` - call /{scope}/search
+  * `tvgen history --payload <json> --scope <market>` - call /{scope}/history
   * `tvgen summary --payload <json> --scope <market>` - call /{scope}/summary
   * `tvgen generate --market <market> --output specs/<market>.yaml` - create spec
   * `tvgen validate --spec <file>` - validate a spec file
 * Tests: `tests/`
 * OpenAPI specs: `specs/`
-* Legacy scripts (deprecated) live in the project root and must be removed
+
+Common flags:
+
+* `--scope` - TradingView market name for scan-like commands
+* `--filter2`, `--sort`, `--range` - optional JSON objects passed to `scan`
 
 ---
 
@@ -111,3 +117,6 @@ A nightly or weekly scheduled job can re-run the same steps to keep specs up-to-
 * `validate_spec()`
 * `bump_version()`
 * `create_pull_request()`
+
+`bump_version()` updates `pyproject.toml` and `CHANGELOG.md`. `create_pull_request()`
+uses the GitHub CLI to open a PR with updated specs.

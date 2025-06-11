@@ -70,6 +70,30 @@ def test_scan_invalid_json(tv_api_mock):
         api.scan("crypto", {})
 
 
+@pytest.mark.parametrize("endpoint", ["search", "history", "summary"])
+def test_endpoint_error(tv_api_mock, endpoint):
+    tv_api_mock.post(
+        f"https://scanner.tradingview.com/crypto/{endpoint}",
+        status_code=500,
+    )
+    api = TradingViewAPI()
+    method = getattr(api, endpoint)
+    with pytest.raises(requests.exceptions.HTTPError):
+        method("crypto", {})
+
+
+@pytest.mark.parametrize("endpoint", ["search", "history", "summary"])
+def test_endpoint_invalid_json(tv_api_mock, endpoint):
+    tv_api_mock.post(
+        f"https://scanner.tradingview.com/crypto/{endpoint}",
+        text="not-json",
+    )
+    api = TradingViewAPI()
+    method = getattr(api, endpoint)
+    with pytest.raises(ValueError):
+        method("crypto", {})
+
+
 def test_metainfo_error(tv_api_mock):
     tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/metainfo",

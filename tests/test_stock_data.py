@@ -1,4 +1,5 @@
 import pytest
+import requests
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 
 
@@ -36,3 +37,21 @@ def test_fetch_recommendation_error(tv_api_mock):
     with pytest.raises(ValueError) as exc:
         fetch_recommendation("AAPL")
     assert "AAPL" in str(exc.value)
+
+
+def test_fetch_stock_http_error(tv_api_mock):
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/stocks/scan",
+        status_code=500,
+    )
+    with pytest.raises(requests.exceptions.HTTPError):
+        fetch_stock_value("AAPL")
+
+
+def test_fetch_recommend_http_error(tv_api_mock):
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/stocks/scan",
+        status_code=404,
+    )
+    with pytest.raises(requests.exceptions.HTTPError):
+        fetch_recommendation("AAPL")

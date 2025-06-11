@@ -35,6 +35,36 @@ def test_cli_scan(tv_api_mock) -> None:
     assert "data" in result.output
 
 
+def test_cli_scan_full_payload(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"data": []},
+    )
+    payload_args = [
+        "scan",
+        "--symbols",
+        "BTCUSD",
+        "--columns",
+        "close",
+        "--scope",
+        "crypto",
+        "--filter2",
+        "{}",
+        "--sort",
+        "{}",
+        "--range",
+        "{}",
+    ]
+    result = runner.invoke(cli, payload_args)
+    assert result.exit_code == 0
+    assert "data" in result.output
+    sent = tv_api_mock.request_history[0].json()
+    assert sent["filter2"] == {}
+    assert sent["sort"] == {}
+    assert sent["range"] == {}
+
+
 def test_cli_recommend(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.get(
