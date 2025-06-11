@@ -6,6 +6,8 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 import requests_cache
 
+from src.constants import SCOPES
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,16 +58,6 @@ class TradingViewAPI:
         self.session.headers.setdefault("User-Agent", "tv-generator")
         self.base_url = base_url or os.environ.get("TV_BASE_URL", self.BASE_URL)
         self.timeout = int(os.environ.get("TV_TIMEOUT", timeout))
-        self._valid_scopes = {
-            "crypto",
-            "forex",
-            "futures",
-            "america",
-            "bond",
-            "cfd",
-            "coin",
-            "stocks",
-        }
 
     def _request(
         self, scope: str, endpoint: str, method: str, payload: Dict[str, Any]
@@ -91,9 +83,9 @@ class TradingViewAPI:
             raise ValueError("Invalid JSON received from TradingView") from exc
 
     def _url(self, scope: str, endpoint: str) -> str:
-        if scope not in self._valid_scopes:
+        if scope not in SCOPES:
             raise ValueError(
-                f"Invalid scope '{scope}', must be one of {sorted(self._valid_scopes)}"
+                f"Invalid scope '{scope}', must be one of {sorted(SCOPES)}"
             )
         return f"{self.base_url}/{scope}/{endpoint}"
 
