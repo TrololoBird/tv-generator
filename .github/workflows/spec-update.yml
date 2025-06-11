@@ -58,8 +58,7 @@ jobs:
           git fetch origin main
           git rebase origin/main
 
-      - name: Apply stashed changes (if stashed)
-        if: success() && run.output contains 'No local changes to save'
+      - name: Apply stashed changes
         run: |
           git stash pop || echo "No stashed changes to apply"
 
