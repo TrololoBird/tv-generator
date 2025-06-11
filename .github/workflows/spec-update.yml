@@ -55,7 +55,7 @@ jobs:
           branch: 'auto/spec-update'
       - name: Notify on failure
         if: failure()
-        uses: Ilshidur/action-slack@v1
+        uses: Ilshidur/action-slack@2.1.0
         with:
           webhook_url: ${{ secrets.SLACK_WEBHOOK }}
           msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'

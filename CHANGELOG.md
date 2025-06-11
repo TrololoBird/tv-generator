@@ -1,4 +1,7 @@
 # Changelog
+## 0.8.9
+- Fixed Slack notification action version in spec update workflow
+- Version bump
 ## 0.8.8
 * Fixed test linting issues and updated dependencies
 * Version bump
