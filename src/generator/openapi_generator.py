@@ -12,8 +12,9 @@ from src.utils.infer import infer_type
 class _IndentedDumper(yaml.SafeDumper):
     """YAML dumper that indents sequences properly."""
 
-    def increase_indent(self, flow: bool = False, indentless: bool = False):
-        return super().increase_indent(flow, False)
+    def increase_indent(self, flow: bool = False, indentless: bool = False) -> None:
+        """Override to disable indentless lists."""
+        super().increase_indent(flow, False)
 
 
 logger = logging.getLogger(__name__)
@@ -29,7 +30,10 @@ class OpenAPIGenerator:
         root = Path(__file__).resolve().parents[2]
         self.version = toml.load(root / "pyproject.toml")["project"]["version"]
 
-    def collect_market_fields(self, market_dir: Path):
+    def collect_market_fields(
+        self, market_dir: Path
+    ) -> tuple[list[str], Dict[str, str]]:
+        """Return available fields and their inferred types for a market."""
         df = pd.read_csv(market_dir / "field_status.tsv", sep="\t")
         df_ok = df[df["status"] == "ok"]
         fields = sorted(set(df_ok["field"]))

@@ -205,6 +205,13 @@ def test_cli_help() -> None:
     assert "TradingView" in result.output
 
 
+def test_cli_version() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, ["--version"], prog_name="tvgen")
+    assert result.exit_code == 0
+    assert "tvgen, version" in result.output
+
+
 def test_generate_help() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["generate", "--help"])

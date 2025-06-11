@@ -8,6 +8,7 @@ from pathlib import Path
 
 import click
 import yaml
+from importlib.metadata import version as pkg_version
 import requests
 from openapi_spec_validator import validate_spec
 from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
@@ -39,6 +40,7 @@ SCOPES = [
     is_flag=True,
     help="Enable debug logging",
 )
+@click.version_option(pkg_version("tv-generator"))
 def cli(verbose: bool) -> None:
     """TradingView command line utilities."""
     level = logging.DEBUG if verbose else logging.INFO

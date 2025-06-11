@@ -1,7 +1,6 @@
 openapi: 3.1.0
 info:
   title: Unofficial TradingView Scanner API
-  version: 0.8.10
   description: Auto-generated from collected field data.
 servers:
   - url: https://scanner.tradingview.com
@@ -108,7 +107,7 @@ components:
     CryptoFields:
       type: object
       properties:
-        close:
+        foo:
           type: integer
         open:
           type: integer
