@@ -49,10 +49,19 @@ jobs:
             yamllint "$spec"
             openapi-spec-validator "$spec"
           done
+      - name: Stash changes (if any)
+        run: |
+          git stash --include-untracked
+
       - name: Fetch and rebase before commit
         run: |
           git fetch origin main
           git rebase origin/main
+
+      - name: Apply stashed changes (if stashed)
+        if: success() && run.output contains 'No local changes to save'
+        run: |
+          git stash pop || echo "No stashed changes to apply"
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
