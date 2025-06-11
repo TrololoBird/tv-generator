@@ -1,10 +1,165 @@
 openapi: 3.1.0
 info:
   title: Unofficial TradingView Scanner API
-  version: 0.8.9
+  version: 0.8.15
   description: Auto-generated from collected field data.
 servers:
   - url: https://scanner.tradingview.com
-paths: {}
+paths:
+  /forex/scan:
+    post:
+      summary: Scan forex
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForexScanRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForexScanResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /forex/search:
+    post:
+      summary: Search forex
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForexSearchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForexSearchResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /forex/history:
+    post:
+      summary: History forex
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForexHistoryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForexHistoryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /forex/summary:
+    post:
+      summary: Summary forex
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForexSummaryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForexSummaryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /forex/metainfo:
+    post:
+      summary: Get forex metainfo
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForexMetainfoResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
 components:
-  schemas: {}
+  schemas:
+    ForexMetainfoResponse:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+    ForexFields:
+      type: object
+      properties:
+        close:
+          type: integer
+        open:
+          type: string
+    ForexScanRequest:
+      type: object
+      properties:
+        symbols:
+          type: object
+          properties:
+            tickers:
+              type: array
+              items:
+                type: string
+            query:
+              type: object
+              properties:
+                types:
+                  type: array
+                  items:
+                    type: string
+        columns:
+          type: array
+          items:
+            type: string
+        filter:
+          type: object
+        filter2:
+          type: object
+        sort:
+          type: object
+        range:
+          type: object
+      required:
+        - symbols
+        - columns
+    ForexScanResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForexFields'
+    ForexSearchRequest:
+      type: object
+    ForexHistoryRequest:
+      type: object
+    ForexSummaryRequest:
+      type: object
+    ForexSearchResponse:
+      type: object
+    ForexHistoryResponse:
+      type: object
+    ForexSummaryResponse:
+      type: object

@@ -1,10 +1,165 @@
 openapi: 3.1.0
 info:
   title: Unofficial TradingView Scanner API
-  version: 0.8.9
+  version: 0.8.15
   description: Auto-generated from collected field data.
 servers:
   - url: https://scanner.tradingview.com
-paths: {}
+paths:
+  /futures/scan:
+    post:
+      summary: Scan futures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FuturesScanRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FuturesScanResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /futures/search:
+    post:
+      summary: Search futures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FuturesSearchRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FuturesSearchResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /futures/history:
+    post:
+      summary: History futures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FuturesHistoryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FuturesHistoryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /futures/summary:
+    post:
+      summary: Summary futures
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FuturesSummaryRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FuturesSummaryResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
+  /futures/metainfo:
+    post:
+      summary: Get futures metainfo
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FuturesMetainfoResponse'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
 components:
-  schemas: {}
+  schemas:
+    FuturesMetainfoResponse:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+    FuturesFields:
+      type: object
+      properties:
+        close:
+          type: integer
+        open:
+          type: string
+    FuturesScanRequest:
+      type: object
+      properties:
+        symbols:
+          type: object
+          properties:
+            tickers:
+              type: array
+              items:
+                type: string
+            query:
+              type: object
+              properties:
+                types:
+                  type: array
+                  items:
+                    type: string
+        columns:
+          type: array
+          items:
+            type: string
+        filter:
+          type: object
+        filter2:
+          type: object
+        sort:
+          type: object
+        range:
+          type: object
+      required:
+        - symbols
+        - columns
+    FuturesScanResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FuturesFields'
+    FuturesSearchRequest:
+      type: object
+    FuturesHistoryRequest:
+      type: object
+    FuturesSummaryRequest:
+      type: object
+    FuturesSearchResponse:
+      type: object
+    FuturesHistoryResponse:
+      type: object
+    FuturesSummaryResponse:
+      type: object
