@@ -58,11 +58,6 @@ jobs:
         run: |
           git stash --include-untracked
 
-      - name: Fetch and rebase before commit
-        run: |
-          git fetch origin main
-          git rebase origin/main
-
       - name: Apply stashed changes
         run: |
           git stash pop || echo "No stashed changes to apply"
@@ -79,7 +74,7 @@ jobs:
           commit-message: 'chore: update generated specifications'
           title: 'Update OpenAPI specifications'
           body: 'Automated update of generated specifications.'
-          branch: 'auto/spec-update'
+          branch: 'OpenAPI'
           token: ${{ secrets.GITHUB_TOKEN }}
         # - name: Notify on failure
         #   if: failure()
