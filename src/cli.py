@@ -17,19 +17,9 @@ from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
 from src.generator.openapi_generator import OpenAPIGenerator
+from src.constants import SCOPES
 
 logger = logging.getLogger(__name__)
-
-SCOPES = [
-    "crypto",
-    "forex",
-    "futures",
-    "america",
-    "bond",
-    "cfd",
-    "coin",
-    "stocks",
-]
 
 
 @click.group()
