@@ -1,4 +1,5 @@
 import pytest
+import requests
 from src.api.tradingview_api import TradingViewAPI
 
 
@@ -54,8 +55,9 @@ def test_scan_error(tv_api_mock):
         status_code=404,
     )
     api = TradingViewAPI()
-    with pytest.raises(Exception):
+    with pytest.raises(requests.exceptions.HTTPError) as exc:
         api.scan("crypto", {})
+    assert "404" in str(exc.value)
 
 
 def test_scan_invalid_json(tv_api_mock):
@@ -74,8 +76,9 @@ def test_metainfo_error(tv_api_mock):
         status_code=404,
     )
     api = TradingViewAPI()
-    with pytest.raises(Exception):
+    with pytest.raises(requests.exceptions.HTTPError) as exc:
         api.metainfo("crypto", {"query": ""})
+    assert "404" in str(exc.value)
 
 
 def test_scan_invalid_scope():
