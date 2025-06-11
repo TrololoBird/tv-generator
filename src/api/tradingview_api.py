@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -85,7 +85,7 @@ class TradingViewAPI:
             logger.error("HTTP error: %s - %s", r.status_code, r.text)
             raise
         try:
-            return r.json()
+            return cast(Dict[str, Any], r.json())
         except ValueError as exc:
             logger.error("Invalid JSON: %s", r.text)
             raise ValueError("Invalid JSON received from TradingView") from exc
