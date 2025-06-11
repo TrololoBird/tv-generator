@@ -1,6 +1,6 @@
 # tv-generator
 
-[![CI](https://github.com/your-org/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/tv-generator/actions/workflows/ci.yml)
+[![CI](https://github.com/TrololoBird/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/TrololoBird/tv-generator/actions/workflows/ci.yml)
 
 Utilities for interacting with the TradingView Screener API and generating an OpenAPI specification.
 
