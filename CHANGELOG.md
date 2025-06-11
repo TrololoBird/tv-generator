@@ -1,4 +1,7 @@
 # Changelog
+## 0.8.8
+* Fixed test linting issues and updated dependencies
+* Version bump
 ## 0.8.7
 * Refactored CLI exception handling for specific error types
 * Added logging of CLI errors
