@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-import toml
+from unittest import mock
 from src.generator.openapi_generator import OpenAPIGenerator
 
 
@@ -18,13 +18,13 @@ def test_generate(tmp_path: Path):
     market_dir = tmp_path / "results" / "crypto"
     _create_field_status(market_dir / "field_status.tsv")
 
-    gen = OpenAPIGenerator(tmp_path / "results")
+    with mock.patch("toml.load", return_value={"project": {"version": "1.2.3"}}):
+        gen = OpenAPIGenerator(tmp_path / "results")
     out = tmp_path / "spec.yaml"
     gen.generate(out, market="crypto")
 
     data = yaml.safe_load(out.read_text())
-    version = toml.load(Path("pyproject.toml"))["project"]["version"]
-    assert data["info"]["version"] == version
+    assert data["info"]["version"] == "1.2.3"
     assert "/crypto/scan" in data["paths"]
     scan_path = data["paths"]["/crypto/scan"]["post"]
     assert (

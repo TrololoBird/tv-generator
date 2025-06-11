@@ -131,6 +131,36 @@ def test_cli_summary(tv_api_mock) -> None:
     assert "summary" in result.output
 
 
+def test_cli_search_invalid_payload() -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["search", "--payload", "{", "--scope", "crypto"],
+    )
+    assert result.exit_code != 0
+    assert result.exception is not None
+
+
+def test_cli_history_invalid_payload() -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["history", "--payload", "{", "--scope", "crypto"],
+    )
+    assert result.exit_code != 0
+    assert result.exception is not None
+
+
+def test_cli_summary_invalid_payload() -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["summary", "--payload", "{", "--scope", "crypto"],
+    )
+    assert result.exit_code != 0
+    assert result.exception is not None
+
+
 def test_scan_cli_missing_scope():
     runner = CliRunner()
     result = runner.invoke(cli, ["scan", "--symbols", "AAPL", "--columns", "close"])
@@ -207,6 +237,7 @@ def test_cli_generate_missing_results(tmp_path: Path) -> None:
             ],
         )
         assert result.exit_code != 0
+        assert result.exception is not None
         assert "Missing field_status.tsv" in result.output
 
 
@@ -217,9 +248,11 @@ def test_cli_scan_error(tv_api_mock) -> None:
         status_code=500,
     )
     result = runner.invoke(
-        cli, ["scan", "--symbols", "BTCUSD", "--columns", "close", "--scope", "crypto"]
+        cli,
+        ["scan", "--symbols", "BTCUSD", "--columns", "close", "--scope", "crypto"],
     )
     assert result.exit_code != 0
+    assert result.exception is not None
     assert "500" in result.output
 
 
@@ -231,6 +264,7 @@ def test_cli_recommend_error(tv_api_mock) -> None:
     )
     result = runner.invoke(cli, ["recommend", "--symbol", "AAPL"])
     assert result.exit_code != 0
+    assert result.exception is not None
     assert "unavailable" in result.output
 
 
@@ -242,6 +276,7 @@ def test_cli_price_error(tv_api_mock) -> None:
     )
     result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
     assert result.exit_code != 0
+    assert result.exception is not None
     assert "unavailable" in result.output
 
 
@@ -253,6 +288,7 @@ def test_cli_metainfo_error(tv_api_mock) -> None:
     )
     result = runner.invoke(cli, ["metainfo", "--query", "t", "--scope", "crypto"])
     assert result.exit_code != 0
+    assert result.exception is not None
     assert "500" in result.output
 
 
@@ -260,4 +296,14 @@ def test_cli_validate_missing_file() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["validate", "--spec", "missing.yaml"])
     assert result.exit_code != 0
+    assert result.exception is not None
     assert "No such file" in result.output
+
+
+def test_cli_validate_invalid_yaml(tmp_path: Path) -> None:
+    invalid = tmp_path / "spec.yaml"
+    invalid.write_text(": bad")
+    runner = CliRunner()
+    result = runner.invoke(cli, ["validate", "--spec", str(invalid)])
+    assert result.exit_code != 0
+    assert result.exception is not None

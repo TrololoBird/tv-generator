@@ -1,6 +1,6 @@
 ---
 name: Update Specs
-# yamllint disable rule:truthy
+# yamllint disable rule:truthy rule:line-length
 
 on:
   workflow_dispatch: {}  # yamllint disable-line rule:truthy
@@ -32,7 +32,7 @@ jobs:
       - name: Generate specs for all markets
         run: |
           for market in crypto forex stocks futures; do
-            tvgen generate --market $market --output specs/openapi_${market}.yaml
+            tvgen generate --market $market --output specs/openapi_${market}.yaml  # yamllint disable-line rule:line-length
           done
       - name: Validate all generated specs
         run: |
@@ -53,9 +53,9 @@ jobs:
           title: 'Update OpenAPI specifications'
           body: 'Automated update of generated specifications.'
           branch: 'auto/spec-update'
-          - name: Notify on failure
-  if: failure()
-  uses: Ilshidur/action-slack@v1
-  with:
-    webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-    msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'
+      - name: Notify on failure
+        if: failure()
+        uses: Ilshidur/action-slack@v1
+        with:
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+          msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'
