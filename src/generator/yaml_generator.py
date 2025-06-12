@@ -76,12 +76,17 @@ def generate_yaml(
 
     fields: list[tuple[str, Dict[str, Any]]] = []
     scan_rows = scan.get("data", []) if isinstance(scan, dict) else []
+    no_tf_enum: set[str] = set()
     for idx, field in enumerate(meta.fields):
         flags = set(field.flags or [])
         if {"deprecated", "private"} & flags:
             continue
         schema: Dict[str, Any] = {"$ref": tv2ref(field.t)}
         schema["description"] = _describe_field(field.n)
+
+        base_name, _, tf = field.n.partition("|")
+        if "|" in field.n and base_name in {"RSI", "EMA20"}:
+            no_tf_enum.add(base_name)
 
         values: list[Any] = []
         for row in scan_rows:
@@ -130,6 +135,15 @@ def generate_yaml(
     }
     for name, schema in base.items():
         openapi["components"]["schemas"].setdefault(name, schema)
+
+    openapi["components"]["schemas"]["NumericFieldNoTimeframe"] = {
+        "type": "string",
+        "enum": sorted(no_tf_enum),
+    }
+    openapi["components"]["schemas"]["NumericFieldWithTimeframe"] = {
+        "type": "string",
+        "pattern": r"^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$",
+    }
 
     if len(fields) > 64:
         parts = []
