@@ -1,4 +1,6 @@
 # Changelog
+## 0.8.39
+- Version bump
 ## 0.8.38
 - Version bump
 ## 0.8.37

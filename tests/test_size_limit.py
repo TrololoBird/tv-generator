@@ -40,3 +40,25 @@ def test_size_limit() -> None:
         spec_file = Path("coin.yaml")
         assert spec_file.exists()
         assert spec_file.stat().st_size < 1_048_576
+
+
+def test_generate_to_specs_dir() -> None:
+    """CLI 'generate' creates specs/coin.yaml under 1 MB using fixture data."""
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        market_dir = Path("results") / "coin"
+        _prepare(market_dir)
+        result = runner.invoke(
+            cli,
+            [
+                "generate",
+                "--scope",
+                "coin",
+                "--indir",
+                str(Path("results")),
+            ],
+        )
+        assert result.exit_code == 0, result.output
+        spec_file = Path("specs/coin.yaml")
+        assert spec_file.exists()
+        assert spec_file.stat().st_size < 1_048_576
