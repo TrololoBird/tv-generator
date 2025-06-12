@@ -5,7 +5,7 @@ name: Update Specs
 on:
   workflow_dispatch: {}  # yamllint disable-line rule:truthy
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 3 * * *'
 
 permissions:
   contents: write
@@ -37,16 +37,25 @@ jobs:
           pip install requests_mock yamllint openapi-spec-validator \
             types-requests types-PyYAML types-toml
           pip install -e .
-      - name: Prepare field status files
+      - name: Export server URL
+        if: ${{ secrets.SERVER_URL != '' }}
+        run: echo "SERVER_URL=${{ secrets.SERVER_URL }}" >> "$GITHUB_ENV"
+
+      - name: Collect full data
         run: |
-          for market in crypto forex stocks futures; do
-            mkdir -p "results/$market"
-            echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > "results/$market/field_status.tsv"
-          done
+          extra=""
+          if [ -n "$SERVER_URL" ]; then
+            extra="--server-url $SERVER_URL"
+          fi
+          poetry run tvgen collect-full --outdir results $extra
       - name: Generate specs for all markets
         run: |
+          extra=""
+          if [ -n "$SERVER_URL" ]; then
+            extra="--server-url $SERVER_URL"
+          fi
           for market in crypto forex stocks futures; do
-            tvgen generate --market $market --output specs/openapi_${market}.yaml  # yamllint disable-line rule:line-length
+            tvgen generate --market $market --output specs/openapi_${market}.yaml $extra  # yamllint disable-line rule:line-length
           done
       - name: Validate all generated specs
         run: |
@@ -54,6 +63,11 @@ jobs:
             yamllint "$spec"
             openapi-spec-validator "$spec"
           done
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: results
+          path: results/**
       - name: Stash changes (if any)
         run: |
           git stash --include-untracked
@@ -70,7 +84,9 @@ jobs:
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
-          add: specs/openapi_*.yaml
+          add: |
+            specs/openapi_*.yaml
+            results/**
           message: 'chore: update generated specifications'
           default_author: github_actions
 
