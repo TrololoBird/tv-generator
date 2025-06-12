@@ -13,7 +13,7 @@ def _create_metainfo(path: Path) -> None:
         "data": {
             "fields": [
                 {"name": "close", "type": "integer"},
-                {"name": "open", "type": "string"},
+                {"name": "open", "type": "text"},
             ]
         }
     }
@@ -23,7 +23,7 @@ def _create_metainfo(path: Path) -> None:
     tsv = (
         "field\ttv_type\tstatus\tsample_value\n"
         "close\tinteger\tok\t1\n"
-        "open\tstring\tok\ta\n"
+        "open\ttext\tok\ta\n"
     )
     (path.parent / "field_status.tsv").write_text(tsv)
 
