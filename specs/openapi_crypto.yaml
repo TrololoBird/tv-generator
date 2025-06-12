@@ -1,15 +1,15 @@
 openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
-  title: Unofficial TradingView Scanner API
-  version: 0.8.25
-  description: Auto-generated from collected field data.
+  title: Unofficial TradingView Crypto API
+  version: 1.0.0
 servers:
   - url: https://scanner.tradingview.com
 paths:
   /crypto/scan:
     post:
       summary: Scan crypto
+      description: Scan crypto
       operationId: CryptoScan
       x-openai-isConsequential: false
       requestBody:
@@ -31,6 +31,7 @@ paths:
   /crypto/search:
     post:
       summary: Search crypto
+      description: Search crypto
       operationId: CryptoSearch
       x-openai-isConsequential: false
       requestBody:
@@ -52,6 +53,7 @@ paths:
   /crypto/history:
     post:
       summary: History crypto
+      description: History crypto
       operationId: CryptoHistory
       x-openai-isConsequential: false
       requestBody:
@@ -73,6 +75,7 @@ paths:
   /crypto/summary:
     post:
       summary: Summary crypto
+      description: Summary crypto
       operationId: CryptoSummary
       x-openai-isConsequential: false
       requestBody:
@@ -94,6 +97,7 @@ paths:
   /crypto/metainfo:
     post:
       summary: Get crypto metainfo
+      description: Get crypto metainfo
       operationId: CryptoMetainfo
       x-openai-isConsequential: false
       responses:
@@ -109,20 +113,18 @@ paths:
           description: Server Error
 components:
   schemas:
-    CryptoMetainfoResponse:
-      type: object
-      properties:
-        fields:
-          type: array
-          items:
-            type: string
+    Num:
+      type: number
+    Str:
+      type: string
+    Bool:
+      type: boolean
+    Time:
+      type: string
+      format: date-time
     CryptoFields:
       type: object
-      properties:
-        close:
-          type: integer
-        open:
-          type: string
+      properties: {}
     CryptoScanRequest:
       type: object
       properties:
@@ -174,3 +176,10 @@ components:
       type: object
     CryptoSummaryResponse:
       type: object
+    CryptoMetainfoResponse:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string

@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Crypto API
-  version: 0.8.39
+  version: 1.0.0
 servers:
   - url: https://scanner.tradingview.com
 paths:
@@ -124,11 +124,7 @@ components:
       format: date-time
     CryptoFields:
       type: object
-      properties:
-        close:
-          $ref: '#/components/schemas/Num'
-        open:
-          $ref: '#/components/schemas/Str'
+      properties: {}
     CryptoScanRequest:
       type: object
       properties:
