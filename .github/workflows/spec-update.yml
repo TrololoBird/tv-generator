@@ -17,6 +17,8 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
+    env:
+      SERVER_URL: ${{ secrets.SERVER_URL }}
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12']
@@ -38,8 +40,8 @@ jobs:
             types-requests types-PyYAML types-toml
           pip install -e .
       - name: Export server URL
-        if: ${{ secrets.SERVER_URL != '' }}
-        run: echo "SERVER_URL=${{ secrets.SERVER_URL }}" >> "$GITHUB_ENV"
+        if: env.SERVER_URL != ''
+        run: echo "SERVER_URL=${SERVER_URL}" >> "$GITHUB_ENV"
 
       - name: Collect full data
         run: |
