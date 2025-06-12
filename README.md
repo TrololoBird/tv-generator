@@ -1,59 +1,89 @@
 # tv-generator
 
-
 ## Overview
-tv-generator ежедневно тянет TradingView metainfo/scan и генерирует OpenAPI 3.1 YAML для GPT Builder Custom Action.
+
+`tv-generator` fetches TradingView metainfo and scan results and generates an OpenAPI 3.1 YAML specification suitable for GPT Builder custom actions.
 
 ## Quick Start
-### Poetry
-poetry install    
-poetry run tvgen collect-full --market all
-poetry run tvgen generate     --market all
+
+### Using Poetry
+```bash
+poetry install
+poetry run tvgen collect-full --market crypto
+poetry run tvgen generate --market crypto
+poetry run tvgen validate --spec specs/crypto.yaml
+```
+You can also build the full set of markets:
+```bash
 poetry run tvgen build --indir results --outdir specs
 poetry run tvgen preview --spec specs/crypto.yaml
-  
+```
+
 ### Docker
+```bash
 docker run --rm ghcr.io/<owner>/tvgen:latest \
-  tvgen collect-full --market all && \
-  tvgen generate     --market all
-  
-## CLI Guide
-| Command      | Purpose                                   | Key Flags                        |
-|--------------|-------------------------------------------|----------------------------------|
+  tvgen collect-full --market crypto && \
+  tvgen generate --market crypto
+```
+
+## CLI Overview
+| Command      | Purpose                                   | Key Flags |
+|--------------|-------------------------------------------|-----------|
 | build        | collect+generate specs for all markets    | --indir • --outdir |
 | collect-full | download metainfo+scan, build TSV         | --market • --outdir • --tickers |
 | generate     | build OpenAPI spec                        | --market • --indir • --outdir • --max-size |
+| validate     | validate spec file                        | --spec |
 | preview      | show fields summary from spec             | --spec |
 
+### Short Examples
+```bash
+# Collect metainfo and scan results
+tvgen collect-full --market crypto --outdir results
+
+# Generate specification from collected data
+tvgen generate --market crypto --indir results --outdir specs
+
+# Validate generated YAML
+tvgen validate --spec specs/crypto.yaml
+```
+
 ## Daily CI Flow
-collect-full → generate → size-validate → commit
+`collect-full` → `generate` → size-validate → commit
 
 ## Field Name Format
-Индикаторы могут иметь вид `NAME|TF`. Например, `RSI|60` означает значение
-индекса RSI на 60‑минутном таймфрейме. Запись `ADX+DI[1]|1D` интерпретируется
-как индикатор `ADX+DI[1]` на дневных свечах.
+Indicators can include a timeframe suffix separated by `|`. For example `RSI|60` means the RSI value on a 60‑minute timeframe. `ADX+DI[1]|1D` refers to the `ADX+DI[1]` indicator on daily candles.
 
-### Example Schema
+Timeframe codes map to minutes unless otherwise noted:
+```
+1, 5, 15, 30, 60, 120, 240   -> minutes
+1D                          -> 1 day
+1W                          -> 1 week
+```
+
+## OpenAPI File Structure
+The generated YAML contains:
+- `openapi` and `info` – version and title.
+- `servers` – base TradingView endpoint.
+- `paths` – endpoints such as `/crypto/scan` or `/stocks/history`, each referencing request and response schemas.
+- `components/schemas` – base scalar types (`Num`, `Str`, `Bool`, `Time`, `Array`) and market specific objects. `<Scope>Fields` defines available fields. `<Scope>ScanRequest` describes the `/scan` payload and similar structures exist for `search`, `history` and `summary`.
+- `NumericFieldNoTimeframe`/`NumericFieldWithTimeframe` specify whether a field name includes a timeframe suffix.
+
+Example snippet:
 ```yaml
 components:
   schemas:
     NumericFieldNoTimeframe:
       type: string
       enum: [RSI, EMA20]
-      description: Дневные значения индикаторов
-      example: RSI
     NumericFieldWithTimeframe:
       type: string
       pattern: "^[A-Z0-9_+\\[\\]]+\\|(1|5|15|30|60|120|240|1D|1W)$"
-      description: Индикатор с таймфреймом
-      example: ADX+DI[1]|1D
-      x-openai-schema-title: Numeric Field
 ```
 
 ## Import into GPT Builder
-1. Add Action → Upload YAML  
-2. Выберите файл specs/<market>.yaml  
-3. Нажмите Validate — ошибок быть не должно
+1. Choose **Add Action** → **Upload YAML**.
+2. Select `specs/<market>.yaml`.
+3. Click **Validate** – the file should pass without errors.
 
 ## Badges
-[Build] (link to GitHub Action badge) [Coverage] (позже заменим процент) [Docker] (latest tag)
+[Build] (CI status) [Coverage] (to be replaced) [Docker] (latest tag)
