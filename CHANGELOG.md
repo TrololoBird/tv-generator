@@ -1,4 +1,6 @@
 # Changelog
+## 0.8.31
+- Version bump
 ## 0.8.30
 - Fixed artifact workflow to correctly upload generated specifications
 ## 0.8.29
