@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Any, cast, Literal
 
-from pydantic import BaseModel, Field, constr, confloat, AliasChoices
+from typing import Annotated
+
+from pydantic import BaseModel, Field, constr, confloat, AliasChoices, StringConstraints
 
 # Accepted TradingView field types
 FieldType = Literal[
@@ -37,10 +39,12 @@ class TVBaseModel(BaseModel):
 class TVField(TVBaseModel):
     """TradingView field description."""
 
-    n: constr(strip_whitespace=True, min_length=1) = Field(alias="name")
+    n: Annotated[str, constr(strip_whitespace=True, min_length=1)] = Field(alias="name")
     t: FieldType = Field(alias="type")
-    interval: confloat(gt=0) | None = None
-    description: constr(strip_whitespace=True, min_length=1) | None = None
+    interval: Annotated[float, confloat(gt=0)] | None = None
+    description: Annotated[str, constr(strip_whitespace=True, min_length=1)] | None = (
+        None
+    )
     flags: list[str] | None = None
 
 
@@ -71,7 +75,7 @@ class MetaInfoResponse(TVBaseModel):
 class ScanItem(TVBaseModel):
     """Single scan item."""
 
-    s: constr(strip_whitespace=True, min_length=1)
+    s: Annotated[str, constr(strip_whitespace=True, min_length=1)]
     d: list[object]
 
 
