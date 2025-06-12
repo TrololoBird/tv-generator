@@ -72,9 +72,10 @@ Fetch market metadata:
 tvgen metainfo --scope crypto --query btc
 ```
 
-Generate an OpenAPI spec and save it to `specs/`:
+Collect full field data and generate an OpenAPI spec:
 
 ```bash
+tvgen collect-full --scope crypto --tickers BTCUSD,ETHUSD
 tvgen generate --market crypto --output specs/openapi_crypto.yaml
 ```
 
@@ -83,6 +84,8 @@ Validate a spec file:
 ```bash
 tvgen validate --spec specs/openapi_crypto.yaml
 ```
+
+This produces an updated `specs/openapi_crypto.yaml`. Commit the file after validation.
 
 Fetch recommendation or price for a symbol:
 
@@ -124,6 +127,7 @@ black --check .
 flake8 .
 mypy src/
 pytest -q
+tvgen collect-full --scope crypto
 tvgen generate --market crypto --output specs/openapi_crypto.yaml
 openapi-spec-validator specs/openapi_crypto.yaml
 ```
@@ -142,6 +146,7 @@ black .
 flake8 .
 mypy src/
 pytest -q
+tvgen collect-full --scope crypto
 tvgen generate --market crypto --output specs/openapi_crypto.yaml
 openapi-spec-validator specs/openapi_crypto.yaml
 ```
@@ -150,8 +155,9 @@ Ensure all commands succeed locally to avoid pipeline failures.
 
 ## Интеграция с GPT Builder Custom Action
 
-1. Сгенерируйте YAML спецификацию командой:
+1. Соберите все поля и создайте YAML спецификацию:
    ```bash
+   tvgen collect-full --scope crypto
    tvgen generate --market crypto --output openapi_crypto.yaml
    ```
 2. Откройте GPT Builder и выберите **Import from OpenAPI**.

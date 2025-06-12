@@ -14,6 +14,7 @@
   * `tvgen search --payload <json> --scope <market>` - call /{scope}/search
   * `tvgen history --payload <json> --scope <market>` - call /{scope}/history
   * `tvgen summary --payload <json> --scope <market>` - call /{scope}/summary
+  * `tvgen collect-full --scope <market> [--tickers ...]` - gather field data
   * `tvgen generate --market <market> --output specs/<market>.yaml` - create spec
   * `tvgen validate --spec <file>` - validate a spec file
 * Tests: `tests/`
@@ -25,6 +26,8 @@ Common flags:
 * `--filter2`, `--sort`, `--range` - optional JSON objects passed to `scan`
 
 ---
+
+**Workflow**: `tvgen collect-full` → `tvgen generate` → `tvgen validate` → commit
 
 ## 🛠 Development Workflow
 
