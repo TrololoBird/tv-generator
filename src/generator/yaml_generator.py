@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, TYPE_CHECKING, Iterable
+from typing import Any, Dict, TYPE_CHECKING
 
 import toml
 import yaml
