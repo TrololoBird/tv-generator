@@ -1,0 +1,12 @@
+{
+  "data": {
+    "fields": [
+      {"name": "field1", "type": "integer"},
+      {"name": "field2", "type": "float"},
+      {"name": "field3", "type": "string", "flags": ["deprecated"]},
+      {"name": "field4", "type": "boolean"},
+      {"name": "field5", "type": "time", "flags": ["private"]}
+    ],
+    "index": {"names": ["AAA", "BBB"]}
+  }
+}
