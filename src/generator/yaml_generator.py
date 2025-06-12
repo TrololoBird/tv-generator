@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 
-import pandas as pd
 import toml
 import yaml
+
+if TYPE_CHECKING:  # pragma: no cover - type checking only
+    import pandas as pd
 
 from src.models import MetaInfoResponse
 from src.utils import tv2ref
@@ -21,7 +23,7 @@ class _IndentedDumper(yaml.SafeDumper):
 def generate_yaml(
     scope: str,
     meta: MetaInfoResponse,
-    tsv: pd.DataFrame,
+    _tsv: "pd.DataFrame",
     server_url: str = "https://scanner.tradingview.com",
     max_size: int = 1_048_576,
 ) -> str:
@@ -57,6 +59,7 @@ def generate_yaml(
         "Str": {"type": "string"},
         "Bool": {"type": "boolean"},
         "Time": {"type": "string", "format": "date-time"},
+        "Array": {"type": "array", "items": {}},
     }
     for name, schema in base.items():
         openapi["components"]["schemas"].setdefault(name, schema)
@@ -180,8 +183,7 @@ def generate_yaml(
         }
     }
 
-    yaml_str = yaml.dump(openapi, sort_keys=False, Dumper=_IndentedDumper)  # type: ignore  # noqa: E501
+    yaml_str = yaml.dump(openapi, sort_keys=False, Dumper=_IndentedDumper)
     if len(yaml_str.encode()) > max_size:
         raise RuntimeError("YAML size exceeds limit")
-    print(yaml_str)
     return yaml_str

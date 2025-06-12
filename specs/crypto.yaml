@@ -122,6 +122,9 @@ components:
     Time:
       type: string
       format: date-time
+    Array:
+      type: array
+      items: {}
     CryptoFields:
       type: object
       properties:

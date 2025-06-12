@@ -15,6 +15,7 @@ TV_TYPE_TO_REF: dict[str, str] = {
     "interface": "#/components/schemas/Str",
     "time": "#/components/schemas/Time",
     "time-yyyymmdd": "#/components/schemas/Time",
+    "array": "#/components/schemas/Array",
 }
 
 
