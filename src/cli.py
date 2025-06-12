@@ -234,6 +234,11 @@ def collect_full(
     if not scopes:
         scopes = tuple(SCOPES)
 
+    ticker_list = [s for s in tickers.split(",") if s]
+    if not ticker_list:
+        raise click.BadParameter("No tickers", param_hint="--tickers")
+    ticker_list = ticker_list[:10]
+
     api = TradingViewAPI(base_url=server_url)
     exit_code = 0
     for scope in scopes:
@@ -261,18 +266,8 @@ def collect_full(
                     if name:
                         field_list.append((str(name), ftype))
 
-            index_obj = (
-                data_section.get("index", {}) if isinstance(data_section, dict) else {}
-            )
-            names = index_obj.get("names", []) if isinstance(index_obj, dict) else []
-            ticker_list = [s for s in tickers.split(",") if s]
-            if not ticker_list:
-                if isinstance(names, list) and names:
-                    ticker_list = [str(n) for n in names[:10]]
-                else:
-                    ticker_list = ["BTCUSD", "ETHUSD"]
             payload = {
-                "symbols": {"tickers": ticker_list[:10], "query": {"types": []}},
+                "symbols": {"tickers": ticker_list, "query": {"types": []}},
                 "columns": [f[0] for f in field_list],
             }
             scan_res = api.scan(scope, payload)
