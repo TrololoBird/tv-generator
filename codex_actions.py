@@ -1,19 +1,24 @@
 import subprocess
 import sys
+import json
 from pathlib import Path
 
 
 def generate_openapi_spec():
     """Run the CLI generator for the crypto market."""
-    spec_file = Path("specs/openapi_crypto.yaml")
-    # tvgen generate expects results/crypto/field_status.tsv
-    status_file = Path("results/crypto/field_status.tsv")
-    if not status_file.exists():
-        status_file.parent.mkdir(parents=True, exist_ok=True)
-        status_file.write_text(
-            "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc\n",
-            encoding="utf-8",
-        )
+    spec_file = Path("specs/crypto.yaml")
+    meta_file = Path("results/crypto/metainfo.json")
+    if not meta_file.exists():
+        meta_file.parent.mkdir(parents=True, exist_ok=True)
+        meta = {
+            "data": {
+                "fields": [
+                    {"name": "close", "type": "integer"},
+                    {"name": "open", "type": "string"},
+                ]
+            }
+        }
+        meta_file.write_text(json.dumps(meta), encoding="utf-8")
 
     try:
         result = subprocess.run(
@@ -43,7 +48,7 @@ def validate_spec():
     """Validate the generated crypto specification."""
     try:
         subprocess.run(
-            ["tvgen", "validate", "--spec", "specs/openapi_crypto.yaml"],
+            ["tvgen", "validate", "--spec", "specs/crypto.yaml"],
             check=True,
             capture_output=True,
             text=True,

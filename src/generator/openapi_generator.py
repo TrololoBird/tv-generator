@@ -2,11 +2,10 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Iterable
 
+import json
 import toml
 
-import pandas as pd
 import yaml
-from src.utils.infer import infer_type
 
 
 class _IndentedDumper(yaml.SafeDumper):
@@ -32,19 +31,47 @@ class OpenAPIGenerator:
 
     def collect_market_fields(
         self, market_dir: Path
-    ) -> tuple[list[str], Dict[str, str]]:
-        """Return available fields and their inferred types for a market."""
-        df = pd.read_csv(market_dir / "field_status.tsv", sep="\t")
-        df_ok = df[df["status"] == "ok"]
-        fields = sorted(set(df_ok["field"]))
-        field_types: Dict[str, str] = {}
-        for field in fields:
-            val_series = df_ok[df_ok["field"] == field]["value"].dropna()
-            if not val_series.empty:
-                field_types[field] = infer_type(val_series.iloc[0])
-            else:
-                field_types[field] = "string"
-        return fields, field_types
+    ) -> tuple[list[tuple[str, Dict[str, Any]]], Dict[str, Dict[str, Any]]]:
+        """Return available fields and their OpenAPI definitions for a market."""
+        meta_file = market_dir / "metainfo.json"
+        if not meta_file.exists():
+            raise RuntimeError(f"Missing metainfo.json for market {market_dir.name}")
+        meta = json.loads(meta_file.read_text())
+
+        fields_data: list[dict[str, Any]] = []
+        if isinstance(meta.get("data"), dict) and isinstance(
+            meta["data"].get("fields"), list
+        ):
+            fields_data = list(meta["data"].get("fields", []))
+        elif isinstance(meta.get("fields"), list):
+            fields_data = list(meta.get("fields", []))
+
+        mapping = {
+            "string": {"type": "string"},
+            "integer": {"type": "integer"},
+            "float": {"type": "number"},
+            "boolean": {"type": "boolean"},
+            "time": {"type": "string", "format": "date-time"},
+        }
+
+        ordered_fields: list[tuple[str, Dict[str, Any]]] = []
+        field_defs: Dict[str, Dict[str, Any]] = {}
+        for item in fields_data:
+            if not isinstance(item, dict):
+                continue
+            name = item.get("name") or item.get("id")
+            if not name:
+                continue
+            type_name = str(item.get("type", "string")).lower()
+            schema = mapping.get(type_name, {"type": "string"}).copy()
+            desc = item.get("description") or item.get("title") or item.get("short")
+            if desc:
+                schema["description"] = str(desc)
+            ordered_fields.append((str(name), schema))
+            field_defs[str(name)] = schema
+
+        ordered_fields.sort(key=lambda x: x[0])
+        return ordered_fields, field_defs
 
     def _add_metainfo_path(
         self, openapi: dict[str, Any], market: str, cap: str
@@ -54,6 +81,8 @@ class OpenAPIGenerator:
         openapi["paths"][f"/{market}/metainfo"] = {
             "post": {
                 "summary": f"Get {market} metainfo",
+                "operationId": f"{cap}Metainfo",
+                "x-openai-isConsequential": False,
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -80,6 +109,7 @@ class OpenAPIGenerator:
     def generate(self, output: Path, market: str | None = None) -> None:
         openapi: Dict[str, Any] = {
             "openapi": "3.1.0",
+            "x-oai-custom-action-schema-version": "v1",
             "info": {
                 "title": "Unofficial TradingView Scanner API",
                 "version": self.version,
@@ -100,14 +130,14 @@ class OpenAPIGenerator:
             if not market_path.is_dir():
                 raise FileNotFoundError(market_path.name)
             market = market_path.name
-            field_file = market_path / "field_status.tsv"
-            if not field_file.exists():
-                raise RuntimeError(f"Missing field_status.tsv for market {market}")
-            columns, types = self.collect_market_fields(market_path)
+            fields, field_defs = self.collect_market_fields(market_path)
+            columns = [name for name, _ in fields]
             cap = market.capitalize()
             openapi["paths"][f"/{market}/scan"] = {
                 "post": {
                     "summary": f"Scan {market}",
+                    "operationId": f"{cap}Scan",
+                    "x-openai-isConsequential": False,
                     "requestBody": {
                         "content": {
                             "application/json": {
@@ -145,6 +175,8 @@ class OpenAPIGenerator:
                 openapi["paths"][f"/{market}/{ep_name}"] = {
                     "post": {
                         "summary": f"{ep_name.capitalize()} {market}",
+                        "operationId": f"{cap}{ep_name.capitalize()}",
+                        "x-openai-isConsequential": False,
                         "requestBody": {
                             "content": {
                                 "application/json": {
@@ -173,10 +205,23 @@ class OpenAPIGenerator:
 
             self._add_metainfo_path(openapi, market, cap)
 
-            openapi["components"]["schemas"][f"{cap}Fields"] = {
-                "type": "object",
-                "properties": {f: {"type": types[f]} for f in columns},
-            }
+            if len(fields) > 64:
+                parts = []
+                for idx in range(0, len(fields), 64):
+                    part_num = idx // 64 + 1
+                    part_name = f"{cap}FieldsPart{part_num}"
+                    props = {name: schema for name, schema in fields[idx : idx + 64]}
+                    openapi["components"]["schemas"][part_name] = {
+                        "type": "object",
+                        "properties": props,
+                    }
+                    parts.append({"$ref": f"#/components/schemas/{part_name}"})
+                openapi["components"]["schemas"][f"{cap}Fields"] = {"allOf": parts}
+            else:
+                openapi["components"]["schemas"][f"{cap}Fields"] = {
+                    "type": "object",
+                    "properties": {name: schema for name, schema in fields},
+                }
             openapi["components"]["schemas"][f"{cap}ScanRequest"] = {
                 "type": "object",
                 "properties": {
