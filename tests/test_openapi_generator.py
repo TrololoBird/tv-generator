@@ -1,22 +1,28 @@
 from pathlib import Path
 
+import json
 import pytest
 import yaml
 from unittest import mock
 from src.generator.openapi_generator import OpenAPIGenerator
 
 
-def _create_field_status(path: Path) -> None:
+def _create_metainfo(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write("field\tstatus\tvalue\n")
-        f.write("close\tok\t1\n")
-        f.write("open\tok\tabc\n")
+    data = {
+        "data": {
+            "fields": [
+                {"name": "close", "type": "integer", "description": ""},
+                {"name": "open", "type": "string"},
+            ]
+        }
+    }
+    path.write_text(json.dumps(data))
 
 
 def test_generate(tmp_path: Path):
     market_dir = tmp_path / "results" / "crypto"
-    _create_field_status(market_dir / "field_status.tsv")
+    _create_metainfo(market_dir / "metainfo.json")
 
     with mock.patch("toml.load", return_value={"project": {"version": "1.2.3"}}):
         gen = OpenAPIGenerator(tmp_path / "results")
@@ -48,7 +54,7 @@ def test_generate(tmp_path: Path):
         assert f"/crypto/{ep}" in data["paths"]
 
 
-def test_generate_missing_field_status(tmp_path: Path) -> None:
+def test_generate_missing_metainfo(tmp_path: Path) -> None:
     market_dir = tmp_path / "results" / "crypto"
     market_dir.mkdir(parents=True)
 
@@ -61,8 +67,8 @@ def test_generate_missing_field_status(tmp_path: Path) -> None:
 def test_generate_multiple_markets(tmp_path: Path) -> None:
     crypto_dir = tmp_path / "results" / "crypto"
     stocks_dir = tmp_path / "results" / "stocks"
-    _create_field_status(crypto_dir / "field_status.tsv")
-    _create_field_status(stocks_dir / "field_status.tsv")
+    _create_metainfo(crypto_dir / "metainfo.json")
+    _create_metainfo(stocks_dir / "metainfo.json")
 
     gen = OpenAPIGenerator(tmp_path / "results")
     out = tmp_path / "spec.yaml"
