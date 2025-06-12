@@ -37,13 +37,21 @@ jobs:
         run: openapi-spec-validator specs/coin.yaml
       - name: Check size limit
         run: python -c "import os,sys; s=os.path.getsize('specs/coin.yaml'); assert s<1048576"
-      - name: Commit results and spec
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: |
-            results/**
-            specs/coin.yaml
-          message: 'chore: update coin spec'
-          default_author: github_actions
+      - name: Commit and create PR if spec changed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          if git diff --quiet HEAD -- specs/coin.yaml; then
+            echo "No changes detected"
+            exit 0
+          fi
+          branch="coin-spec-${{ github.run_number }}"
+          git checkout -b "$branch"
+          git add results/** specs/coin.yaml
+          git commit -m 'chore: update coin spec'
+          git push origin "$branch"
+          gh pr create --title 'Update coin spec' --body 'Спецификация обновлена автоматически на основе новых данных с TradingView /metainfo'
       - name: Finish
         run: exit 0

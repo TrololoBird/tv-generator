@@ -112,7 +112,10 @@ def bump_version():
     print(f"Version bumped to {new_version}")
 
 
-def create_pull_request():
+def create_pull_request(
+    title: str = "Update OpenAPI specs",
+    body: str = "Automated specification update",
+):
     """Open a pull request using the GitHub CLI."""
     try:
         subprocess.run(
@@ -121,9 +124,9 @@ def create_pull_request():
                 "pr",
                 "create",
                 "--title",
-                "Update OpenAPI specs",
+                title,
                 "--body",
-                "Automated specification update",
+                body,
             ],
             check=True,
         )
