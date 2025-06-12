@@ -47,12 +47,16 @@ jobs:
           format_code()
           bump_version()
 
-          res = subprocess.run([
-              "git",
-              "diff",
-              "--quiet",
-              "specs/crypto.yaml",
-          ])
+          res = subprocess.run(
+              [
+                  "git",
+                  "diff",
+                  "--quiet",
+                  "HEAD",
+                  "--",
+                  "specs/crypto.yaml",
+              ]
+          )
           if res.returncode == 0:
               print("No spec changes detected")
           else:
