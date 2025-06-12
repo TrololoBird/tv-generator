@@ -100,9 +100,9 @@ class OpenAPIGenerator:
             "properties": {"fields": {"type": "array", "items": {"type": "string"}}},
         }
 
-    def generate(
-        self, output: Path, market: str | None = None, max_size: int = 1_048_576
-    ) -> None:
+    def render(self, market: str | None = None, max_size: int = 1_048_576) -> str:
+        """Return OpenAPI YAML for the given market scope."""
+
         openapi: Dict[str, Any] = {
             "openapi": "3.1.0",
             "x-oai-custom-action-schema-version": "v1",
@@ -169,7 +169,6 @@ class OpenAPIGenerator:
                 }
             }
 
-            # additional endpoints
             for ep_name, req, resp in [
                 ("search", "SearchRequest", "SearchResponse"),
                 ("history", "HistoryRequest", "HistoryResponse"),
@@ -271,7 +270,6 @@ class OpenAPIGenerator:
                 },
             }
 
-            # simple request/response schemas for other endpoints
             for req in ["SearchRequest", "HistoryRequest", "SummaryRequest"]:
                 openapi["components"]["schemas"][f"{cap}{req}"] = {
                     "type": "object",
@@ -281,7 +279,6 @@ class OpenAPIGenerator:
                     "type": "object",
                 }
 
-        output.parent.mkdir(parents=True, exist_ok=True)
         yaml_str = yaml.dump(
             openapi,
             sort_keys=False,
@@ -291,5 +288,14 @@ class OpenAPIGenerator:
         )
         if len(yaml_str.encode()) > max_size:
             raise RuntimeError("YAML size exceeds limit")
+        return yaml_str
+
+    def generate(
+        self, output: Path, market: str | None = None, max_size: int = 1_048_576
+    ) -> None:
+        """Render the specification and write it to ``output``."""
+
+        yaml_str = self.render(market=market, max_size=max_size)
+        output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(yaml_str, encoding="utf-8")
         logger.info("OpenAPI spec saved to %s", output)
