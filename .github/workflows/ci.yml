@@ -47,3 +47,12 @@ jobs:
           for spec in specs/openapi_*.yaml; do
             openapi-spec-validator "$spec"
           done
+      - name: Check spec sizes
+        run: |
+          for spec in specs/*.yaml; do
+            size=$(wc -c < "$spec")
+            if [ "$size" -ge 1048576 ]; then
+              echo "${spec} is ${size} bytes, exceeds 1 MB" >&2
+              exit 1
+            fi
+          done
