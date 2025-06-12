@@ -1,9 +1,12 @@
 {
+  "count": 2,
   "data": [
     {
+      "s": "BINANCE:BTCUSD",
       "d": [50000.0, 50500.0, 1500, "BINANCE", true, "2024-01-01T00:00:00Z", "old", 1]
     },
     {
+      "s": "COINBASE:ETHUSD",
       "d": [48000.0, 49000.0, 2000, "COINBASE", false, "2024-01-02T00:00:00Z", "old", 2]
     }
   ]
