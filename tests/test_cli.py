@@ -39,7 +39,7 @@ def test_cli_scan(tv_api_mock) -> None:
             "BTCUSD",
             "--columns",
             "close",
-            "--scope",
+            "--market",
             "crypto",
             "--filter",
             "{}",
@@ -61,7 +61,7 @@ def test_cli_scan_full_payload(tv_api_mock) -> None:
         "BTCUSD",
         "--columns",
         "close",
-        "--scope",
+        "--market",
         "crypto",
         "--filter2",
         "{}",
@@ -109,7 +109,7 @@ def test_cli_metainfo(tv_api_mock) -> None:
     )
     result = runner.invoke(
         cli,
-        ["metainfo", "--query", "test", "--scope", "crypto"],
+        ["metainfo", "--query", "test", "--market", "crypto"],
     )
     assert result.exit_code == 0
     assert "fields" in result.output
@@ -127,7 +127,7 @@ def test_cli_search(tv_api_mock) -> None:
             "search",
             "--payload",
             "{}",
-            "--scope",
+            "--market",
             "crypto",
         ],
     )
@@ -147,7 +147,7 @@ def test_cli_history(tv_api_mock) -> None:
             "history",
             "--payload",
             "{}",
-            "--scope",
+            "--market",
             "stocks",
         ],
     )
@@ -167,7 +167,7 @@ def test_cli_summary(tv_api_mock) -> None:
             "summary",
             "--payload",
             "{}",
-            "--scope",
+            "--market",
             "forex",
         ],
     )
@@ -179,7 +179,7 @@ def test_cli_search_invalid_payload() -> None:
     runner = CliRunner()
     result = runner.invoke(
         cli,
-        ["search", "--payload", "{", "--scope", "crypto"],
+        ["search", "--payload", "{", "--market", "crypto"],
     )
     assert result.exit_code != 0
     assert result.exception is not None
@@ -189,7 +189,7 @@ def test_cli_history_invalid_payload() -> None:
     runner = CliRunner()
     result = runner.invoke(
         cli,
-        ["history", "--payload", "{", "--scope", "crypto"],
+        ["history", "--payload", "{", "--market", "crypto"],
     )
     assert result.exit_code != 0
     assert result.exception is not None
@@ -199,7 +199,7 @@ def test_cli_summary_invalid_payload() -> None:
     runner = CliRunner()
     result = runner.invoke(
         cli,
-        ["summary", "--payload", "{", "--scope", "crypto"],
+        ["summary", "--payload", "{", "--market", "crypto"],
     )
     assert result.exit_code != 0
     assert result.exception is not None
@@ -209,7 +209,7 @@ def test_scan_cli_missing_scope():
     runner = CliRunner()
     result = runner.invoke(cli, ["scan", "--symbols", "AAPL", "--columns", "close"])
     assert result.exit_code != 0
-    assert "Missing option '--scope'" in result.output
+    assert "Missing option '--market'" in result.output
 
 
 def test_cli_help() -> None:
@@ -230,7 +230,7 @@ def test_generate_help() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["generate", "--help"])
     assert result.exit_code == 0
-    assert "--scope" in result.output
+    assert "--market" in result.output
     assert "--indir" in result.output
 
 
@@ -245,7 +245,7 @@ def test_cli_generate_and_validate(tmp_path: Path) -> None:
             cli,
             [
                 "generate",
-                "--scope",
+                "--market",
                 "crypto",
                 "--indir",
                 str(Path("results")),
@@ -278,7 +278,7 @@ def test_cli_generate_missing_results(tmp_path: Path) -> None:
             cli,
             [
                 "generate",
-                "--scope",
+                "--market",
                 "crypto",
                 "--indir",
                 str(Path("results")),
@@ -299,7 +299,7 @@ def test_cli_scan_error(tv_api_mock) -> None:
     )
     result = runner.invoke(
         cli,
-        ["scan", "--symbols", "BTCUSD", "--columns", "close", "--scope", "crypto"],
+        ["scan", "--symbols", "BTCUSD", "--columns", "close", "--market", "crypto"],
     )
     assert result.exit_code != 0
     assert result.exception is not None
@@ -336,7 +336,7 @@ def test_cli_metainfo_error(tv_api_mock) -> None:
         "https://scanner.tradingview.com/crypto/metainfo",
         status_code=500,
     )
-    result = runner.invoke(cli, ["metainfo", "--query", "t", "--scope", "crypto"])
+    result = runner.invoke(cli, ["metainfo", "--query", "t", "--market", "crypto"])
     assert result.exit_code != 0
     assert result.exception is not None
     assert "500" in result.output
@@ -382,7 +382,7 @@ def test_collect_full_success(monkeypatch):
     runner = CliRunner()
     _mock_collect_api(monkeypatch)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
+        result = runner.invoke(cli, ["collect-full", "--market", "crypto"])
         assert result.exit_code == 0
         base = Path("results/crypto")
         assert (base / "metainfo.json").exists()
@@ -397,7 +397,7 @@ def test_collect_full_alias(monkeypatch):
     runner = CliRunner()
     _mock_collect_api(monkeypatch)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--scope", "crypto"])
+        result = runner.invoke(cli, ["collect", "--market", "crypto"])
         assert result.exit_code == 0
 
 
@@ -409,7 +409,7 @@ def test_collect_full_error(monkeypatch):
     )
     monkeypatch.setattr("src.cli.full_scan", lambda scope, tickers, columns: {})
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
+        result = runner.invoke(cli, ["collect-full", "--market", "crypto"])
         assert result.exit_code != 0
         log = Path("results/crypto/error.log").read_text()
         assert log
