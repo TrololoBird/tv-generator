@@ -30,7 +30,7 @@ def generate_openapi_spec():
             [
                 "tvgen",
                 "generate",
-                "--scope",
+                "--market",
                 "crypto",
                 "--indir",
                 "results",

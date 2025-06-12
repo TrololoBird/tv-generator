@@ -8,13 +8,14 @@
   * `generator/` — OpenAPI 3.1.0 spec generation logic
   * `utils/` — shared utilities and type inference
 * CLI interface: `src/cli.py`
-  * `tvgen scan --scope <market>` - perform a basic scan
+  * `tvgen scan --market <market>` - perform a basic scan
   * `tvgen recommend --symbol <symbol> [--market stocks]` - fetch recommendation
   * `tvgen price --symbol <symbol> [--market stocks]` - fetch last close price
-  * `tvgen search --payload <json> --scope <market>` - call /{scope}/search
-  * `tvgen history --payload <json> --scope <market>` - call /{scope}/history
-  * `tvgen summary --payload <json> --scope <market>` - call /{scope}/summary
-  * `tvgen collect-full --scope <market> [--tickers ...]` - gather field data
+  * `tvgen search --payload <json> --market <market>` - call /{market}/search
+  * `tvgen history --payload <json> --market <market>` - call /{market}/history
+  * `tvgen summary --payload <json> --market <market>` - call /{market}/summary
+  * `tvgen collect-full --market <market> [--tickers ...]` - gather field data
+  * `tvgen build` - collect metainfo+scan and generate specs for all markets
   * `tvgen generate --market <market> --output specs/<market>.yaml` - create spec
   * `tvgen validate --spec <file>` - validate a spec file
 * Tests: `tests/`
@@ -22,7 +23,7 @@
 
 Common flags:
 
-* `--scope` - TradingView market name for scan-like commands
+* `--market` - TradingView market name for scan-like commands
 * `--filter2`, `--sort`, `--range` - optional JSON objects passed to `scan`
 
 ---

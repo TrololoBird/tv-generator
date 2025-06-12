@@ -7,19 +7,21 @@ tv-generator ежедневно тянет TradingView metainfo/scan и гене
 ## Quick Start
 ### Poetry
 poetry install    
-poetry run tvgen collect-full --scope all      
-poetry run tvgen generate     --scope all      
+poetry run tvgen collect-full --market all
+poetry run tvgen generate     --market all
   
 ### Docker
-docker run --rm ghcr.io/<owner>/tvgen:latest \  
-  tvgen collect-full --scope all && \    
-  tvgen generate     --scope all    
+docker run --rm ghcr.io/<owner>/tvgen:latest \
+  tvgen collect-full --market all && \
+  tvgen generate     --market all
   
 ## CLI Guide
 | Command      | Purpose                                   | Key Flags                        |
 |--------------|-------------------------------------------|----------------------------------|
-| collect-full | download metainfo+scan, build TSV         | --scope • --outdir • --tickers   |
-| generate     | build OpenAPI spec                        | --scope • --indir • --max-size   |
+| build        | collect+generate specs for all markets    | --indir • --outdir |
+| collect-full | download metainfo+scan, build TSV         | --market • --outdir • --tickers   |
+| generate     | build OpenAPI spec                        | --market • --indir • --max-size   |
+| preview      | show fields summary from spec             | --spec |
 
 ## Daily CI Flow
 collect-full → generate → size-validate → commit

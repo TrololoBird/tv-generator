@@ -54,10 +54,10 @@ def cli(verbose: bool) -> None:
     help="Comma-separated fields",
 )
 @click.option(
-    "--scope",
+    "--market",
     required=True,
     type=click.Choice(SCOPES),
-    help="Market scope",
+    help="Market name",
 )
 @click.option("--filter", "filter_", help="JSON filter")
 @click.option("--filter2", help="Secondary JSON filter")
@@ -66,7 +66,7 @@ def cli(verbose: bool) -> None:
 def scan(
     symbols: str,
     columns: str,
-    scope: str,
+    market: str,
     filter_: str | None,
     filter2: str | None,
     sort: str | None,
@@ -84,7 +84,7 @@ def scan(
         json.loads(range_) if range_ else None,
     )
     try:
-        result = api.scan(scope, payload=payload)
+        result = api.scan(market, payload=payload)
     except requests.exceptions.RequestException as exc:
         logger.error("Scan request failed: %s", exc)
         raise click.ClickException(str(exc))
@@ -135,17 +135,17 @@ def price(symbol: str, market: str) -> None:
 @cli.command()
 @click.option("--query", required=True, help="Search query or market identifier")
 @click.option(
-    "--scope",
+    "--market",
     required=True,
     type=click.Choice(SCOPES),
-    help="Market scope",
+    help="Market name",
 )
-def metainfo(query: str, scope: str) -> None:
-    """Fetch metainfo for given scope via /{scope}/metainfo."""
+def metainfo(query: str, market: str) -> None:
+    """Fetch metainfo for given market via /{market}/metainfo."""
 
     api = TradingViewAPI()
     try:
-        data = api.metainfo(scope, {"query": query})
+        data = api.metainfo(market, {"query": query})
     except (
         requests.exceptions.RequestException
     ) as exc:  # pragma: no cover - click handles output
@@ -159,13 +159,13 @@ def metainfo(query: str, scope: str) -> None:
 
 @cli.command()
 @click.option("--payload", required=True, help="JSON payload")
-@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
-def search(payload: str, scope: str) -> None:
-    """Call /{scope}/search with the given payload."""
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+def search(payload: str, market: str) -> None:
+    """Call /{market}/search with the given payload."""
 
     api = TradingViewAPI()
     try:
-        data = api.search(scope, json.loads(payload))
+        data = api.search(market, json.loads(payload))
     except (
         requests.exceptions.RequestException
     ) as exc:  # pragma: no cover - click handles output
@@ -179,13 +179,13 @@ def search(payload: str, scope: str) -> None:
 
 @cli.command()
 @click.option("--payload", required=True, help="JSON payload")
-@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
-def history(payload: str, scope: str) -> None:
-    """Call /{scope}/history with the given payload."""
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+def history(payload: str, market: str) -> None:
+    """Call /{market}/history with the given payload."""
 
     api = TradingViewAPI()
     try:
-        data = api.history(scope, json.loads(payload))
+        data = api.history(market, json.loads(payload))
     except (
         requests.exceptions.RequestException
     ) as exc:  # pragma: no cover - click handles output
@@ -199,13 +199,13 @@ def history(payload: str, scope: str) -> None:
 
 @cli.command()
 @click.option("--payload", required=True, help="JSON payload")
-@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
-def summary(payload: str, scope: str) -> None:
-    """Call /{scope}/summary with the given payload."""
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+def summary(payload: str, market: str) -> None:
+    """Call /{market}/summary with the given payload."""
 
     api = TradingViewAPI()
     try:
-        data = api.summary(scope, json.loads(payload))
+        data = api.summary(market, json.loads(payload))
     except (
         requests.exceptions.RequestException
     ) as exc:  # pragma: no cover - click handles output
@@ -218,7 +218,7 @@ def summary(payload: str, scope: str) -> None:
 
 
 @cli.command("collect-full")
-@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
 @click.option(
     "--tickers",
     default="AUTO",
@@ -232,14 +232,14 @@ def summary(payload: str, scope: str) -> None:
     show_default=True,
     help="Directory to store results",
 )
-def collect_full(scope: str, tickers: str, outdir: Path) -> None:
+def collect_full(market: str, tickers: str, outdir: Path) -> None:
     """Fetch metainfo and scan results saving JSON and TSV."""
 
-    market_dir = outdir / scope
+    market_dir = outdir / market
     market_dir.mkdir(parents=True, exist_ok=True)
     error_log = market_dir / "error.log"
     try:
-        meta = fetch_metainfo(scope)
+        meta = fetch_metainfo(market)
 
         fields: list[dict[str, Any]] = []
         if isinstance(meta.get("data"), dict) and isinstance(
@@ -260,7 +260,7 @@ def collect_full(scope: str, tickers: str, outdir: Path) -> None:
         else:
             tickers_list = [t for t in tickers.split(",") if t]
 
-        scan = full_scan(scope, tickers_list, columns)
+        scan = full_scan(market, tickers_list, columns)
 
         save_json(meta, market_dir / "metainfo.json")
         save_json(scan, market_dir / "scan.json")
@@ -280,8 +280,32 @@ def collect_full(scope: str, tickers: str, outdir: Path) -> None:
 cli.add_command(collect_full, name="collect")
 
 
+@cli.command()
+@click.option(
+    "--indir",
+    type=click.Path(path_type=Path),
+    default="results",
+    show_default=True,
+    help="Directory to store intermediate data",
+)
+@click.option(
+    "--outdir",
+    type=click.Path(path_type=Path),
+    default="specs",
+    show_default=True,
+    help="Directory for YAML specs",
+)
+def build(indir: Path, outdir: Path) -> None:
+    """Collect data and generate specs for all markets."""
+
+    for market in SCOPES:
+        click.echo(f"* {market}")
+        collect_full.callback(market, "AUTO", indir)
+        generate.callback(market, indir, outdir, 1_048_576)
+
+
 @cli.command("generate")
-@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
 @click.option(
     "--indir",
     type=click.Path(path_type=Path),
@@ -303,10 +327,10 @@ cli.add_command(collect_full, name="collect")
     show_default=True,
     help="Maximum YAML size in bytes",
 )
-def generate(scope: str, indir: Path, outdir: Path, max_size: int) -> None:
+def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
     """Generate OpenAPI YAML using collected JSON and TSV."""
 
-    market_dir = indir / scope
+    market_dir = indir / market
     meta_file = market_dir / "metainfo.json"
     scan_file = market_dir / "scan.json"
     status_file = market_dir / "field_status.tsv"
@@ -331,10 +355,10 @@ def generate(scope: str, indir: Path, outdir: Path, max_size: int) -> None:
                 )
     meta = MetaInfoResponse(data=tv_fields)
 
-    yaml_str = generate_yaml(scope, meta, tsv, scan_data, max_size=max_size)
+    yaml_str = generate_yaml(market, meta, tsv, scan_data, max_size=max_size)
 
     outdir.mkdir(parents=True, exist_ok=True)
-    out_file = outdir / f"{scope}.yaml"
+    out_file = outdir / f"{market}.yaml"
     out_file.write_text(yaml_str)
     size_kb = out_file.stat().st_size // 1024
     click.echo(f"\u2713 {out_file.name} {size_kb} KB")
@@ -361,6 +385,50 @@ def validate(spec_file: Path) -> None:
         logger.error("Specification validation failed: %s", exc)
         raise click.ClickException(f"Validation failed: {exc}")
     click.echo("Specification is valid")
+
+
+@cli.command()
+@click.option(
+    "--spec",
+    "spec_file",
+    type=click.Path(path_type=Path),
+    required=True,
+    help="Spec file to preview",
+)
+def preview(spec_file: Path) -> None:
+    """Show table with fields, type, enum and description."""
+
+    try:
+        data = yaml.safe_load(spec_file.read_text())
+    except FileNotFoundError as exc:
+        raise click.ClickException(str(exc))
+    except yaml.YAMLError as exc:
+        raise click.ClickException(str(exc))
+
+    schemas = data.get("components", {}).get("schemas", {})
+    fields_schema = None
+    for key, val in schemas.items():
+        if key.endswith("Fields") and isinstance(val, dict):
+            fields_schema = val
+            break
+    if not fields_schema:
+        raise click.ClickException("Fields schema not found")
+
+    props = fields_schema.get("properties", {})
+    rows = []
+    for name, info in props.items():
+        t = info.get("type")
+        if not t and isinstance(info.get("$ref"), str):
+            ref = info["$ref"].split("/")[-1]
+            t = schemas.get(ref, {}).get("type", ref)
+        enum = ",".join(str(v) for v in info.get("enum", [])) if "enum" in info else ""
+        desc = info.get("description", "")
+        rows.append({"field": name, "type": t or "", "enum": enum, "description": desc})
+    if not rows:
+        raise click.ClickException("No fields found")
+
+    df = pd.DataFrame(rows, columns=["field", "type", "enum", "description"])
+    click.echo(df.to_string(index=False))
 
 
 if __name__ == "__main__":
