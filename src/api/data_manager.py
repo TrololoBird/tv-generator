@@ -4,7 +4,12 @@ from src.models import MetaInfoResponse
 
 
 def build_field_status(meta: MetaInfoResponse, scan: dict) -> pd.DataFrame:
-    """Return status for each field from meta based on scan results."""
+    """Return DataFrame summarizing scan results for each field.
+
+    The returned frame has exactly four columns in this order:
+    ``["field", "tv_type", "status", "sample_value"]``. ``tv_type`` is taken
+    from ``field.t`` in the supplied ``meta`` model.
+    """
     rows = scan.get("data", []) if isinstance(scan, dict) else []
     if not isinstance(rows, list):
         rows = []
