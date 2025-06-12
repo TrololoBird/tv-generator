@@ -7,17 +7,23 @@ from pathlib import Path
 def generate_openapi_spec():
     """Run the CLI generator for the crypto market."""
     meta_file = Path("results/crypto/metainfo.json")
+    scan_file = Path("results/crypto/scan.json")
+    status_file = Path("results/crypto/field_status.tsv")
     if not meta_file.exists():
         meta_file.parent.mkdir(parents=True, exist_ok=True)
         meta = {
             "data": {
                 "fields": [
                     {"name": "close", "type": "integer"},
-                    {"name": "open", "type": "string"},
+                    {"name": "open", "type": "text"},
                 ]
             }
         }
         meta_file.write_text(json.dumps(meta), encoding="utf-8")
+    if not scan_file.exists():
+        scan_file.write_text(json.dumps({"data": []}), encoding="utf-8")
+    if not status_file.exists():
+        status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
 
     try:
         result = subprocess.run(
