@@ -6,6 +6,7 @@ requests_mock
 click>=8.2
 toml>=0.10
 requests_cache>=1.2
+pydantic>=2.7
 types-requests
 types-PyYAML
 types-toml
