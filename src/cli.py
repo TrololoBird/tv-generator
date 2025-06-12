@@ -212,62 +212,96 @@ def summary(payload: str, scope: str) -> None:
     click.echo(json.dumps(data, indent=2))
 
 
-@cli.command()
-@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
-@click.option("--symbols", default="", help="Comma-separated tickers for scan")
+@cli.command(name="collect-full")
 @click.option(
-    "--results-dir",
+    "--scope", "scopes", multiple=True, type=click.Choice(SCOPES), help="Market scope"
+)
+@click.option("--tickers", default="", help="Comma-separated tickers to scan")
+@click.option(
+    "--outdir",
     type=click.Path(path_type=Path),
     default="results",
     show_default=True,
     help="Directory to store results",
 )
-def collect(scope: str, symbols: str, results_dir: Path) -> None:
-    """Fetch metainfo and a sample scan for given scope."""
+@click.option("--server-url", default=None, help="Override TradingView API host")
+def collect_full(
+    scopes: tuple[str, ...], tickers: str, outdir: Path, server_url: str | None
+) -> None:
+    """Fetch metainfo and full scan results for given scopes."""
 
-    api = TradingViewAPI()
-    market_dir = results_dir / scope
-    market_dir.mkdir(parents=True, exist_ok=True)
-    try:
-        meta = api.metainfo(scope, {"query": ""})
-    except (
-        requests.exceptions.RequestException,
-        ValueError,
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Metainfo request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    (market_dir / "metainfo.json").write_text(json.dumps(meta, indent=2))
+    if not scopes:
+        scopes = tuple(SCOPES)
 
-    fields = []
-    for item in meta.get("fields", []):
-        if isinstance(item, dict) and str(item.get("type", "")).lower() == "string":
-            name = item.get("name") or item.get("id")
-            if name:
-                fields.append(str(name))
+    api = TradingViewAPI(base_url=server_url)
+    exit_code = 0
+    for scope in scopes:
+        market_dir = outdir / scope
+        market_dir.mkdir(parents=True, exist_ok=True)
+        error_log = market_dir / "error.log"
+        try:
+            meta = api.metainfo(scope, {"query": ""})
+            (market_dir / "metainfo.json").write_text(json.dumps(meta, indent=2))
 
-    tickers = [s for s in symbols.split(",") if s] or ["AAPL"]
-    payload = build_scan_payload(tickers, fields or ["name"])
-    try:
-        scan_res = api.scan(scope, payload)
-    except (
-        requests.exceptions.RequestException,
-        ValueError,
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Scan request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    (market_dir / "scan.json").write_text(json.dumps(scan_res, indent=2))
+            data_section = meta.get("data", {})
+            fields_data = []
+            if isinstance(data_section, dict) and isinstance(
+                data_section.get("fields"), list
+            ):
+                fields_data = data_section.get("fields")
+            elif isinstance(meta.get("fields"), list):
+                fields_data = meta.get("fields")  # type: ignore[assignment]
 
-    values: list[str | int | float | bool | None] = []
-    if scan_res.get("data"):
-        first = scan_res["data"][0].get("d")
-        if isinstance(first, list):
-            values = first
-    with open(market_dir / "field_status.tsv", "w", encoding="utf-8") as fh:
-        fh.write("field\tstatus\tvalue\n")
-        for idx, field in enumerate(fields):
-            val = values[idx] if idx < len(values) else ""
-            fh.write(f"{field}\tok\t{val}\n")
-    click.echo(f"Data saved to {market_dir}")
+            field_list: list[tuple[str, str]] = []
+            for item in fields_data:
+                if isinstance(item, dict):
+                    name = item.get("name") or item.get("id")
+                    ftype = str(item.get("type", "string")).lower()
+                    if name:
+                        field_list.append((str(name), ftype))
+
+            index_obj = (
+                data_section.get("index", {}) if isinstance(data_section, dict) else {}
+            )
+            names = index_obj.get("names", []) if isinstance(index_obj, dict) else []
+            ticker_list = [s for s in tickers.split(",") if s]
+            if not ticker_list:
+                if isinstance(names, list) and names:
+                    ticker_list = [str(n) for n in names[:10]]
+                else:
+                    ticker_list = ["BTCUSD", "ETHUSD"]
+            payload = {
+                "symbols": {"tickers": ticker_list[:10], "query": {"types": []}},
+                "columns": [f[0] for f in field_list],
+            }
+            scan_res = api.scan(scope, payload)
+            (market_dir / "scan.json").write_text(json.dumps(scan_res, indent=2))
+
+            rows = scan_res.get("data", []) if isinstance(scan_res, dict) else []
+            with open(market_dir / "field_status.tsv", "w", encoding="utf-8") as fh:
+                fh.write("field\ttype\tstatus\tsample_value\n")
+                for idx, (fname, ftype) in enumerate(field_list):
+                    values = []
+                    for row in rows:
+                        dval = row.get("d") if isinstance(row, dict) else None
+                        if isinstance(dval, list) and idx < len(dval):
+                            values.append(dval[idx])
+                        else:
+                            values.append(None)
+                    non_null = [v for v in values if v not in (None, "", [])]
+                    status = "ok" if non_null and len(non_null) == len(values) else "na"
+                    sample = non_null[0] if non_null else ""
+                    fh.write(f"{fname}\t{ftype}\t{status}\t{sample}\n")
+        except Exception as exc:  # pragma: no cover - click handles output
+            exit_code = 1
+            with open(error_log, "a", encoding="utf-8") as efh:
+                efh.write(f"{exc}\n")
+            logger.error("Failed to collect %s: %s", scope, exc)
+    if exit_code:
+        raise click.ClickException("Collection failed")
+
+
+cli.add_command(collect_full, name="collect")
 
 
 @cli.command()
