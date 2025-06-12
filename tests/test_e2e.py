@@ -12,8 +12,8 @@ def test_e2e_collect_and_generate(tmp_path, monkeypatch):
         "data": {
             "fields": [
                 {"name": "field1", "type": "integer"},
-                {"name": "field2", "type": "float"},
-                {"name": "field3", "type": "string"},
+                {"name": "field2", "type": "number"},
+                {"name": "field3", "type": "text"},
                 {"name": "field4", "type": "boolean"},
                 {"name": "field5", "type": "time"},
             ],

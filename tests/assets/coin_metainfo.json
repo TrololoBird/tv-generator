@@ -1,13 +1,13 @@
 {
   "data": {
     "fields": [
-      {"name": "close", "type": "float"},
-      {"name": "open", "type": "float"},
+      {"name": "close", "type": "number"},
+      {"name": "open", "type": "number"},
       {"name": "volume", "type": "integer"},
-      {"name": "exchange", "type": "string"},
+      {"name": "exchange", "type": "text"},
       {"name": "is_hot", "type": "boolean"},
       {"name": "timestamp", "type": "time"},
-      {"name": "deprecated_field", "type": "string", "flags": ["deprecated"]},
+      {"name": "deprecated_field", "type": "text", "flags": ["deprecated"]},
       {"name": "private_field", "type": "integer", "flags": ["private"]}
     ],
     "index": {"names": ["BINANCE:BTCUSDT", "COINBASE:ETHUSD"]}
