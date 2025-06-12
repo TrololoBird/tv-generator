@@ -7,6 +7,8 @@ TV_TYPE_TO_REF: dict[str, str] = {
     "fundamental_price": "#/components/schemas/Num",
     "percent": "#/components/schemas/Num",
     "integer": "#/components/schemas/Num",
+    "float": "#/components/schemas/Num",
+    "string": "#/components/schemas/Str",
     "bool": "#/components/schemas/Bool",
     "boolean": "#/components/schemas/Bool",
     "text": "#/components/schemas/Str",

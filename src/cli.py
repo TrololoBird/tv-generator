@@ -17,8 +17,12 @@ from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
 from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
-from src.generator.openapi_generator import OpenAPIGenerator
+from src.generator.yaml_generator import generate_yaml
+from src.api.data_fetcher import fetch_metainfo, full_scan, save_json
+from src.api.data_manager import build_field_status
+from src.models import TVField, MetaInfoResponse
 from src.constants import SCOPES
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -213,15 +217,8 @@ def summary(payload: str, scope: str) -> None:
     click.echo(json.dumps(data, indent=2))
 
 
-@cli.command(name="collect-full")
-@click.option(
-    "--scope",
-    "scopes",
-    multiple=True,
-    type=click.Choice(SCOPES),
-    help="Market scope",
-)
-@click.option("--tickers", default="", help="Comma-separated tickers to scan")
+@cli.command("collect-full")
+@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
 @click.option(
     "--outdir",
     type=click.Path(path_type=Path),
@@ -229,126 +226,111 @@ def summary(payload: str, scope: str) -> None:
     show_default=True,
     help="Directory to store results",
 )
-@click.option("--server-url", default=None, help="Override TradingView API host")
-@click.pass_context
-def collect_full(
-    ctx: click.Context,
-    scopes: tuple[str, ...],
-    tickers: str,
-    outdir: Path,
-    server_url: str | None,
-) -> None:
-    """Fetch metainfo and full scan results for given scopes."""
+def collect_full(scope: str, outdir: Path) -> None:
+    """Fetch metainfo and scan results saving JSON and TSV."""
 
-    if not scopes:
-        scopes = tuple(SCOPES)
+    market_dir = outdir / scope
+    market_dir.mkdir(parents=True, exist_ok=True)
+    error_log = market_dir / "error.log"
+    try:
+        meta = fetch_metainfo(scope)
 
-    source = ctx.get_parameter_source("tickers")
-    ticker_list = [s for s in tickers.split(",") if s]
-    api = TradingViewAPI(base_url=server_url)
+        fields: list[dict[str, Any]] = []
+        if isinstance(meta.get("data"), dict) and isinstance(
+            meta["data"].get("fields"), list
+        ):
+            fields = list(meta["data"].get("fields", []))
+        elif isinstance(meta.get("fields"), list):
+            fields = list(meta.get("fields", []))
 
-    if not ticker_list:
-        if source == click.core.ParameterSource.COMMANDLINE:
-            raise click.BadParameter("No tickers", param_hint="--tickers")
-        try:
-            meta = api.metainfo(scopes[0] if scopes else SCOPES[0], {"query": ""})
-            index = meta.get("data", {}).get("index", {})
-            names = index.get("names") if isinstance(index, dict) else None
-            if isinstance(names, list):
-                ticker_list = [str(n) for n in names][:10]
-        except Exception as exc:  # pragma: no cover - click handles output
-            logger.error("Failed to fetch default tickers: %s", exc)
-            raise click.ClickException(str(exc))
+        columns: list[str] = []
+        for item in fields:
+            name = item.get("name") or item.get("id")
+            if name:
+                columns.append(str(name))
 
-        if not ticker_list:
-            raise click.BadParameter("No tickers", param_hint="--tickers")
+        index = meta.get("index") or meta.get("data", {}).get("index") or {}
+        names = index.get("names") if isinstance(index, dict) else None
+        tickers = [str(n) for n in names][:10] if isinstance(names, list) else []
 
-    ticker_list = ticker_list[:10]
-    exit_code = 0
-    for scope in scopes:
-        market_dir = outdir / scope
-        market_dir.mkdir(parents=True, exist_ok=True)
-        error_log = market_dir / "error.log"
-        try:
-            meta = api.metainfo(scope, {"query": ""})
-            (market_dir / "metainfo.json").write_text(json.dumps(meta, indent=2))
+        scan = full_scan(scope, tickers, columns)
 
-            data_section = meta.get("data", {})
-            fields_data: list[dict[str, Any]] = []
-            if isinstance(data_section, dict) and isinstance(
-                data_section.get("fields"), list
-            ):
-                fields_data = list(data_section.get("fields", []))
-            elif isinstance(meta.get("fields"), list):
-                fields_data = list(meta.get("fields", []))
+        save_json(meta, market_dir / "metainfo.json")
+        save_json(scan, market_dir / "scan.json")
 
-            field_list: list[tuple[str, str]] = []
-            for item in fields_data:
-                if isinstance(item, dict):
-                    name = item.get("name") or item.get("id")
-                    ftype = str(item.get("type", "string")).lower()
-                    if name:
-                        field_list.append((str(name), ftype))
-
-            payload = {
-                "symbols": {"tickers": ticker_list, "query": {"types": []}},
-                "columns": [f[0] for f in field_list],
-            }
-            scan_res = api.scan(scope, payload)
-            (market_dir / "scan.json").write_text(json.dumps(scan_res, indent=2))
-
-            rows = scan_res.get("data", []) if isinstance(scan_res, dict) else []
-            with open(market_dir / "field_status.tsv", "w", encoding="utf-8") as fh:
-                fh.write("field\ttype\tstatus\tsample_value\n")
-                for idx, (fname, ftype) in enumerate(field_list):
-                    values = []
-                    for row in rows:
-                        dval = row.get("d") if isinstance(row, dict) else None
-                        if isinstance(dval, list) and idx < len(dval):
-                            values.append(dval[idx])
-                        else:
-                            values.append(None)
-                    non_null = [v for v in values if v not in (None, "", [])]
-                    status = "ok" if non_null and len(non_null) == len(values) else "na"
-                    sample = non_null[0] if non_null else ""
-                    fh.write(f"{fname}\t{ftype}\t{status}\t{sample}\n")
-        except Exception as exc:  # pragma: no cover - click handles output
-            exit_code = 1
-            with open(error_log, "a", encoding="utf-8") as efh:
-                efh.write(f"{exc}\n")
-            logger.error("Failed to collect %s: %s", scope, exc)
-    if exit_code:
-        raise click.ClickException("Collection failed")
+        tv_fields = [
+            TVField(name=c, type=str(f.get("type", "string")))
+            for c, f in zip(columns, fields)
+        ]
+        meta_model = MetaInfoResponse(data=tv_fields)
+        df = build_field_status(meta_model, scan)
+        df.to_csv(market_dir / "field_status.tsv", sep="\t", index=False)
+    except Exception as exc:  # pragma: no cover - click handles output
+        error_log.write_text(str(exc))
+        raise click.ClickException(str(exc))
 
 
 cli.add_command(collect_full, name="collect")
 
 
-@cli.command()
-@click.option("--market", required=True, help="Market directory to use")
+@cli.command("generate")
+@click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
 @click.option(
-    "--output",
-    type=click.Path(path_type=Path),
-    required=True,
-    help="Output YAML file",
-)
-@click.option(
-    "--results-dir",
+    "--indir",
     type=click.Path(path_type=Path),
     default="results",
     show_default=True,
-    help="Directory with scan results",
+    help="Input directory",
 )
-def generate(market: str, output: Path, results_dir: Path) -> None:
-    """Generate OpenAPI spec for a market from collected results."""
+@click.option(
+    "--outdir",
+    type=click.Path(path_type=Path),
+    default="specs",
+    show_default=True,
+    help="Directory for YAML specs",
+)
+@click.option(
+    "--max-size",
+    type=int,
+    default=1_048_576,
+    show_default=True,
+    help="Maximum YAML size in bytes",
+)
+def generate(scope: str, indir: Path, outdir: Path, max_size: int) -> None:
+    """Generate OpenAPI YAML using collected JSON and TSV."""
 
-    genr = OpenAPIGenerator(results_dir)
+    market_dir = indir / scope
+    meta_file = market_dir / "metainfo.json"
+    scan_file = market_dir / "scan.json"
+    status_file = market_dir / "field_status.tsv"
+
     try:
-        genr.generate(output, market=market)
-    except (RuntimeError, FileNotFoundError, ValueError) as exc:
-        logger.error("Spec generation failed: %s", exc)
-        raise click.ClickException(f"Failed to generate spec: {exc}")
-    click.echo(f"Specification written to {output}")
+        meta_data = json.loads(meta_file.read_text())
+        json.loads(scan_file.read_text())
+        tsv = pd.read_csv(status_file, sep="\t")
+    except FileNotFoundError as exc:
+        raise click.ClickException(str(exc))
+
+    fields_json = (
+        meta_data.get("fields") or meta_data.get("data", {}).get("fields") or []
+    )
+    tv_fields = []
+    for f in fields_json:
+        if isinstance(f, dict):
+            name = f.get("name") or f.get("id")
+            if name is not None:
+                tv_fields.append(
+                    TVField(name=str(name), type=str(f.get("type", "string")))
+                )
+    meta = MetaInfoResponse(data=tv_fields)
+
+    yaml_str = generate_yaml(scope, meta, tsv, max_size=max_size)
+
+    outdir.mkdir(parents=True, exist_ok=True)
+    out_file = outdir / f"{scope}.yaml"
+    out_file.write_text(yaml_str)
+    size_kb = out_file.stat().st_size // 1024
+    click.echo(f"\u2713 {out_file.name} {size_kb} KB")
 
 
 @cli.command()

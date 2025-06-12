@@ -1,16 +1,12 @@
 from pathlib import Path
 
 from click.testing import CliRunner
-import respx
-import httpx
 import yaml
 from openapi_spec_validator import validate_spec
 
 from src.cli import cli
-from src.api.tradingview_api import TradingViewAPI
 
 
-@respx.mock
 def test_e2e_collect_and_generate(tmp_path, monkeypatch):
     meta = {
         "data": {
@@ -31,17 +27,8 @@ def test_e2e_collect_and_generate(tmp_path, monkeypatch):
         ]
     }
 
-    respx.post("https://scanner.tradingview.com/crypto/metainfo").respond(
-        200, json=meta
-    )
-    respx.get("https://scanner.tradingview.com/crypto/scan").respond(200, json=scan)
-
-    def fake_init(self, session=None, base_url=None, timeout=10, cache=None):
-        self.session = httpx.Client()
-        self.base_url = base_url or TradingViewAPI.BASE_URL
-        self.timeout = timeout
-
-    monkeypatch.setattr(TradingViewAPI, "__init__", fake_init)
+    monkeypatch.setattr("src.cli.fetch_metainfo", lambda scope: meta)
+    monkeypatch.setattr("src.cli.full_scan", lambda scope, tickers, columns: scan)
 
     runner = CliRunner()
     with runner.isolated_filesystem():
@@ -56,16 +43,16 @@ def test_e2e_collect_and_generate(tmp_path, monkeypatch):
         assert (market_dir / "scan.json").exists()
         assert (market_dir / "field_status.tsv").exists()
 
-        spec_file = Path("tmp_spec.yaml")
+        spec_file = out_dir / "crypto.yaml"
         result = runner.invoke(
             cli,
             [
                 "generate",
-                "--market",
+                "--scope",
                 "crypto",
-                "--output",
-                str(spec_file),
-                "--results-dir",
+                "--indir",
+                str(out_dir),
+                "--outdir",
                 str(out_dir),
             ],
         )
