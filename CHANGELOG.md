@@ -1,4 +1,6 @@
 # Changelog
+## 0.8.29
+- Version bump
 ## 0.8.28
 - Added full-field generation, Pydantic validation, etc.
 ## 0.8.27
