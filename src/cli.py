@@ -313,7 +313,7 @@ def generate(scope: str, indir: Path, outdir: Path, max_size: int) -> None:
 
     try:
         meta_data = json.loads(meta_file.read_text())
-        json.loads(scan_file.read_text())
+        scan_data = json.loads(scan_file.read_text())
         tsv = pd.read_csv(status_file, sep="\t")
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
@@ -331,7 +331,7 @@ def generate(scope: str, indir: Path, outdir: Path, max_size: int) -> None:
                 )
     meta = MetaInfoResponse(data=tv_fields)
 
-    yaml_str = generate_yaml(scope, meta, tsv, max_size=max_size)
+    yaml_str = generate_yaml(scope, meta, tsv, scan_data, max_size=max_size)
 
     outdir.mkdir(parents=True, exist_ok=True)
     out_file = outdir / f"{scope}.yaml"

@@ -2,14 +2,15 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Crypto API
-  version: 1.0.1
+  version: 1.0.2
 servers:
   - url: https://scanner.tradingview.com
 paths:
   /crypto/scan:
     post:
-      summary: Scan crypto
-      description: Scan crypto
+      summary: Scan crypto market data
+      description: 'Send a CryptoScanRequest payload and receive a CryptoScanResponse.
+        The response contains fields defined in #/components/schemas/CryptoFields.'
       operationId: CryptoScan
       x-openai-isConsequential: false
       requestBody:
@@ -30,8 +31,9 @@ paths:
           description: Server Error
   /crypto/search:
     post:
-      summary: Search crypto
-      description: Search crypto
+      summary: Search crypto market data
+      description: 'Send a CryptoSearchRequest payload and receive a CryptoSearchResponse.
+        The response contains fields defined in #/components/schemas/CryptoFields.'
       operationId: CryptoSearch
       x-openai-isConsequential: false
       requestBody:
@@ -52,8 +54,9 @@ paths:
           description: Server Error
   /crypto/history:
     post:
-      summary: History crypto
-      description: History crypto
+      summary: History crypto market data
+      description: 'Send a CryptoHistoryRequest payload and receive a CryptoHistoryResponse.
+        The response contains fields defined in #/components/schemas/CryptoFields.'
       operationId: CryptoHistory
       x-openai-isConsequential: false
       requestBody:
@@ -74,8 +77,9 @@ paths:
           description: Server Error
   /crypto/summary:
     post:
-      summary: Summary crypto
-      description: Summary crypto
+      summary: Summary crypto market data
+      description: 'Send a CryptoSummaryRequest payload and receive a CryptoSummaryResponse.
+        The response contains fields defined in #/components/schemas/CryptoFields.'
       operationId: CryptoSummary
       x-openai-isConsequential: false
       requestBody:
@@ -97,7 +101,7 @@ paths:
   /crypto/metainfo:
     post:
       summary: Get crypto metainfo
-      description: Get crypto metainfo
+      description: Returns the list of available fields for crypto.
       operationId: CryptoMetainfo
       x-openai-isConsequential: false
       responses:
@@ -130,8 +134,10 @@ components:
       properties:
         close:
           $ref: '#/components/schemas/Num'
+          description: Close
         open:
           $ref: '#/components/schemas/Str'
+          description: Open
     CryptoScanRequest:
       type: object
       properties:
