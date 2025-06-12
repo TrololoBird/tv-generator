@@ -84,3 +84,12 @@ def test_generate_missing_market_dir(tmp_path: Path) -> None:
     out = tmp_path / "spec.yaml"
     with pytest.raises(FileNotFoundError):
         gen.generate(out, market="crypto")
+
+
+def test_render(tmp_path: Path) -> None:
+    market_dir = tmp_path / "results" / "crypto"
+    _create_metainfo(market_dir / "metainfo.json")
+    gen = OpenAPIGenerator(tmp_path / "results")
+    yaml_str = gen.render("crypto")
+    data = yaml.safe_load(yaml_str)
+    assert "/crypto/scan" in data["paths"]

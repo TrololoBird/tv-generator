@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from pydantic import BaseModel, Field
 
@@ -37,9 +37,9 @@ class MetaInfoResponse(TVBaseModel):
             if fields_json is None:
                 fields_json = obj.get("fields")
             if isinstance(fields_json, list):
-                fields = [TVField.parse_obj(f) for f in fields_json]
+                fields = [cast(TVField, TVField.parse_obj(f)) for f in fields_json]
                 return cls(data=fields)
-        return super().parse_obj(obj)
+        return cast(MetaInfoResponse, super().parse_obj(obj))
 
     @property
     def fields(self) -> list[TVField]:
