@@ -18,7 +18,7 @@ def test_generate_yaml() -> None:
     meta = _sample_meta()
     tsv = pd.DataFrame(columns=["field", "tv_type", "status", "sample_value"])
     with mock.patch("toml.load", return_value={"project": {"version": "1.2.3"}}):
-        yaml_str = generate_yaml("crypto", meta, tsv)
+        yaml_str = generate_yaml("crypto", meta, tsv, None)
     data = yaml.safe_load(yaml_str)
     assert data["info"]["version"] == "1.2.3"
     assert "/crypto/scan" in data["paths"]
@@ -41,4 +41,4 @@ def test_generate_yaml_size_limit() -> None:
     tsv = pd.DataFrame()
     with mock.patch("toml.load", return_value={"project": {"version": "1.0"}}):
         with pytest.raises(RuntimeError):
-            generate_yaml("crypto", meta, tsv, max_size=10)
+            generate_yaml("crypto", meta, tsv, None, max_size=10)
