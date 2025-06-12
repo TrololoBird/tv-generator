@@ -1,12 +1,15 @@
 {
   "data": {
     "fields": [
-      {"name": "field1", "type": "integer"},
-      {"name": "field2", "type": "float"},
-      {"name": "field3", "type": "string", "flags": ["deprecated"]},
-      {"name": "field4", "type": "boolean"},
-      {"name": "field5", "type": "time", "flags": ["private"]}
+      {"name": "close", "type": "float"},
+      {"name": "open", "type": "float"},
+      {"name": "volume", "type": "integer"},
+      {"name": "exchange", "type": "string"},
+      {"name": "is_hot", "type": "boolean"},
+      {"name": "timestamp", "type": "time"},
+      {"name": "deprecated_field", "type": "string", "flags": ["deprecated"]},
+      {"name": "private_field", "type": "integer", "flags": ["private"]}
     ],
-    "index": {"names": ["AAA", "BBB"]}
+    "index": {"names": ["BINANCE:BTCUSDT", "COINBASE:ETHUSD"]}
   }
 }

@@ -1,0 +1,50 @@
+openapi: 3.1.0
+info:
+  title: Example Coin API
+  version: 0.1.0
+servers:
+  - url: https://scanner.tradingview.com
+paths:
+  /coin/scan:
+    post:
+      summary: Scan coin market
+      operationId: CoinScan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoinScanRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoinScanResponse'
+components:
+  schemas:
+    CoinFields:
+      type: object
+      properties:
+        close:
+          type: number
+        open:
+          type: number
+        volume:
+          type: integer
+        exchange:
+          type: string
+        is_hot:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+    CoinScanRequest:
+      type: object
+    CoinScanResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CoinFields'
