@@ -1,10 +1,10 @@
 # Changelog
 ## [1.0.0] – 2025-06-12
 ### Added
-* Daily multi-market pipeline (collect-full / generate)
-* OpenAPI 3.1 generation with GPT-Builder extensions
+* Daily multi-market pipeline (`collect-full` / `generate`)
+* OpenAPI 3.1 generation with GPT Builder extensions
 ### Fixed
-* Size-limit guard < 1 MB
+* Size-limit guard (< 1 MB)
 ## 0.8.40
 - Version bump
 ## 0.8.39
