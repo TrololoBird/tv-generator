@@ -14,7 +14,11 @@ def build_scan_payload(
     """Return a scan payload for the given symbols and columns."""
 
     symbols_list = list(symbols)
-    columns_list = list(columns)
+
+    def _normalize(col: str) -> str:
+        return col[:-3] if col.endswith("|1D") else col
+
+    columns_list = [_normalize(c) for c in columns]
 
     if not symbols_list:
         raise ValueError("symbols list cannot be empty")

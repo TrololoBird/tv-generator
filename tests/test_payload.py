@@ -63,3 +63,8 @@ def test_build_scan_payload_duplicate_columns():
     with pytest.raises(ValueError) as exc:
         build_scan_payload(["A"], ["close", "close"])
     assert "contains duplicates" in str(exc.value)
+
+
+def test_build_scan_payload_strip_1d():
+    payload = build_scan_payload(["A"], ["ADX+DI[1]|1D", "close"])
+    assert payload["columns"] == ["ADX+DI[1]", "close"]

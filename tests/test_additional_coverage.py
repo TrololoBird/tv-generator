@@ -31,7 +31,9 @@ def test_choose_tickers_with_scan_and_model() -> None:
     fields = [TVField(name="s", type="string")]
     scan = {"data": [{"s": "AAA", "d": ["TICK"]}]}
     meta = MetaInfoResponse(data=fields)
-    result = choose_tickers({"fields": [f.model_dump(by_alias=True) for f in meta.data], "scan": scan})
+    result = choose_tickers(
+        {"fields": [f.model_dump(by_alias=True) for f in meta.data], "scan": scan}
+    )
     assert result == ["TICK"]
 
 
