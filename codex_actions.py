@@ -6,7 +6,6 @@ from pathlib import Path
 
 def generate_openapi_spec():
     """Run the CLI generator for the crypto market."""
-    spec_file = Path("specs/crypto.yaml")
     meta_file = Path("results/crypto/metainfo.json")
     if not meta_file.exists():
         meta_file.parent.mkdir(parents=True, exist_ok=True)
@@ -25,10 +24,12 @@ def generate_openapi_spec():
             [
                 "tvgen",
                 "generate",
-                "--market",
+                "--scope",
                 "crypto",
-                "--output",
-                str(spec_file),
+                "--indir",
+                "results",
+                "--outdir",
+                "specs",
             ],
             check=True,
             capture_output=True,

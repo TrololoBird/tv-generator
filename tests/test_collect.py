@@ -1,48 +1,34 @@
 from click.testing import CliRunner
+from pathlib import Path
 
 from src.cli import cli
-from src.api.tradingview_api import TradingViewAPI
 
 
-def test_collect_no_tickers(monkeypatch):
+def test_collect_full(monkeypatch):
     runner = CliRunner()
 
-    def fake_meta(self, scope, payload):
-        return {"data": {"fields": [], "index": {"names": []}}}
+    meta = {
+        "fields": [{"name": "c1", "type": "integer"}],
+        "index": {"names": ["AAA", "BBB"]},
+    }
+    scan_args = {}
 
-    def fake_scan(self, scope, payload):
+    monkeypatch.setattr("src.cli.fetch_metainfo", lambda scope: meta)
+
+    def fake_scan(scope, tickers, columns):
+        scan_args["tickers"] = tickers
+        scan_args["columns"] = columns
         return {"data": []}
 
-    monkeypatch.setattr(TradingViewAPI, "metainfo", fake_meta)
-    monkeypatch.setattr(TradingViewAPI, "scan", fake_scan)
+    monkeypatch.setattr("src.cli.full_scan", fake_scan)
+    monkeypatch.setattr("src.cli.save_json", lambda d, p: Path(p).write_text("{}"))
 
     with runner.isolated_filesystem():
-        result = runner.invoke(
-            cli,
-            ["collect-full", "--scope", "crypto", "--tickers", ""],
-        )
-        assert result.exit_code == 2
-        assert "No tickers" in result.output
-
-
-def test_collect_custom_tickers(monkeypatch):
-    runner = CliRunner()
-    payload_holder = {}
-
-    def fake_meta(self, scope, payload):
-        return {"data": {"fields": [], "index": {"names": []}}}
-
-    def fake_scan(self, scope, payload):
-        payload_holder["payload"] = payload
-        return {"data": []}
-
-    monkeypatch.setattr(TradingViewAPI, "metainfo", fake_meta)
-    monkeypatch.setattr(TradingViewAPI, "scan", fake_scan)
-
-    with runner.isolated_filesystem():
-        result = runner.invoke(
-            cli,
-            ["collect-full", "--scope", "crypto", "--tickers", "A,B"],
-        )
+        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
         assert result.exit_code == 0
-        assert payload_holder["payload"]["symbols"]["tickers"] == ["A", "B"]
+        assert scan_args["tickers"] == ["AAA", "BBB"]
+        assert scan_args["columns"] == ["c1"]
+        market_dir = Path("results/crypto")
+        assert (market_dir / "metainfo.json").exists()
+        assert (market_dir / "scan.json").exists()
+        assert (market_dir / "field_status.tsv").exists()
