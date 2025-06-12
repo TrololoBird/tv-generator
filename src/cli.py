@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 import click
 import yaml
@@ -244,13 +245,13 @@ def collect_full(
             (market_dir / "metainfo.json").write_text(json.dumps(meta, indent=2))
 
             data_section = meta.get("data", {})
-            fields_data = []
+            fields_data: list[dict[str, Any]] = []
             if isinstance(data_section, dict) and isinstance(
                 data_section.get("fields"), list
             ):
-                fields_data = data_section.get("fields")
+                fields_data = list(data_section.get("fields", []))
             elif isinstance(meta.get("fields"), list):
-                fields_data = meta.get("fields")  # type: ignore[assignment]
+                fields_data = list(meta.get("fields", []))
 
             field_list: list[tuple[str, str]] = []
             for item in fields_data:

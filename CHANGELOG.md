@@ -1,4 +1,6 @@
 # Changelog
+## 0.8.24
+- Version bump
 ## 0.8.23
 - Version bump
 ## 0.8.22
