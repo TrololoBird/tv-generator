@@ -36,6 +36,20 @@ Strict type checking requires Python type stubs for third-party libraries:
 pip install types-requests types-PyYAML types-toml
 ```
 
+### Docker
+
+```bash
+docker build -t tvgen .
+docker run --rm tvgen --version
+```
+
+### Примеры collect-full/generate
+
+```bash
+tvgen collect-full --scope crypto --tickers BTCUSD,ETHUSD
+tvgen generate --market crypto --output specs/openapi_crypto.yaml
+```
+
 ## Running
 
 Scan a market:
@@ -133,3 +147,14 @@ openapi-spec-validator specs/openapi_crypto.yaml
 ```
 
 Ensure all commands succeed locally to avoid pipeline failures.
+
+## Интеграция с GPT Builder Custom Action
+
+1. Сгенерируйте YAML спецификацию командой:
+   ```bash
+   tvgen generate --market crypto --output openapi_crypto.yaml
+   ```
+2. Откройте GPT Builder и выберите **Import from OpenAPI**.
+3. Загрузите полученный `openapi_crypto.yaml` и подтвердите импорт.
+
+После этого действия TradingView API будет доступен как кастомный action в вашем GPT.

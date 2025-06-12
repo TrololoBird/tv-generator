@@ -393,7 +393,9 @@ def test_collect_full_alias(tv_api_mock):
     runner = CliRunner()
     _mock_collect_api(tv_api_mock)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--scope", "crypto", "--tickers", "AAA,BBB"])
+        result = runner.invoke(
+            cli, ["collect", "--scope", "crypto", "--tickers", "AAA,BBB"]
+        )
         assert result.exit_code == 0
 
 

@@ -215,7 +215,11 @@ def summary(payload: str, scope: str) -> None:
 
 @cli.command(name="collect-full")
 @click.option(
-    "--scope", "scopes", multiple=True, type=click.Choice(SCOPES), help="Market scope"
+    "--scope",
+    "scopes",
+    multiple=True,
+    type=click.Choice(SCOPES),
+    help="Market scope",
 )
 @click.option("--tickers", default="", help="Comma-separated tickers to scan")
 @click.option(
@@ -226,20 +230,40 @@ def summary(payload: str, scope: str) -> None:
     help="Directory to store results",
 )
 @click.option("--server-url", default=None, help="Override TradingView API host")
+@click.pass_context
 def collect_full(
-    scopes: tuple[str, ...], tickers: str, outdir: Path, server_url: str | None
+    ctx: click.Context,
+    scopes: tuple[str, ...],
+    tickers: str,
+    outdir: Path,
+    server_url: str | None,
 ) -> None:
     """Fetch metainfo and full scan results for given scopes."""
 
     if not scopes:
         scopes = tuple(SCOPES)
 
+    source = ctx.get_parameter_source("tickers")
     ticker_list = [s for s in tickers.split(",") if s]
-    if not ticker_list:
-        raise click.BadParameter("No tickers", param_hint="--tickers")
-    ticker_list = ticker_list[:10]
-
     api = TradingViewAPI(base_url=server_url)
+
+    if not ticker_list:
+        if source == click.core.ParameterSource.COMMANDLINE:
+            raise click.BadParameter("No tickers", param_hint="--tickers")
+        try:
+            meta = api.metainfo(scopes[0] if scopes else SCOPES[0], {"query": ""})
+            index = meta.get("data", {}).get("index", {})
+            names = index.get("names") if isinstance(index, dict) else None
+            if isinstance(names, list):
+                ticker_list = [str(n) for n in names][:10]
+        except Exception as exc:  # pragma: no cover - click handles output
+            logger.error("Failed to fetch default tickers: %s", exc)
+            raise click.ClickException(str(exc))
+
+        if not ticker_list:
+            raise click.BadParameter("No tickers", param_hint="--tickers")
+
+    ticker_list = ticker_list[:10]
     exit_code = 0
     for scope in scopes:
         market_dir = outdir / scope
