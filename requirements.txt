@@ -10,4 +10,3 @@ pydantic>=2.7
 types-requests
 types-PyYAML
 types-toml
-respx
