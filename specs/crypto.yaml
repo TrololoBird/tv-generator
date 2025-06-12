@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Scanner API
-  version: 0.8.27
+  version: 0.8.28
   description: Auto-generated from collected field data.
 servers:
   - url: https://scanner.tradingview.com
