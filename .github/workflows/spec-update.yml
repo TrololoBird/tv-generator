@@ -106,3 +106,40 @@ jobs:
           #   with:
           #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
           #     msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'
+
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-root
+          poetry run pip install pytest-cov
+
+      - name: Ruff (lint/fix check)
+        run: poetry run ruff check .
+
+      - name: Black (format check)
+        run: poetry run black --check .
+
+      - name: Pytest with coverage
+        run: poetry run pytest --cov=src --cov-report=xml -q
+
+      - name: Upload coverage to Codecov
+        if: ${{ env.CODECOV_TOKEN != '' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          pip install codecov
+          codecov -t $CODECOV_TOKEN
