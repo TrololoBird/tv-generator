@@ -18,7 +18,7 @@ from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
 from src.generator.yaml_generator import generate_yaml
-from src.api.data_fetcher import fetch_metainfo, full_scan, save_json
+from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
 from src.constants import SCOPES
@@ -220,13 +220,19 @@ def summary(payload: str, scope: str) -> None:
 @cli.command("collect-full")
 @click.option("--scope", required=True, type=click.Choice(SCOPES), help="Market scope")
 @click.option(
+    "--tickers",
+    default="AUTO",
+    show_default=True,
+    help='Comma-separated tickers or "AUTO"',
+)
+@click.option(
     "--outdir",
     type=click.Path(path_type=Path),
     default="results",
     show_default=True,
     help="Directory to store results",
 )
-def collect_full(scope: str, outdir: Path) -> None:
+def collect_full(scope: str, tickers: str, outdir: Path) -> None:
     """Fetch metainfo and scan results saving JSON and TSV."""
 
     market_dir = outdir / scope
@@ -249,11 +255,12 @@ def collect_full(scope: str, outdir: Path) -> None:
             if name:
                 columns.append(str(name))
 
-        index = meta.get("index") or meta.get("data", {}).get("index") or {}
-        names = index.get("names") if isinstance(index, dict) else None
-        tickers = [str(n) for n in names][:10] if isinstance(names, list) else []
+        if tickers == "AUTO":
+            tickers_list = choose_tickers(meta)
+        else:
+            tickers_list = [t for t in tickers.split(",") if t]
 
-        scan = full_scan(scope, tickers, columns)
+        scan = full_scan(scope, tickers_list, columns)
 
         save_json(meta, market_dir / "metainfo.json")
         save_json(scan, market_dir / "scan.json")

@@ -62,3 +62,24 @@ def test_generate_to_specs_dir() -> None:
         spec_file = Path("specs/coin.yaml")
         assert spec_file.exists()
         assert spec_file.stat().st_size < 1_048_576
+
+
+def test_collect_full_auto_tickers(monkeypatch) -> None:
+    runner = CliRunner()
+
+    meta = json.loads((ASSETS / "coin_metainfo.json").read_text())
+    sent: dict[str, list[str]] = {}
+
+    monkeypatch.setattr("src.cli.fetch_metainfo", lambda scope: meta)
+
+    def fake_scan(scope: str, tickers: list[str], columns: list[str]) -> dict:
+        sent["tickers"] = tickers
+        return {"data": []}
+
+    monkeypatch.setattr("src.cli.full_scan", fake_scan)
+    monkeypatch.setattr("src.cli.save_json", lambda d, p: Path(p).write_text("{}"))
+
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["collect-full", "--scope", "coin"])
+        assert result.exit_code == 0, result.output
+        assert len(sent["tickers"]) <= 10
