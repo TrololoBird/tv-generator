@@ -49,7 +49,7 @@ jobs:
           if [ -n "$SERVER_URL" ]; then
             extra="--server-url $SERVER_URL"
           fi
-          poetry run tvgen collect-full --outdir results $extra
+          poetry run tvgen collect-full --outdir results "$extra"
       - name: Generate specs for all markets
         run: |
           extra=""
@@ -57,7 +57,7 @@ jobs:
             extra="--server-url $SERVER_URL"
           fi
           for market in crypto forex stocks futures; do
-            tvgen generate --market $market --output specs/openapi_${market}.yaml $extra  # yamllint disable-line rule:line-length
+            tvgen generate --market $market --output specs/openapi_${market}.yaml "$extra"  # yamllint disable-line rule:line-length
           done
       - name: Validate all generated specs
         run: |
