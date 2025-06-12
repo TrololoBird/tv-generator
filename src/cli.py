@@ -20,7 +20,7 @@ from src.utils.payload import build_scan_payload
 from src.generator.yaml_generator import generate_yaml
 from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 from src.api.data_manager import build_field_status
-from src.models import TVField, MetaInfoResponse
+from src.models import TVField, MetaInfoResponse, ScanResponse
 from src.constants import SCOPES
 import pandas as pd
 
@@ -341,6 +341,10 @@ def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
         tsv = pd.read_csv(status_file, sep="\t")
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
+
+    # Validate TradingView JSON
+    MetaInfoResponse.parse_obj(meta_data)
+    ScanResponse.parse_obj(scan_data)
 
     fields_json = (
         meta_data.get("fields") or meta_data.get("data", {}).get("fields") or []

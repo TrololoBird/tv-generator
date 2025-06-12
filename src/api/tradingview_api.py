@@ -7,6 +7,7 @@ from requests.adapters import HTTPAdapter, Retry
 import requests_cache
 
 from src.constants import SCOPES
+from src.models import MetaInfoResponse, ScanResponse
 
 logger = logging.getLogger(__name__)
 
@@ -90,12 +91,16 @@ class TradingViewAPI:
         return f"{self.base_url}/{scope}/{endpoint}"
 
     def scan(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Send GET /{scope}/scan and return JSON."""
-        return self._request(scope, "scan", "GET", payload)
+        """Send GET /{scope}/scan and return JSON validated by ``ScanResponse``."""
+        data = self._request(scope, "scan", "GET", payload)
+        ScanResponse.parse_obj(data)
+        return data
 
     def metainfo(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Fetch metainfo for scope."""
-        return self._request(scope, "metainfo", "POST", payload)
+        """Fetch metainfo for scope validated by ``MetaInfoResponse``."""
+        data = self._request(scope, "metainfo", "POST", payload)
+        MetaInfoResponse.parse_obj(data)
+        return data
 
     def search(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """POST /{scope}/search."""

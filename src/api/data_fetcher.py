@@ -3,7 +3,7 @@ from pathlib import Path
 from collections import Counter
 from typing import Any, Dict, List
 
-from src.models import MetaInfoResponse
+from src.models import MetaInfoResponse, ScanResponse
 
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -32,9 +32,11 @@ def fetch_metainfo(
     resp = session.get(url, timeout=30)
     resp.raise_for_status()
     try:
-        return resp.json()
+        data = resp.json()
     except ValueError as exc:  # pragma: no cover - should not happen in tests
         raise ValueError("Invalid JSON received from TradingView") from exc
+    MetaInfoResponse.parse_obj(data)
+    return data
 
 
 def _chunks(seq: List[str], size: int) -> List[List[str]]:
@@ -146,6 +148,7 @@ def full_scan(
             data = resp.json()
         except ValueError as exc:  # pragma: no cover - should not happen in tests
             raise ValueError("Invalid JSON received from TradingView") from exc
+        ScanResponse.parse_obj(data)
         if result is None:
             result = data
         else:
@@ -161,7 +164,9 @@ def full_scan(
                     )
                     if isinstance(dval, list) and isinstance(res_d, list):
                         res_d.extend(dval)
-    return result or {}
+    final = result or {}
+    ScanResponse.parse_obj(final)
+    return final
 
 
 def save_json(data: Dict, path: Path) -> None:

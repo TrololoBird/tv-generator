@@ -1,8 +1,28 @@
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import Any, cast, ClassVar, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, constr, confloat, AliasChoices
+
+# Accepted TradingView field types
+FieldType = Literal[
+    "number",
+    "price",
+    "fundamental_price",
+    "percent",
+    "integer",
+    "float",
+    "string",
+    "bool",
+    "boolean",
+    "text",
+    "map",
+    "set",
+    "interface",
+    "time",
+    "time-yyyymmdd",
+    "array",
+]
 
 
 class TVBaseModel(BaseModel):
@@ -17,8 +37,10 @@ class TVBaseModel(BaseModel):
 class TVField(TVBaseModel):
     """TradingView field description."""
 
-    n: str = Field(alias="name")
-    t: str = Field(alias="type")
+    n: constr(strip_whitespace=True, min_length=1) = Field(alias="name")
+    t: FieldType = Field(alias="type")
+    interval: confloat(gt=0) | None = None
+    description: constr(strip_whitespace=True, min_length=1) | None = None
     flags: list[str] | None = None
 
 
@@ -49,6 +71,7 @@ class MetaInfoResponse(TVBaseModel):
 class ScanItem(TVBaseModel):
     """Single scan item."""
 
+    s: constr(strip_whitespace=True, min_length=1)
     d: list[object]
 
 
@@ -56,6 +79,9 @@ class ScanResponse(TVBaseModel):
     """Response for scan results."""
 
     data: list[ScanItem]
+    count: int | None = Field(
+        default=None, validation_alias=AliasChoices("count", "totalCount")
+    )
 
 
 __all__ = ["TVField", "MetaInfoResponse", "ScanItem", "ScanResponse"]

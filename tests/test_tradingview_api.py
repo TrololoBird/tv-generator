@@ -1,5 +1,6 @@
 import pytest
 import requests
+from pydantic import ValidationError
 from src.api.tradingview_api import TradingViewAPI
 
 
@@ -19,7 +20,7 @@ from src.api.tradingview_api import TradingViewAPI
 def test_scan_and_metainfo(tv_api_mock, scope):
     tv_api_mock.get(
         f"https://scanner.tradingview.com/{scope}/scan",
-        json={"data": []},
+        json={"count": 0, "data": []},
     )
     tv_api_mock.post(
         f"https://scanner.tradingview.com/{scope}/metainfo",
@@ -27,7 +28,7 @@ def test_scan_and_metainfo(tv_api_mock, scope):
     )
 
     api = TradingViewAPI()
-    assert api.scan(scope, {}) == {"data": []}
+    assert api.scan(scope, {}) == {"count": 0, "data": []}
     assert api.metainfo(scope, {"query": ""}) == {"fields": []}
 
     tv_api_mock.post(
@@ -67,6 +68,16 @@ def test_scan_invalid_json(tv_api_mock):
     )
     api = TradingViewAPI()
     with pytest.raises(ValueError):
+        api.scan("crypto", {})
+
+
+def test_scan_invalid_schema(tv_api_mock):
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"foo": "bar"},
+    )
+    api = TradingViewAPI()
+    with pytest.raises(ValidationError):
         api.scan("crypto", {})
 
 

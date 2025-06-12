@@ -18,7 +18,7 @@ def _create_metainfo(path: Path) -> None:
         }
     }
     path.write_text(json.dumps(data))
-    scan = {"data": [{"d": [1, "a"]}]}
+    scan = {"count": 1, "data": [{"s": "AAA", "d": [1, "a"]}]}
     (path.parent / "scan.json").write_text(json.dumps(scan))
     tsv = (
         "field\ttv_type\tstatus\tsample_value\n"
@@ -30,7 +30,10 @@ def _create_metainfo(path: Path) -> None:
 
 def test_cli_scan(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get("https://scanner.tradingview.com/crypto/scan", json={"data": []})
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"count": 0, "data": []},
+    )
     result = runner.invoke(
         cli,
         [
@@ -53,7 +56,7 @@ def test_cli_scan_full_payload(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.get(
         "https://scanner.tradingview.com/crypto/scan",
-        json={"data": []},
+        json={"count": 0, "data": []},
     )
     payload_args = [
         "scan",
@@ -83,7 +86,7 @@ def test_cli_recommend(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
-        json={"data": [{"d": ["buy"]}]},
+        json={"count": 1, "data": [{"s": "AAPL", "d": ["buy"]}]},
     )
     result = runner.invoke(cli, ["recommend", "--symbol", "AAPL"])
     assert result.exit_code == 0
@@ -94,7 +97,7 @@ def test_cli_price(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.get(
         "https://scanner.tradingview.com/stocks/scan",
-        json={"data": [{"d": [1.0]}]},
+        json={"count": 1, "data": [{"s": "AAPL", "d": [1.0]}]},
     )
     result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
     assert result.exit_code == 0
@@ -372,7 +375,13 @@ def _mock_collect_api(monkeypatch) -> None:
         return meta
 
     def fake_scan(scope: str, tickers: list[str], columns: list[str]) -> dict:
-        return {"data": [{"d": [1, "a"]}, {"d": [2, "b"]}]}
+        return {
+            "count": 2,
+            "data": [
+                {"s": tickers[0], "d": [1, "a"]},
+                {"s": tickers[1] if len(tickers) > 1 else tickers[0], "d": [2, "b"]},
+            ],
+        }
 
     monkeypatch.setattr("src.cli.fetch_metainfo", fake_meta)
     monkeypatch.setattr("src.cli.full_scan", fake_scan)

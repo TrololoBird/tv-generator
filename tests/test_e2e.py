@@ -21,10 +21,11 @@ def test_e2e_collect_and_generate(tmp_path, monkeypatch):
         }
     }
     scan = {
+        "count": 2,
         "data": [
-            {"d": [1, 1.1, "a", True, "2024-01-01T00:00:00Z"]},
-            {"d": [2, 2.2, "b", False, "2024-01-02T00:00:00Z"]},
-        ]
+            {"s": "AAA", "d": [1, 1.1, "a", True, "2024-01-01T00:00:00Z"]},
+            {"s": "BBB", "d": [2, 2.2, "b", False, "2024-01-02T00:00:00Z"]},
+        ],
     }
 
     monkeypatch.setattr("src.cli.fetch_metainfo", lambda scope: meta)
