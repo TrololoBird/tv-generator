@@ -52,6 +52,13 @@ jobs:
           git add results/** specs/coin.yaml
           git commit -m 'chore: update coin spec'
           git push origin "$branch"
-          gh pr create --title 'Update coin spec' --body 'Спецификация обновлена автоматически на основе новых данных с TradingView /metainfo'
+          python - <<'PY'
+          from codex_actions import create_pull_request
+
+          create_pull_request(
+              title="Update coin spec",
+              body="Спецификация обновлена автоматически на основе новых данных с TradingView /metainfo",
+          )
+          PY
       - name: Finish
         run: exit 0
