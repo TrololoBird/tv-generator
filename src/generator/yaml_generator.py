@@ -133,8 +133,8 @@ def generate_yaml(
         "Time": {"type": "string", "format": "date-time"},
         "Array": {"type": "array", "items": {}},
     }
-    for name, schema in base.items():
-        openapi["components"]["schemas"].setdefault(name, schema)
+    for name, base_schema in base.items():
+        openapi["components"]["schemas"].setdefault(name, base_schema)
 
     openapi["components"]["schemas"]["NumericFieldNoTimeframe"] = {
         "type": "string",

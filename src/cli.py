@@ -9,7 +9,7 @@ from typing import Any
 
 import click
 import yaml
-from importlib.metadata import version as pkg_version
+from importlib.metadata import PackageNotFoundError, version as pkg_version
 import requests
 from openapi_spec_validator import validate_spec
 from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
@@ -27,6 +27,12 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
+try:
+    _pkg_version = pkg_version("tv-generator")
+except PackageNotFoundError:  # pragma: no cover - dev environment
+    _pkg_version = "0.0.0"
+
+
 @click.group()
 @click.option(
     "--verbose",
@@ -35,7 +41,7 @@ logger = logging.getLogger(__name__)
     is_flag=True,
     help="Enable debug logging",
 )
-@click.version_option(pkg_version("tv-generator"))
+@click.version_option(_pkg_version)
 def cli(verbose: bool) -> None:
     """TradingView command line utilities."""
     level = logging.DEBUG if verbose else logging.INFO
@@ -265,10 +271,10 @@ def collect_full(market: str, tickers: str, outdir: Path) -> None:
         save_json(meta, market_dir / "metainfo.json")
         save_json(scan, market_dir / "scan.json")
 
-        tv_fields = [
-            TVField(name=c, type=str(f.get("type", "string")))
-            for c, f in zip(columns, fields)
-        ]
+        tv_fields = []
+        for c, f in zip(columns, fields):
+            data = {"name": c, "type": f.get("type", "string")}
+            tv_fields.append(TVField.model_validate(data))
         meta_model = MetaInfoResponse(data=tv_fields)
         df = build_field_status(meta_model, scan)
         df.to_csv(market_dir / "field_status.tsv", sep="\t", index=False)
@@ -300,8 +306,12 @@ def build(indir: Path, outdir: Path) -> None:
 
     for market in SCOPES:
         click.echo(f"* {market}")
-        collect_full.callback(market, "AUTO", indir)
-        generate.callback(market, indir, outdir, 1_048_576)
+        cb_collect = getattr(collect_full, "callback", None)
+        if callable(cb_collect):
+            cb_collect(market, "AUTO", indir)
+        cb_generate = getattr(generate, "callback", None)
+        if callable(cb_generate):
+            cb_generate(market, indir, outdir, 1_048_576)
 
 
 @cli.command("generate")
@@ -354,9 +364,8 @@ def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
         if isinstance(f, dict):
             name = f.get("name") or f.get("id")
             if name is not None:
-                tv_fields.append(
-                    TVField(name=str(name), type=str(f.get("type", "string")))
-                )
+                data = {"name": name, "type": f.get("type", "string")}
+                tv_fields.append(TVField.model_validate(data))
     meta = MetaInfoResponse(data=tv_fields)
 
     yaml_str = generate_yaml(market, meta, tsv, scan_data, max_size=max_size)
