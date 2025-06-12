@@ -46,4 +46,3 @@ def test_collect_custom_tickers(monkeypatch):
         )
         assert result.exit_code == 0
         assert payload_holder["payload"]["symbols"]["tickers"] == ["A", "B"]
-
