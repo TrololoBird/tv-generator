@@ -42,3 +42,17 @@ def test_generate_yaml_size_limit() -> None:
     with mock.patch("toml.load", return_value={"project": {"version": "1.0"}}):
         with pytest.raises(RuntimeError):
             generate_yaml("crypto", meta, tsv, None, max_size=10)
+
+
+def test_numeric_field_components() -> None:
+    fields = [
+        TVField(name="RSI|1D", type="number"),
+        TVField(name="ADX+DI[1]|60", type="number"),
+    ]
+    meta = MetaInfoResponse(data=fields)
+    tsv = pd.DataFrame()
+    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    data = yaml.safe_load(yaml_str)
+    schemas = data["components"]["schemas"]
+    assert schemas["NumericFieldNoTimeframe"]["enum"] == ["RSI"]
+    assert "pattern" in schemas["NumericFieldWithTimeframe"]
