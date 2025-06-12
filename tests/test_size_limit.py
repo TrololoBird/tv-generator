@@ -83,3 +83,12 @@ def test_collect_full_auto_tickers(monkeypatch) -> None:
         result = runner.invoke(cli, ["collect-full", "--market", "coin"])
         assert result.exit_code == 0, result.output
         assert len(sent["tickers"]) <= 10
+
+
+def test_repo_specs_size() -> None:
+    """All repository YAML specs should be under 1 MB."""
+    specs_dir = Path(__file__).resolve().parents[1] / "specs"
+    for spec in specs_dir.glob("*.yaml"):
+        assert (
+            spec.stat().st_size < 1_048_576
+        ), f"{spec.name} is {spec.stat().st_size} bytes, exceeds 1 MB"
