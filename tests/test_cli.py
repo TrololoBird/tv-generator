@@ -375,7 +375,10 @@ def test_collect_full_success(tv_api_mock):
     runner = CliRunner()
     _mock_collect_api(tv_api_mock)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
+        result = runner.invoke(
+            cli,
+            ["collect-full", "--scope", "crypto", "--tickers", "AAA,BBB"],
+        )
         assert result.exit_code == 0
         base = Path("results/crypto")
         assert (base / "metainfo.json").exists()
@@ -390,7 +393,7 @@ def test_collect_full_alias(tv_api_mock):
     runner = CliRunner()
     _mock_collect_api(tv_api_mock)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--scope", "crypto"])
+        result = runner.invoke(cli, ["collect", "--scope", "crypto", "--tickers", "AAA,BBB"])
         assert result.exit_code == 0
 
 
@@ -398,7 +401,10 @@ def test_collect_full_error(tv_api_mock):
     runner = CliRunner()
     tv_api_mock.post("https://scanner.tradingview.com/crypto/metainfo", status_code=500)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
+        result = runner.invoke(
+            cli,
+            ["collect-full", "--scope", "crypto", "--tickers", "AAA,BBB"],
+        )
         assert result.exit_code != 0
         log = Path("results/crypto/error.log").read_text()
         assert log
