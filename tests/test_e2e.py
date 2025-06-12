@@ -1,0 +1,83 @@
+from pathlib import Path
+
+from click.testing import CliRunner
+import respx
+import httpx
+import yaml
+from openapi_spec_validator import validate_spec
+
+from src.cli import cli
+from src.api.tradingview_api import TradingViewAPI
+
+
+@respx.mock
+def test_e2e_collect_and_generate(tmp_path, monkeypatch):
+    meta = {
+        "data": {
+            "fields": [
+                {"name": "field1", "type": "integer"},
+                {"name": "field2", "type": "float"},
+                {"name": "field3", "type": "string"},
+                {"name": "field4", "type": "boolean"},
+                {"name": "field5", "type": "time"},
+            ],
+            "index": {"names": ["AAA", "BBB"]},
+        }
+    }
+    scan = {
+        "data": [
+            {"d": [1, 1.1, "a", True, "2024-01-01T00:00:00Z"]},
+            {"d": [2, 2.2, "b", False, "2024-01-02T00:00:00Z"]},
+        ]
+    }
+
+    respx.post("https://scanner.tradingview.com/crypto/metainfo").respond(
+        200, json=meta
+    )
+    respx.get("https://scanner.tradingview.com/crypto/scan").respond(200, json=scan)
+
+    def fake_init(self, session=None, base_url=None, timeout=10, cache=None):
+        self.session = httpx.Client()
+        self.base_url = base_url or TradingViewAPI.BASE_URL
+        self.timeout = timeout
+
+    monkeypatch.setattr(TradingViewAPI, "__init__", fake_init)
+
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        out_dir = Path("tmp_res")
+        result = runner.invoke(
+            cli,
+            ["collect-full", "--scope", "crypto", "--outdir", str(out_dir)],
+        )
+        assert result.exit_code == 0
+        market_dir = out_dir / "crypto"
+        assert (market_dir / "metainfo.json").exists()
+        assert (market_dir / "scan.json").exists()
+        assert (market_dir / "field_status.tsv").exists()
+
+        spec_file = Path("tmp_spec.yaml")
+        result = runner.invoke(
+            cli,
+            [
+                "generate",
+                "--market",
+                "crypto",
+                "--output",
+                str(spec_file),
+                "--results-dir",
+                str(out_dir),
+            ],
+        )
+        assert result.exit_code == 0
+
+        spec = yaml.safe_load(spec_file.read_text())
+        validate_spec(spec)
+        fields = spec["components"]["schemas"]["CryptoFields"]["properties"]
+        assert set(fields) == {
+            "field1",
+            "field2",
+            "field3",
+            "field4",
+            "field5",
+        }

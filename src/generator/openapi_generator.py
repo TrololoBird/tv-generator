@@ -131,7 +131,6 @@ class OpenAPIGenerator:
                 raise FileNotFoundError(market_path.name)
             market = market_path.name
             fields, field_defs = self.collect_market_fields(market_path)
-            columns = [name for name, _ in fields]
             cap = market.capitalize()
             openapi["paths"][f"/{market}/scan"] = {
                 "post": {
@@ -210,7 +209,10 @@ class OpenAPIGenerator:
                 for idx in range(0, len(fields), 64):
                     part_num = idx // 64 + 1
                     part_name = f"{cap}FieldsPart{part_num}"
-                    props = {name: schema for name, schema in fields[idx : idx + 64]}
+                    props = {
+                        name: schema
+                        for name, schema in fields[idx : idx + 64]  # noqa: E203
+                    }
                     openapi["components"]["schemas"][part_name] = {
                         "type": "object",
                         "properties": props,
