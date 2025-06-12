@@ -344,3 +344,55 @@ def test_cli_validate_invalid_yaml(tmp_path: Path) -> None:
     result = runner.invoke(cli, ["validate", "--spec", str(invalid)])
     assert result.exit_code != 0
     assert result.exception is not None
+
+
+def _mock_collect_api(tv_api_mock) -> None:
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        json={
+            "data": {
+                "fields": [
+                    {"name": "close", "type": "integer"},
+                    {"name": "open", "type": "string"},
+                ],
+                "index": {"names": ["AAA", "BBB"]},
+            }
+        },
+    )
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"data": [{"d": [1, "a"]}, {"d": [2, "b"]}]},
+    )
+
+
+def test_collect_full_success(tv_api_mock):
+    runner = CliRunner()
+    _mock_collect_api(tv_api_mock)
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
+        assert result.exit_code == 0
+        base = Path("results/crypto")
+        assert (base / "metainfo.json").exists()
+        assert (base / "scan.json").exists()
+        status_lines = (base / "field_status.tsv").read_text().splitlines()
+        assert status_lines[0] == "field\ttype\tstatus\tsample_value"
+        assert "close\tinteger\tok\t1" in status_lines[1]
+        assert "open\tstring\tok\ta" in status_lines[2]
+
+
+def test_collect_full_alias(tv_api_mock):
+    runner = CliRunner()
+    _mock_collect_api(tv_api_mock)
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["collect", "--scope", "crypto"])
+        assert result.exit_code == 0
+
+
+def test_collect_full_error(tv_api_mock):
+    runner = CliRunner()
+    tv_api_mock.post("https://scanner.tradingview.com/crypto/metainfo", status_code=500)
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["collect-full", "--scope", "crypto"])
+        assert result.exit_code != 0
+        log = Path("results/crypto/error.log").read_text()
+        assert log
