@@ -6,6 +6,7 @@ import json
 import toml
 
 import yaml
+from src.utils import tv2ref
 
 
 class _IndentedDumper(yaml.SafeDumper):
@@ -46,14 +47,6 @@ class OpenAPIGenerator:
         elif isinstance(meta.get("fields"), list):
             fields_data = list(meta.get("fields", []))
 
-        mapping = {
-            "string": {"type": "string"},
-            "integer": {"type": "integer"},
-            "float": {"type": "number"},
-            "boolean": {"type": "boolean"},
-            "time": {"type": "string", "format": "date-time"},
-        }
-
         ordered_fields: list[tuple[str, Dict[str, Any]]] = []
         field_defs: Dict[str, Dict[str, Any]] = {}
         for item in fields_data:
@@ -63,10 +56,11 @@ class OpenAPIGenerator:
             if not name:
                 continue
             type_name = str(item.get("type", "string")).lower()
-            schema = mapping.get(type_name, {"type": "string"}).copy()
-            desc = item.get("description") or item.get("title") or item.get("short")
-            if desc:
-                schema["description"] = str(desc)
+            try:
+                ref = tv2ref(type_name)
+            except KeyError:
+                ref = "#/components/schemas/Str"
+            schema = {"$ref": ref}
             ordered_fields.append((str(name), schema))
             field_defs[str(name)] = schema
 
@@ -106,7 +100,9 @@ class OpenAPIGenerator:
             "properties": {"fields": {"type": "array", "items": {"type": "string"}}},
         }
 
-    def generate(self, output: Path, market: str | None = None) -> None:
+    def generate(
+        self, output: Path, market: str | None = None, max_size: int = 1_048_576
+    ) -> None:
         openapi: Dict[str, Any] = {
             "openapi": "3.1.0",
             "x-oai-custom-action-schema-version": "v1",
@@ -119,6 +115,14 @@ class OpenAPIGenerator:
             "paths": {},
             "components": {"schemas": {}},
         }
+
+        base = {
+            "Num": {"type": "number"},
+            "Str": {"type": "string"},
+            "Bool": {"type": "boolean"},
+            "Time": {"type": "string", "format": "date-time"},
+        }
+        openapi["components"]["schemas"].update(base)
 
         markets: Iterable[Path]
         if market:
@@ -208,7 +212,7 @@ class OpenAPIGenerator:
                 parts = []
                 for idx in range(0, len(fields), 64):
                     part_num = idx // 64 + 1
-                    part_name = f"{cap}FieldsPart{part_num}"
+                    part_name = f"{cap}FieldsPart{part_num:02d}"
                     props = {
                         name: schema
                         for name, schema in fields[idx : idx + 64]  # noqa: E203
@@ -218,11 +222,15 @@ class OpenAPIGenerator:
                         "properties": props,
                     }
                     parts.append({"$ref": f"#/components/schemas/{part_name}"})
-                openapi["components"]["schemas"][f"{cap}Fields"] = {"allOf": parts}
+                openapi["components"]["schemas"][f"{cap}Fields"] = {
+                    "allOf": parts,
+                    "additionalProperties": False,
+                }
             else:
                 openapi["components"]["schemas"][f"{cap}Fields"] = {
                     "type": "object",
                     "properties": {name: schema for name, schema in fields},
+                    "additionalProperties": False,
                 }
             openapi["components"]["schemas"][f"{cap}ScanRequest"] = {
                 "type": "object",
@@ -274,13 +282,14 @@ class OpenAPIGenerator:
                 }
 
         output.parent.mkdir(parents=True, exist_ok=True)
-        with open(output, "w", encoding="utf-8") as f:
-            yaml.dump(
-                openapi,
-                f,
-                sort_keys=False,
-                indent=2,
-                explicit_start=False,
-                Dumper=_IndentedDumper,
-            )
+        yaml_str = yaml.dump(
+            openapi,
+            sort_keys=False,
+            indent=2,
+            explicit_start=False,
+            Dumper=_IndentedDumper,
+        )
+        if len(yaml_str.encode()) > max_size:
+            raise RuntimeError("YAML size exceeds limit")
+        output.write_text(yaml_str, encoding="utf-8")
         logger.info("OpenAPI spec saved to %s", output)
