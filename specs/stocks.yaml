@@ -1,108 +1,108 @@
 openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
-  title: Unofficial TradingView Crypto API
+  title: Unofficial TradingView Stocks API
   version: 1.0.30
 servers:
   - url: https://scanner.tradingview.com
 paths:
-  /crypto/scan:
+  /stocks/scan:
     post:
-      summary: Scan crypto market data
-      description: 'Send a CryptoScanRequest payload and receive a CryptoScanResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoScan
+      summary: Scan stocks market data
+      description: 'Send a StocksScanRequest payload and receive a StocksScanResponse.
+        The response contains fields defined in #/components/schemas/StocksFields.'
+      operationId: StocksScan
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoScanRequest'
+              $ref: '#/components/schemas/StocksScanRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoScanResponse'
+                $ref: '#/components/schemas/StocksScanResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/search:
+  /stocks/search:
     post:
-      summary: Search crypto market data
-      description: 'Send a CryptoSearchRequest payload and receive a CryptoSearchResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoSearch
+      summary: Search stocks market data
+      description: 'Send a StocksSearchRequest payload and receive a StocksSearchResponse.
+        The response contains fields defined in #/components/schemas/StocksFields.'
+      operationId: StocksSearch
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoSearchRequest'
+              $ref: '#/components/schemas/StocksSearchRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoSearchResponse'
+                $ref: '#/components/schemas/StocksSearchResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/history:
+  /stocks/history:
     post:
-      summary: History crypto market data
-      description: 'Send a CryptoHistoryRequest payload and receive a CryptoHistoryResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoHistory
+      summary: History stocks market data
+      description: 'Send a StocksHistoryRequest payload and receive a StocksHistoryResponse.
+        The response contains fields defined in #/components/schemas/StocksFields.'
+      operationId: StocksHistory
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoHistoryRequest'
+              $ref: '#/components/schemas/StocksHistoryRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoHistoryResponse'
+                $ref: '#/components/schemas/StocksHistoryResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/summary:
+  /stocks/summary:
     post:
-      summary: Summary crypto market data
-      description: 'Send a CryptoSummaryRequest payload and receive a CryptoSummaryResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoSummary
+      summary: Summary stocks market data
+      description: 'Send a StocksSummaryRequest payload and receive a StocksSummaryResponse.
+        The response contains fields defined in #/components/schemas/StocksFields.'
+      operationId: StocksSummary
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoSummaryRequest'
+              $ref: '#/components/schemas/StocksSummaryRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoSummaryResponse'
+                $ref: '#/components/schemas/StocksSummaryResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/metainfo:
+  /stocks/metainfo:
     post:
-      summary: Get crypto metainfo
-      description: Returns the list of available fields for crypto.
-      operationId: CryptoMetainfo
+      summary: Get stocks metainfo
+      description: Returns the list of available fields for stocks.
+      operationId: StocksMetainfo
       x-openai-isConsequential: false
       responses:
         '200':
@@ -110,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoMetainfoResponse'
+                $ref: '#/components/schemas/StocksMetainfoResponse'
         '400':
           description: Bad Request
         '500':
@@ -135,16 +135,13 @@ components:
     NumericFieldWithTimeframe:
       type: string
       pattern: ^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$
-    CryptoFields:
+    StocksFields:
       type: object
       properties:
         close:
           $ref: '#/components/schemas/Num'
           description: Close
-        open:
-          $ref: '#/components/schemas/Str'
-          description: Open
-    CryptoScanRequest:
+    StocksScanRequest:
       type: object
       properties:
         symbols:
@@ -176,26 +173,26 @@ components:
       required:
         - symbols
         - columns
-    CryptoScanResponse:
+    StocksScanResponse:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/CryptoFields'
-    CryptoSearchRequest:
+            $ref: '#/components/schemas/StocksFields'
+    StocksSearchRequest:
       type: object
-    CryptoHistoryRequest:
+    StocksHistoryRequest:
       type: object
-    CryptoSummaryRequest:
+    StocksSummaryRequest:
       type: object
-    CryptoSearchResponse:
+    StocksSearchResponse:
       type: object
-    CryptoHistoryResponse:
+    StocksHistoryResponse:
       type: object
-    CryptoSummaryResponse:
+    StocksSummaryResponse:
       type: object
-    CryptoMetainfoResponse:
+    StocksMetainfoResponse:
       type: object
       properties:
         fields:

@@ -238,43 +238,68 @@ def summary(payload: str, market: str) -> None:
     show_default=True,
     help="Directory to store results",
 )
-def collect_full(market: str, tickers: str, outdir: Path) -> None:
+@click.option(
+    "--offline",
+    is_flag=True,
+    help="Use existing JSON files instead of network requests",
+)
+def collect_full(market: str, tickers: str, outdir: Path, offline: bool) -> None:
     """Fetch metainfo and scan results saving JSON and TSV."""
 
     market_dir = outdir / market
     market_dir.mkdir(parents=True, exist_ok=True)
+    meta_path = market_dir / "metainfo.json"
+    scan_path = market_dir / "scan.json"
     error_log = market_dir / "error.log"
     try:
-        meta = fetch_metainfo(market)
+        offline = offline or (meta_path.exists() and scan_path.exists())
+        if offline:
+            meta = json.loads(meta_path.read_text())
+            scan = (
+                json.loads(scan_path.read_text())
+                if scan_path.exists()
+                else {"data": []}
+            )
+            fields = meta.get("data", {}).get("fields") or meta.get("fields", [])
+        else:
+            meta = fetch_metainfo(market)
 
-        fields: list[dict[str, Any]] = []
-        if isinstance(meta.get("data"), dict) and isinstance(
-            meta["data"].get("fields"), list
-        ):
-            fields = list(meta["data"].get("fields", []))
-        elif isinstance(meta.get("fields"), list):
-            fields = list(meta.get("fields", []))
+            fields: list[dict[str, Any]] = []
+            if isinstance(meta.get("data"), dict) and isinstance(
+                meta["data"].get("fields"), list
+            ):
+                fields = list(meta["data"].get("fields", []))
+            elif isinstance(meta.get("fields"), list):
+                fields = list(meta.get("fields", []))
 
-        columns: list[str] = []
+            columns: list[str] = []
+            for item in fields:
+                name = item.get("name") or item.get("id")
+                if name:
+                    columns.append(str(name))
+
+            if tickers == "AUTO":
+                tickers_list = choose_tickers(meta)
+            else:
+                tickers_list = [t for t in tickers.split(",") if t]
+
+            scan = full_scan(market, tickers_list, columns)
+
+            save_json(meta, meta_path)
+            save_json(scan, scan_path)
+
+        fields = meta.get("data", {}).get("fields") or meta.get("fields", [])
+        tv_fields = []
+        columns = []
         for item in fields:
             name = item.get("name") or item.get("id")
             if name:
                 columns.append(str(name))
-
-        if tickers == "AUTO":
-            tickers_list = choose_tickers(meta)
-        else:
-            tickers_list = [t for t in tickers.split(",") if t]
-
-        scan = full_scan(market, tickers_list, columns)
-
-        save_json(meta, market_dir / "metainfo.json")
-        save_json(scan, market_dir / "scan.json")
-
-        tv_fields = []
-        for c, f in zip(columns, fields):
-            data = {"name": c, "type": f.get("type", "string")}
-            tv_fields.append(TVField.model_validate(data))
+                tv_fields.append(
+                    TVField.model_validate(
+                        {"name": name, "type": item.get("type", "string")}
+                    )
+                )
         meta_model = MetaInfoResponse(data=tv_fields)
         df = build_field_status(meta_model, scan)
         df.to_csv(market_dir / "field_status.tsv", sep="\t", index=False)
@@ -308,14 +333,20 @@ cli.add_command(collect_full, name="collect")
     show_default=True,
     help="Number of parallel workers",
 )
-def build(indir: Path, outdir: Path, workers: int) -> None:
+@click.option(
+    "--offline",
+    is_flag=True,
+    help="Skip data collection if results exist",
+)
+def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
     """Collect data and generate specs for all markets."""
 
     def _process(market: str) -> None:
         click.echo(f"* {market}")
         cb_collect = getattr(collect_full, "callback", None)
         if callable(cb_collect):
-            cb_collect(market, "AUTO", indir)
+            offline_mode = offline or (indir / market / "metainfo.json").exists()
+            cb_collect(market, "AUTO", indir, offline_mode)
         cb_generate = getattr(generate, "callback", None)
         if callable(cb_generate):
             cb_generate(market, indir, outdir, 1_048_576)
