@@ -2,7 +2,12 @@ import yaml
 import pandas as pd
 import pytest
 from unittest import mock
-from src.generator.yaml_generator import generate_yaml
+from src.generator.yaml_generator import (
+    generate_yaml,
+    collect_field_schemas,
+    build_components_schemas,
+    build_paths_section,
+)
 from src.models import MetaInfoResponse, TVField
 
 
@@ -71,3 +76,23 @@ def test_symbol_field_ignored() -> None:
     props = data["components"]["schemas"]["CryptoFields"]["properties"]
     assert "symbol" not in props
     assert "close" in props
+
+
+def test_collect_and_build_components() -> None:
+    fields = [TVField(name="RSI|1D", type="number")]
+    meta = MetaInfoResponse(data=fields)
+    scan = {"data": [{"d": [55]}]}
+    collected, no_tf = collect_field_schemas(meta, scan)
+    assert collected[0][0] == "RSI|1D"
+    assert "description" in collected[0][1]
+    assert no_tf == {"RSI"}
+
+    components = build_components_schemas("Crypto", collected, no_tf)
+    assert "CryptoFields" in components
+    assert "NumericFieldNoTimeframe" in components
+
+
+def test_build_paths_section() -> None:
+    paths = build_paths_section("crypto", "Crypto")
+    assert "/crypto/scan" in paths
+    assert "/crypto/metainfo" in paths
