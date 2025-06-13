@@ -35,19 +35,20 @@ jobs:
       - name: Test with coverage
         run: pytest --cov=src --cov-report=xml --cov-fail-under=95 -q
       - name: Upload coverage to Codecov
-        if: ${{ env.CODECOV_TOKEN != '' }}
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           pip install codecov
           codecov -t $CODECOV_TOKEN
-       - name: Generate specs for all markets
-         run: |
-           for market in crypto forex stocks futures; do
-             mkdir -p results/$market
-             echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > results/$market/field_status.tsv
-             tvgen generate --market $market --outdir specs/openapi_${market}.yaml
-           done
+      - name: Generate specs for all markets
+        run: |
+          mkdir -p specs
+          for market in crypto forex stocks futures; do
+            mkdir -p results/$market
+            echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > results/$market/field_status.tsv
+            tvgen generate --market $market --outdir specs/openapi_${market}.yaml
+          done
 
       - name: Validate all generated specs
         run: |
