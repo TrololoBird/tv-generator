@@ -1,4 +1,6 @@
 # Changelog
+## 1.0.20
+- Version bump
 ## 1.0.19
 - Version bump
 ## 1.0.18
