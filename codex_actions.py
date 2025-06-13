@@ -2,41 +2,28 @@ import subprocess
 import sys
 import json
 from pathlib import Path
+from src.constants import SCOPES
 
 
-def generate_openapi_spec():
-    """Run the CLI generator for the crypto market."""
-    meta_file = Path("results/crypto/metainfo.json")
-    scan_file = Path("results/crypto/scan.json")
-    status_file = Path("results/crypto/field_status.tsv")
-    if not meta_file.exists():
-        meta_file.parent.mkdir(parents=True, exist_ok=True)
-        meta = {
-            "data": {
-                "fields": [
-                    {"name": "close", "type": "integer"},
-                    {"name": "open", "type": "text"},
-                ]
-            }
-        }
-        meta_file.write_text(json.dumps(meta), encoding="utf-8")
-    if not scan_file.exists():
-        scan_file.write_text(json.dumps({"data": []}), encoding="utf-8")
-    if not status_file.exists():
-        status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
+def generate_openapi_spec() -> None:
+    """Run the CLI generator for all markets."""
+
+    for market in SCOPES:
+        meta_file = Path(f"results/{market}/metainfo.json")
+        scan_file = Path(f"results/{market}/scan.json")
+        status_file = Path(f"results/{market}/field_status.tsv")
+        if not meta_file.exists():
+            meta_file.parent.mkdir(parents=True, exist_ok=True)
+            meta = {"data": {"fields": [{"name": "close", "type": "integer"}]}}
+            meta_file.write_text(json.dumps(meta), encoding="utf-8")
+        if not scan_file.exists():
+            scan_file.write_text(json.dumps({"data": []}), encoding="utf-8")
+        if not status_file.exists():
+            status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
 
     try:
         result = subprocess.run(
-            [
-                "tvgen",
-                "generate",
-                "--market",
-                "crypto",
-                "--indir",
-                "results",
-                "--outdir",
-                "specs",
-            ],
+            ["tvgen", "build", "--indir", "results", "--outdir", "specs"],
             check=True,
             capture_output=True,
             text=True,
@@ -51,21 +38,25 @@ def generate_openapi_spec():
         raise
 
 
-def validate_spec():
-    """Validate the generated crypto specification."""
-    try:
-        subprocess.run(
-            ["tvgen", "validate", "--spec", "specs/crypto.yaml"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except FileNotFoundError:
-        print("tvgen command not found", file=sys.stderr)
-        raise
-    except subprocess.CalledProcessError as exc:
-        print(exc.stderr, file=sys.stderr)
-        raise
+def validate_spec() -> None:
+    """Validate all generated specifications."""
+    for market in SCOPES:
+        spec = Path(f"specs/{market}.yaml")
+        if not spec.exists():
+            continue
+        try:
+            subprocess.run(
+                ["tvgen", "validate", "--spec", str(spec)],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except FileNotFoundError:
+            print("tvgen command not found", file=sys.stderr)
+            raise
+        except subprocess.CalledProcessError as exc:
+            print(exc.stderr, file=sys.stderr)
+            raise
 
 
 def run_tests():

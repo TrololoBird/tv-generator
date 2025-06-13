@@ -301,10 +301,17 @@ cli.add_command(collect_full, name="collect")
     show_default=True,
     help="Directory for YAML specs",
 )
-def build(indir: Path, outdir: Path) -> None:
+@click.option(
+    "--workers",
+    type=int,
+    default=1,
+    show_default=True,
+    help="Number of parallel workers",
+)
+def build(indir: Path, outdir: Path, workers: int) -> None:
     """Collect data and generate specs for all markets."""
 
-    for market in SCOPES:
+    def _process(market: str) -> None:
         click.echo(f"* {market}")
         cb_collect = getattr(collect_full, "callback", None)
         if callable(cb_collect):
@@ -312,6 +319,23 @@ def build(indir: Path, outdir: Path) -> None:
         cb_generate = getattr(generate, "callback", None)
         if callable(cb_generate):
             cb_generate(market, indir, outdir, 1_048_576)
+
+    if workers > 1:
+        from concurrent.futures import ThreadPoolExecutor
+
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futures = [ex.submit(_process, m) for m in SCOPES]
+            for f in futures:
+                try:
+                    f.result()
+                except Exception as exc:
+                    raise click.ClickException(str(exc))
+    else:
+        for market in SCOPES:
+            _process(market)
+
+
+cli.add_command(build, name="build-all")
 
 
 @cli.command("generate")

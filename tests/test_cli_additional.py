@@ -139,6 +139,17 @@ def test_build_error(monkeypatch) -> None:
         assert result.exit_code != 0
 
 
+def test_build_parallel(monkeypatch) -> None:
+    runner = CliRunner()
+    _mock_collect_api(monkeypatch)
+    monkeypatch.setattr("src.constants.SCOPES", ["coin", "stocks"])
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["build", "--workers", "2"])
+        assert result.exit_code == 0, result.output
+        assert Path("specs/coin.yaml").exists()
+        assert Path("specs/stocks.yaml").exists()
+
+
 def test_preview() -> None:
     runner = CliRunner()
     with runner.isolated_filesystem():
