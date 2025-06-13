@@ -81,6 +81,8 @@ def generate_yaml(
         flags = set(field.flags or [])
         if {"deprecated", "private"} & flags:
             continue
+        if field.n.lower() in {"symbol", "s"}:
+            continue
         schema: Dict[str, Any] = {"$ref": tv2ref(field.t)}
         schema["description"] = _describe_field(field.n)
 
