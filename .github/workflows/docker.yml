@@ -60,10 +60,10 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            ${{ env.GHCR_REGISTRY }}/${{ github.repository_owner | toLower }}/${{ env.IMAGE_NAME }}:latest
-            ${{ env.GHCR_REGISTRY }}/${{ github.repository_owner | toLower }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
-            ${{ env.GHCR_REGISTRY }}/${{ github.repository_owner | toLower }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          cache-from: type=registry,ref=${{ env.GHCR_REGISTRY }}/${{ github.repository_owner | toLower }}/${{ env.IMAGE_NAME }}:cache
+            ${{ env.GHCR_REGISTRY }}/${{ toLower(github.repository_owner) }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.GHCR_REGISTRY }}/${{ toLower(github.repository_owner) }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+            ${{ env.GHCR_REGISTRY }}/${{ toLower(github.repository_owner) }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.GHCR_REGISTRY }}/${{ toLower(github.repository_owner) }}/${{ env.IMAGE_NAME }}:cache
           cache-to: type=inline
           provenance: false
 
