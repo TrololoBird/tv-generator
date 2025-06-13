@@ -9,13 +9,14 @@ def test_tv2ref_known_types():
         "fundamental_price",
         "percent",
         "integer",
+        "float",
     ]:
         assert tv2ref(t) == "#/components/schemas/Num"
 
     for t in ["bool", "boolean"]:
         assert tv2ref(t) == "#/components/schemas/Bool"
 
-    for t in ["text", "map", "set", "interface"]:
+    for t in ["text", "map", "set", "interface", "string"]:
         assert tv2ref(t) == "#/components/schemas/Str"
 
     for t in ["time", "time-yyyymmdd"]:
