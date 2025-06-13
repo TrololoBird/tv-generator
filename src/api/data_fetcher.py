@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from collections import Counter
 from typing import Any, Dict, List
+from concurrent.futures import ThreadPoolExecutor
 
 from src.models import MetaInfoResponse, ScanResponse
 
@@ -135,15 +136,15 @@ def full_scan(
         meta_json = fetch_metainfo(scope, api_base)
         tickers = choose_tickers(meta_json, limit=10)
 
-    session = _get_session()
     url = f"{api_base.rstrip('/')}/{scope}/scan"
     batches = _chunks(columns, 20)
-    result: dict[str, Any] | None = None
-    for cols in batches:
+
+    def _scan(cols: List[str]) -> Dict[str, Any]:
         payload = {
             "symbols": {"tickers": tickers, "query": {"types": []}},
             "columns": cols,
         }
+        session = _get_session()
         resp = session.post(url, json=payload, timeout=30)
         resp.raise_for_status()
         try:
@@ -151,6 +152,13 @@ def full_scan(
         except ValueError as exc:  # pragma: no cover - should not happen in tests
             raise ValueError("Invalid JSON received from TradingView") from exc
         ScanResponse.parse_obj(data)
+        return data
+
+    result: dict[str, Any] | None = None
+    with ThreadPoolExecutor(max_workers=min(8, len(batches))) as executor:
+        responses = list(executor.map(_scan, batches))
+
+    for data in responses:
         if result is None:
             result = data
         else:
