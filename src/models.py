@@ -4,7 +4,7 @@ from typing import Any, cast, Literal
 
 from typing import Annotated
 
-from pydantic import BaseModel, Field, constr, confloat, AliasChoices, StringConstraints
+from pydantic import BaseModel, Field, constr, confloat, AliasChoices
 
 # Accepted TradingView field types
 FieldType = Literal[
