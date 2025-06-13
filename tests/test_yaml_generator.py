@@ -56,3 +56,18 @@ def test_numeric_field_components() -> None:
     schemas = data["components"]["schemas"]
     assert schemas["NumericFieldNoTimeframe"]["enum"] == ["RSI"]
     assert "pattern" in schemas["NumericFieldWithTimeframe"]
+
+
+def test_symbol_field_ignored() -> None:
+    meta = MetaInfoResponse(
+        data=[
+            TVField(name="symbol", type="string"),
+            TVField(name="close", type="integer"),
+        ]
+    )
+    tsv = pd.DataFrame()
+    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    data = yaml.safe_load(yaml_str)
+    props = data["components"]["schemas"]["CryptoFields"]["properties"]
+    assert "symbol" not in props
+    assert "close" in props
