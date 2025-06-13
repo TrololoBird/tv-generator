@@ -36,5 +36,5 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/tvgen:latest
+          tags: ghcr.io/${{ github.repository_owner | toLower }}/tvgen:latest
           provenance: false
