@@ -22,14 +22,24 @@ def generate_openapi_spec() -> None:
             status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
 
     try:
-        result = subprocess.run(
-            ["tvgen", "build", "--indir", "results", "--outdir", "specs"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        if result.stdout:
-            print(result.stdout)
+        for market in SCOPES:
+            result = subprocess.run(
+                [
+                    "tvgen",
+                    "generate",
+                    "--market",
+                    market,
+                    "--indir",
+                    "results",
+                    "--outdir",
+                    "specs",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            if result.stdout:
+                print(result.stdout)
     except FileNotFoundError:
         print("tvgen command not found", file=sys.stderr)
         raise

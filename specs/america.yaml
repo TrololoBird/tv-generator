@@ -1,108 +1,108 @@
 openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
-  title: Unofficial TradingView Crypto API
+  title: Unofficial TradingView America API
   version: 1.0.30
 servers:
   - url: https://scanner.tradingview.com
 paths:
-  /crypto/scan:
+  /america/scan:
     post:
-      summary: Scan crypto market data
-      description: 'Send a CryptoScanRequest payload and receive a CryptoScanResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoScan
+      summary: Scan america market data
+      description: 'Send a AmericaScanRequest payload and receive a AmericaScanResponse.
+        The response contains fields defined in #/components/schemas/AmericaFields.'
+      operationId: AmericaScan
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoScanRequest'
+              $ref: '#/components/schemas/AmericaScanRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoScanResponse'
+                $ref: '#/components/schemas/AmericaScanResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/search:
+  /america/search:
     post:
-      summary: Search crypto market data
-      description: 'Send a CryptoSearchRequest payload and receive a CryptoSearchResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoSearch
+      summary: Search america market data
+      description: 'Send a AmericaSearchRequest payload and receive a AmericaSearchResponse.
+        The response contains fields defined in #/components/schemas/AmericaFields.'
+      operationId: AmericaSearch
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoSearchRequest'
+              $ref: '#/components/schemas/AmericaSearchRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoSearchResponse'
+                $ref: '#/components/schemas/AmericaSearchResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/history:
+  /america/history:
     post:
-      summary: History crypto market data
-      description: 'Send a CryptoHistoryRequest payload and receive a CryptoHistoryResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoHistory
+      summary: History america market data
+      description: 'Send a AmericaHistoryRequest payload and receive a AmericaHistoryResponse.
+        The response contains fields defined in #/components/schemas/AmericaFields.'
+      operationId: AmericaHistory
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoHistoryRequest'
+              $ref: '#/components/schemas/AmericaHistoryRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoHistoryResponse'
+                $ref: '#/components/schemas/AmericaHistoryResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/summary:
+  /america/summary:
     post:
-      summary: Summary crypto market data
-      description: 'Send a CryptoSummaryRequest payload and receive a CryptoSummaryResponse.
-        The response contains fields defined in #/components/schemas/CryptoFields.'
-      operationId: CryptoSummary
+      summary: Summary america market data
+      description: 'Send a AmericaSummaryRequest payload and receive a AmericaSummaryResponse.
+        The response contains fields defined in #/components/schemas/AmericaFields.'
+      operationId: AmericaSummary
       x-openai-isConsequential: false
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CryptoSummaryRequest'
+              $ref: '#/components/schemas/AmericaSummaryRequest'
       responses:
         '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoSummaryResponse'
+                $ref: '#/components/schemas/AmericaSummaryResponse'
         '400':
           description: Bad Request
         '500':
           description: Server Error
-  /crypto/metainfo:
+  /america/metainfo:
     post:
-      summary: Get crypto metainfo
-      description: Returns the list of available fields for crypto.
-      operationId: CryptoMetainfo
+      summary: Get america metainfo
+      description: Returns the list of available fields for america.
+      operationId: AmericaMetainfo
       x-openai-isConsequential: false
       responses:
         '200':
@@ -110,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CryptoMetainfoResponse'
+                $ref: '#/components/schemas/AmericaMetainfoResponse'
         '400':
           description: Bad Request
         '500':
@@ -135,16 +135,13 @@ components:
     NumericFieldWithTimeframe:
       type: string
       pattern: ^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$
-    CryptoFields:
+    AmericaFields:
       type: object
       properties:
         close:
           $ref: '#/components/schemas/Num'
           description: Close
-        open:
-          $ref: '#/components/schemas/Str'
-          description: Open
-    CryptoScanRequest:
+    AmericaScanRequest:
       type: object
       properties:
         symbols:
@@ -176,26 +173,26 @@ components:
       required:
         - symbols
         - columns
-    CryptoScanResponse:
+    AmericaScanResponse:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/CryptoFields'
-    CryptoSearchRequest:
+            $ref: '#/components/schemas/AmericaFields'
+    AmericaSearchRequest:
       type: object
-    CryptoHistoryRequest:
+    AmericaHistoryRequest:
       type: object
-    CryptoSummaryRequest:
+    AmericaSummaryRequest:
       type: object
-    CryptoSearchResponse:
+    AmericaSearchResponse:
       type: object
-    CryptoHistoryResponse:
+    AmericaHistoryResponse:
       type: object
-    CryptoSummaryResponse:
+    AmericaSummaryResponse:
       type: object
-    CryptoMetainfoResponse:
+    AmericaMetainfoResponse:
       type: object
       properties:
         fields:
