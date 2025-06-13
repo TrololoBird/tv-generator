@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: |
           poetry install --no-interaction --no-root
+      - name: Debug tvgen installation
+        run: |
+          poetry run tvgen --help || echo "tvgen is not installed or not in PATH"
       - name: Collect full data
         run: poetry run tvgen collect-full --scope coin
       - name: Generate spec
