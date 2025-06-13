@@ -35,9 +35,9 @@ jobs:
       - name: Test with coverage
         run: pytest --cov=src --cov-report=xml --cov-fail-under=95 -q
       - name: Upload coverage to Codecov
-        if: ${{ secrets.CODECOV_TOKEN != '' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: ${{ env.CODECOV_TOKEN != '' }}
         run: |
           pip install codecov
           codecov -t $CODECOV_TOKEN
