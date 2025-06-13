@@ -64,7 +64,7 @@ def generate_yaml(
     scope: str,
     meta: MetaInfoResponse,
     _tsv: "pd.DataFrame",
-    scan: dict | None = None,
+    scan: dict[str, Any] | None = None,
     server_url: str = "https://scanner.tradingview.com",
     max_size: int = 1_048_576,
 ) -> str:
