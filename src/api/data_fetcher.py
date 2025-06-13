@@ -25,7 +25,7 @@ def _get_session() -> requests.Session:
 
 def fetch_metainfo(
     scope: str, api_base: str = "https://scanner.tradingview.com"
-) -> Dict:
+) -> Dict[str, Any]:
     """Return metainfo for a given scope using GET request."""
     session = _get_session()
     url = f"{api_base.rstrip('/')}/{scope}/metainfo"
@@ -35,6 +35,8 @@ def fetch_metainfo(
         data = resp.json()
     except ValueError as exc:  # pragma: no cover - should not happen in tests
         raise ValueError("Invalid JSON received from TradingView") from exc
+    if not isinstance(data, dict):
+        raise ValueError("Invalid JSON structure from TradingView")
     MetaInfoResponse.parse_obj(data)
     return data
 
@@ -58,7 +60,7 @@ def choose_tickers(
     if not isinstance(meta, dict):
         meta_dict: Dict[str, Any] = (
             meta.model_dump(exclude_none=False) if hasattr(meta, "model_dump") else {}
-        )  # type: ignore[arg-type]
+        )
     else:
         meta_dict = meta
 
@@ -127,7 +129,7 @@ def full_scan(
     tickers: List[str],
     columns: List[str],
     api_base: str = "https://scanner.tradingview.com",
-) -> Dict:
+) -> Dict[str, Any]:
     """Perform a scan request splitting columns into batches."""
     if tickers == ["AUTO"]:
         meta_json = fetch_metainfo(scope, api_base)
@@ -136,7 +138,7 @@ def full_scan(
     session = _get_session()
     url = f"{api_base.rstrip('/')}/{scope}/scan"
     batches = _chunks(columns, 20)
-    result: Dict | None = None
+    result: dict[str, Any] | None = None
     for cols in batches:
         payload = {
             "symbols": {"tickers": tickers, "query": {"types": []}},
@@ -164,12 +166,12 @@ def full_scan(
                     )
                     if isinstance(dval, list) and isinstance(res_d, list):
                         res_d.extend(dval)
-    final = result or {}
+    final: dict[str, Any] = result or {}
     ScanResponse.parse_obj(final)
     return final
 
 
-def save_json(data: Dict, path: Path) -> None:
+def save_json(data: Dict[str, Any], path: Path) -> None:
     """Save dictionary as pretty JSON to given path."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:

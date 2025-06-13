@@ -3,7 +3,7 @@ from typing import Any
 from src.models import MetaInfoResponse
 
 
-def build_field_status(meta: MetaInfoResponse, scan: dict) -> pd.DataFrame:
+def build_field_status(meta: MetaInfoResponse, scan: dict[str, Any]) -> pd.DataFrame:
     """Return DataFrame summarizing scan results for each field.
 
     The returned frame has exactly four columns in this order:
