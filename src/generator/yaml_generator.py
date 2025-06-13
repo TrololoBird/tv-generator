@@ -60,19 +60,10 @@ def _describe_field(name: str) -> str:
     return _indicator_name(name)
 
 
-def generate_yaml(
-    scope: str,
-    meta: MetaInfoResponse,
-    _tsv: "pd.DataFrame",
-    scan: dict[str, Any] | None = None,
-    server_url: str = "https://scanner.tradingview.com",
-    max_size: int = 1_048_576,
-) -> str:
-    """Return OpenAPI YAML specification for a scope."""
-
-    cap = scope.capitalize()
-    root = Path(__file__).resolve().parents[2]
-    version = toml.load(root / "pyproject.toml")["project"]["version"]
+def collect_field_schemas(
+    meta: MetaInfoResponse, scan: dict[str, Any] | None
+) -> tuple[list[tuple[str, Dict[str, Any]]], set[str]]:
+    """Return field schemas and numeric fields without timeframe."""
 
     fields: list[tuple[str, Dict[str, Any]]] = []
     scan_rows = scan.get("data", []) if isinstance(scan, dict) else []
@@ -86,7 +77,7 @@ def generate_yaml(
         schema: Dict[str, Any] = {"$ref": tv2ref(field.t)}
         schema["description"] = _describe_field(field.n)
 
-        base_name, _, tf = field.n.partition("|")
+        base_name, _, _ = field.n.partition("|")
         if "|" in field.n and base_name in {"RSI", "EMA20"}:
             no_tf_enum.add(base_name)
 
@@ -115,18 +106,15 @@ def generate_yaml(
         fields.append((field.n, schema))
 
     fields.sort(key=lambda x: x[0])
+    return fields, no_tf_enum
 
-    openapi: Dict[str, Any] = {
-        "openapi": "3.1.0",
-        "x-oai-custom-action-schema-version": "v1",
-        "info": {
-            "title": f"Unofficial TradingView {cap} API",
-            "version": version,
-        },
-        "servers": [{"url": server_url}],
-        "paths": {},
-        "components": {"schemas": {}},
-    }
+
+def build_components_schemas(
+    cap: str, fields: list[tuple[str, Dict[str, Any]]], no_tf_enum: set[str]
+) -> Dict[str, Any]:
+    """Return OpenAPI components schemas section."""
+
+    components: Dict[str, Any] = {}
 
     base = {
         "Num": {"type": "number"},
@@ -136,13 +124,13 @@ def generate_yaml(
         "Array": {"type": "array", "items": {}},
     }
     for name, base_schema in base.items():
-        openapi["components"]["schemas"].setdefault(name, base_schema)
+        components.setdefault(name, base_schema)
 
-    openapi["components"]["schemas"]["NumericFieldNoTimeframe"] = {
+    components["NumericFieldNoTimeframe"] = {
         "type": "string",
         "enum": sorted(no_tf_enum),
     }
-    openapi["components"]["schemas"]["NumericFieldWithTimeframe"] = {
+    components["NumericFieldWithTimeframe"] = {
         "type": "string",
         "pattern": r"^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$",
     }
@@ -152,22 +140,17 @@ def generate_yaml(
         for idx in range(0, len(fields), 64):
             part_num = idx // 64 + 1
             part_name = f"{cap}FieldsPart{part_num:02d}"
-            props = {
-                name: schema for name, schema in fields[idx : idx + 64]  # noqa: E203
-            }
-            openapi["components"]["schemas"][part_name] = {
-                "type": "object",
-                "properties": props,
-            }
+            props = {name: schema for name, schema in fields[idx : idx + 64]}
+            components[part_name] = {"type": "object", "properties": props}
             parts.append({"$ref": f"#/components/schemas/{part_name}"})
-        openapi["components"]["schemas"][f"{cap}Fields"] = {"allOf": parts}
+        components[f"{cap}Fields"] = {"allOf": parts}
     else:
-        openapi["components"]["schemas"][f"{cap}Fields"] = {
+        components[f"{cap}Fields"] = {
             "type": "object",
             "properties": {name: schema for name, schema in fields},
         }
 
-    openapi["components"]["schemas"][f"{cap}ScanRequest"] = {
+    components[f"{cap}ScanRequest"] = {
         "type": "object",
         "properties": {
             "symbols": {
@@ -190,7 +173,7 @@ def generate_yaml(
         },
         "required": ["symbols", "columns"],
     }
-    openapi["components"]["schemas"][f"{cap}ScanResponse"] = {
+    components[f"{cap}ScanResponse"] = {
         "type": "object",
         "properties": {
             "data": {
@@ -201,16 +184,24 @@ def generate_yaml(
     }
 
     for req in ["SearchRequest", "HistoryRequest", "SummaryRequest"]:
-        openapi["components"]["schemas"][f"{cap}{req}"] = {"type": "object"}
+        components[f"{cap}{req}"] = {"type": "object"}
     for resp in ["SearchResponse", "HistoryResponse", "SummaryResponse"]:
-        openapi["components"]["schemas"][f"{cap}{resp}"] = {"type": "object"}
-    openapi["components"]["schemas"][f"{cap}MetainfoResponse"] = {
+        components[f"{cap}{resp}"] = {"type": "object"}
+    components[f"{cap}MetainfoResponse"] = {
         "type": "object",
         "properties": {"fields": {"type": "array", "items": {"type": "string"}}},
     }
 
+    return components
+
+
+def build_paths_section(scope: str, cap: str) -> Dict[str, Any]:
+    """Return OpenAPI paths section for the given scope."""
+
+    paths: Dict[str, Any] = {}
+
     def _add(path: str, req: str, resp: str) -> None:
-        openapi["paths"][f"/{scope}/{path}"] = {
+        paths[f"/{scope}/{path}"] = {
             "post": {
                 "summary": f"{path.capitalize()} {scope} market data",
                 "description": (
@@ -247,7 +238,7 @@ def generate_yaml(
     _add("history", "HistoryRequest", "HistoryResponse")
     _add("summary", "SummaryRequest", "SummaryResponse")
 
-    openapi["paths"][f"/{scope}/metainfo"] = {
+    paths[f"/{scope}/metainfo"] = {
         "post": {
             "summary": f"Get {scope} metainfo",
             "description": f"Returns the list of available fields for {scope}.",
@@ -268,6 +259,39 @@ def generate_yaml(
                 "500": {"description": "Server Error"},
             },
         }
+    }
+
+    return paths
+
+
+def generate_yaml(
+    scope: str,
+    meta: MetaInfoResponse,
+    _tsv: "pd.DataFrame",
+    scan: dict[str, Any] | None = None,
+    server_url: str = "https://scanner.tradingview.com",
+    max_size: int = 1_048_576,
+) -> str:
+    """Return OpenAPI YAML specification for a scope."""
+
+    cap = scope.capitalize()
+    root = Path(__file__).resolve().parents[2]
+    version = toml.load(root / "pyproject.toml")["project"]["version"]
+
+    fields, no_tf_enum = collect_field_schemas(meta, scan)
+    components = build_components_schemas(cap, fields, no_tf_enum)
+    paths = build_paths_section(scope, cap)
+
+    openapi: Dict[str, Any] = {
+        "openapi": "3.1.0",
+        "x-oai-custom-action-schema-version": "v1",
+        "info": {
+            "title": f"Unofficial TradingView {cap} API",
+            "version": version,
+        },
+        "servers": [{"url": server_url}],
+        "paths": paths,
+        "components": {"schemas": components},
     }
 
     yaml_str = yaml.dump(openapi, sort_keys=False, Dumper=_IndentedDumper)
