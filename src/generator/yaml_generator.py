@@ -46,7 +46,7 @@ def _indicator_name(raw: str) -> str:
     for key, val in _INDICATOR_NAMES.items():
         if raw.startswith(key):
             if key == "EMA" and raw != "EMA":
-                period = raw[len("EMA"):]
+                period = raw[len("EMA") :]
                 if period.isdigit():
                     return f"{val} ({period})"
             return val
