@@ -1,129 +1,136 @@
-# Instructions for Codex Agents
+# Codex Agent Guide
 
-## 📁 Project Structure
+Welcome! This document explains how to work with this repository when acting as a Codex agent.
 
-* Source code is in `src/`
+## Table of Contents
+1. [Getting Started](#getting-started)
+2. [Project Structure](#project-structure)
+3. [Development Workflow](#development-workflow)
+4. [CLI Examples](#cli-examples)
+5. [CI/CD Integration](#cicd-integration)
+6. [Codex Rules](#codex-rules)
+7. [Available Codex Actions](#available-codex-actions)
+8. [Glossary](#glossary)
 
-  * `api/` — TradingView API wrappers
-  * `generator/` — OpenAPI 3.1.0 spec generation logic
-  * `utils/` — shared utilities and type inference
-* CLI interface: `src/cli.py`
-  * `tvgen scan --market <market>` - perform a basic scan
-  * `tvgen recommend --symbol <symbol> [--market stocks]` - fetch recommendation
-  * `tvgen price --symbol <symbol> [--market stocks]` - fetch last close price
-  * `tvgen search --payload <json> --market <market>` - call /{market}/search
-  * `tvgen history --payload <json> --market <market>` - call /{market}/history
-  * `tvgen summary --payload <json> --market <market>` - call /{market}/summary
-  * `tvgen collect-full --market <market> [--tickers ...]` - gather field data
-  * `tvgen build` - collect metainfo+scan and generate specs for all markets
-  * `tvgen generate --market <market> --output specs/<market>.yaml` - create spec
-  * `tvgen validate --spec <file>` - validate a spec file
-* Tests: `tests/`
-* OpenAPI specs: `specs/`
+## Getting Started
 
-Common flags:
+The typical workflow is:
 
-* `--market` - TradingView market name for scan-like commands
-* `--filter2`, `--sort`, `--range` - optional JSON objects passed to `scan`
+```
+tvgen collect-full --market crypto
+ tvgen generate --market crypto --outdir specs
+ tvgen validate --spec specs/crypto.yaml
+```
 
----
+After validating the spec, commit your changes with an updated `CHANGELOG.md`.
 
-**Workflow**: `tvgen collect-full` → `tvgen generate` → `tvgen validate` → commit
+## Project Structure
 
-## 🛠 Development Workflow
+- Source code in `src/`
+  - `api/` – TradingView API wrappers
+  - `generator/` – OpenAPI 3.1.0 spec generation logic
+  - `utils/` – shared utilities and type inference
+- CLI entry point: `src/cli.py`
+- Tests live in `tests/`
+- OpenAPI specs are stored in `specs/`
+
+### Common CLI Flags
+
+- `--market` – TradingView market name
+- `--filter2`, `--sort`, `--range` – optional JSON for `scan`
+
+⚠️ **Note**: `tvgen generate` requires `results/<market>/field_status.tsv`. Create a minimal file if it doesn't exist.
+
+## Development Workflow
 
 1. **Install dependencies**
-
    ```bash
    pip install -r requirements.txt
    pip install types-requests types-PyYAML types-toml
    ```
-
-2. **Format code**
-
+2. **Format code** (run before every commit)
    ```bash
    black .
    ```
-
 3. **Lint**
-
    ```bash
    flake8 .
    ```
-
 4. **Type-check**
-
    ```bash
    mypy src/
    ```
-
 5. **Run tests**
-
    ```bash
-   pytest -q
+   PYTHONPATH=$PWD pytest -q
    ```
-
 6. **Generate OpenAPI spec**
-
    ```bash
-   tvgen generate --market crypto --output specs/openapi_crypto.yaml
+   tvgen generate --market crypto --outdir specs
    ```
-   # `tvgen generate` expects a results directory with at least
-   # `results/crypto/field_status.tsv`. Create a minimal file if absent.
-
 7. **Validate spec**
-
    ```bash
-   tvgen validate --spec specs/openapi_crypto.yaml
+   tvgen validate --spec specs/crypto.yaml
    ```
-
 8. **Commit changes**
+   - Update `CHANGELOG.md` with a semantic version bump
+   - Commit updated `specs/*.yaml`
 
-   * Update `CHANGELOG.md` with semantic version bump
-   * Commit updated `specs/*.yaml`
+## CLI Examples
 
----
+```bash
+$ tvgen price --symbol AAPL
+1.0
 
-## ⚙️ CI/CD Integration
+$ tvgen scan --symbols BTCUSD,ETHUSD --columns close --market crypto
+{
+  "count": 2,
+  "data": [
+    {"s": "BINANCE:BTCUSD", "d": [50000.0]},
+    {"s": "COINBASE:ETHUSD", "d": [48000.0]}
+  ]
+}
+```
 
-GitHub Actions in `.github/workflows/ci.yml` will:
+## CI/CD Integration
 
-* Check formatting (`black --check .`)
-* Lint (`flake8 .`)
-* Type-check (`mypy src/`)
-* Run tests (`pytest -q`)
-* Generate spec (`tvgen generate`)
-* Validate spec (`openapi-spec-validator specs/*.yaml`)
-* Optionally auto-commit or open a PR if `specs/*.yaml` changed
+GitHub Actions (see [ci.yml](.github/workflows/ci.yml)) automatically run:
+- `black --check .`
+- `flake8 .`
+- `mypy src/`
+- `pytest -q`
+- `tvgen generate`
+- `openapi-spec-validator specs/*.yaml`
 
-A nightly or weekly scheduled job can re-run the same steps to keep specs up-to-date.
+Check the Actions tab on GitHub for run status. A scheduled workflow keeps specs up to date.
 
----
+## Codex Rules
 
-## 🤖 Codex Rules
+- All changes **must** be submitted via pull request.
+- **Must** actions:
+  - `generate_openapi_spec()` – runs `tvgen generate --market crypto --outdir specs`
+  - `validate_spec()` – runs `tvgen validate --spec specs/crypto.yaml`
+  - `run_tests()`
+- **Should** actions:
+  - `format_code()`
+  - `bump_version()` – updates `pyproject.toml` and `CHANGELOG.md`
+  - `create_pull_request()` if specs changed
 
-* **All changes must be submitted via pull request**
-* **Codex must** always:
+`Must` means the agent always executes the action. `Should` means it is recommended when relevant.
 
-  * run the OpenAPI generator (`generate_openapi_spec()`) – runs `tvgen generate --market crypto --output specs/openapi_crypto.yaml`
-  * validate the YAML (`validate_spec()`) – runs `tvgen validate --spec specs/openapi_crypto.yaml`
-  * run the tests (`run_tests()`)
-* **Codex should**:
+## Available Codex Actions
 
-  * format code (`format_code()`)
-  * bump the version and update `CHANGELOG.md` (`bump_version()`)
-  * create a pull request if any `specs/*.yaml` changed (`create_pull_request()`)
+| Action | Description |
+| ------ | ----------- |
+| `generate_openapi_spec()` | Build `specs/crypto.yaml`. |
+| `run_tests()` | Execute the unit tests. |
+| `format_code()` | Run `black .` to format files. |
+| `validate_spec()` | Validate YAML with `openapi-spec-validator`. |
+| `bump_version()` | Increment version in `pyproject.toml` and add a note to `CHANGELOG.md`. |
+| `create_pull_request()` | Use the GitHub CLI to open a PR with updated specs. |
 
----
+## Glossary
 
-## ✅ Available Codex Actions
-
-* `generate_openapi_spec()`
-* `run_tests()`
-* `format_code()`
-* `validate_spec()`
-* `bump_version()`
-* `create_pull_request()`
-
-`bump_version()` updates `pyproject.toml` and `CHANGELOG.md`. `create_pull_request()`
-uses the GitHub CLI to open a PR with updated specs.
+- **Codex** – automation tooling that executes actions like generating specs or opening pull requests.
+- **OpenAPI spec** – YAML file describing the TradingView API.
+- **TradingView API** – endpoints that supply market data used by `tvgen`.
