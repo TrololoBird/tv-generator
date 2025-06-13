@@ -32,34 +32,38 @@ jobs:
       - name: Debug tvgen installation
         run: |
           poetry run tvgen --help || echo "tvgen is not installed or not in PATH"
-      - name: Collect full data
-        run: poetry run tvgen collect-full --scope coin
-      - name: Generate spec
-        run: poetry run tvgen generate --scope coin
-      - name: Validate generated spec
-        run: openapi-spec-validator specs/coin.yaml
+      - name: Build specs
+        run: poetry run tvgen build --indir results --outdir specs
+      - name: Validate generated specs
+        run: |
+          for spec in specs/*.yaml; do
+            openapi-spec-validator "$spec"
+          done
       - name: Check size limit
-        run: python -c "import os,sys; s=os.path.getsize('specs/coin.yaml'); assert s<1048576"
+        run: |
+          for spec in specs/*.yaml; do
+            python -c "import os,sys; s=os.path.getsize('$spec'); assert s<1048576"
+          done
       - name: Commit and create PR if spec changed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          if git diff --quiet HEAD -- specs/coin.yaml; then
+          if git diff --quiet HEAD -- specs/*.yaml; then
             echo "No changes detected"
             exit 0
           fi
-          branch="coin-spec-${{ github.run_number }}"
+          branch="specs-${{ github.run_number }}"
           git checkout -b "$branch"
-          git add results/** specs/coin.yaml
-          git commit -m 'chore: update coin spec'
+          git add results/** specs/*.yaml
+          git commit -m 'chore: update specs'
           git push origin "$branch"
           python - <<'PY'
           from codex_actions import create_pull_request
 
           create_pull_request(
-              title="Update coin spec",
+              title="Update OpenAPI specs",
               body="Спецификация обновлена автоматически на основе новых данных с TradingView /metainfo",
           )
           PY

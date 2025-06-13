@@ -49,14 +49,7 @@ jobs:
           bump_version()
 
           res = subprocess.run(
-              [
-                  "git",
-                  "diff",
-                  "--quiet",
-                  "HEAD",
-                  "--",
-                  "specs/crypto.yaml",
-              ]
+              ["git", "diff", "--quiet", "HEAD", "--", "specs/*.yaml"]
           )
           if res.returncode == 0:
               print("No spec changes detected")
@@ -75,16 +68,16 @@ jobs:
               ], check=True)
               branch = "spec-update-${{ github.run_number }}"
               subprocess.run(["git", "checkout", "-b", branch], check=True)
-              subprocess.run(["git", "add", "specs/crypto.yaml"], check=True)
+              subprocess.run(["git", "add", "specs/*.yaml"], check=True)
               subprocess.run([
                   "git",
                   "commit",
                   "-m",
-                  "chore: update crypto spec",
+                  "chore: update specs",
               ], check=True)
               subprocess.run(["git", "push", "origin", branch], check=True)
               create_pull_request(
-                  title="Update crypto spec",
+                  title="Update OpenAPI specs",
                   body="Спецификация обновлена автоматически на основе новых данных с TradingView /metainfo",
               )
           PY

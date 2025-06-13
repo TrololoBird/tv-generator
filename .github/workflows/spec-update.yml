@@ -46,25 +46,16 @@ jobs:
         if: env.SERVER_URL != ''
         run: echo "SERVER_URL=${SERVER_URL}" >> "$GITHUB_ENV"
 
-      - name: Collect full data
+      - name: Build specs
         run: |
           extra=""
           if [ -n "$SERVER_URL" ]; then
             extra="--server-url $SERVER_URL"
           fi
-          poetry run tvgen collect-full --outdir results "$extra"
-      - name: Generate specs for all markets
-        run: |
-          extra=""
-          if [ -n "$SERVER_URL" ]; then
-            extra="--server-url $SERVER_URL"
-          fi
-          for market in crypto forex stocks futures; do
-            tvgen generate --market $market --output specs/openapi_${market}.yaml "$extra"  # yamllint disable-line rule:line-length
-          done
+          poetry run tvgen build --indir results --outdir specs $extra
       - name: Validate all generated specs
         run: |
-          for spec in specs/openapi_*.yaml; do
+          for spec in specs/*.yaml; do
             yamllint "$spec"
             openapi-spec-validator "$spec"
           done
@@ -90,7 +81,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: |
-            specs/openapi_*.yaml
+            specs/*.yaml
             results/**
           message: 'chore: update generated specifications'
           default_author: github_actions
