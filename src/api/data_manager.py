@@ -14,13 +14,24 @@ def build_field_status(meta: MetaInfoResponse, scan: dict[str, Any]) -> pd.DataF
     if not isinstance(rows, list):
         rows = []
 
+    # Mapping from field name to index in scan rows. Prefer explicit
+    # ``columns`` mapping if present, otherwise fall back to the order of
+    # ``meta.fields``.  This avoids relying solely on enumeration and
+    # works even if the field order differs between ``meta`` and ``scan``.
+    columns = scan.get("columns")
+    if isinstance(columns, list) and all(isinstance(c, str) for c in columns):
+        index_map = {name: i for i, name in enumerate(columns)}
+    else:
+        index_map = {f.n: i for i, f in enumerate(meta.fields)}
+
     result = []
-    for idx, field in enumerate(meta.fields):
+    for field in meta.fields:
+        idx = index_map.get(field.n)
         missing = False
         values: list[Any] = []
         for row in rows:
             dval = row.get("d") if isinstance(row, dict) else None
-            if isinstance(dval, list) and idx < len(dval):
+            if isinstance(dval, list) and idx is not None and idx < len(dval):
                 values.append(dval[idx])
             else:
                 missing = True
