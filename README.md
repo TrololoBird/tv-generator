@@ -24,7 +24,7 @@ The generation commands contact TradingView's public API. Ensure that `scanner.t
 
 ### Docker
 ```bash
-docker run --rm ghcr.io/<owner>/tvgen:latest \
+docker run --rm ghcr.io/<owner>/tv-generator:latest \
   tvgen collect --market crypto && \
   tvgen generate --market crypto
 ```
@@ -94,4 +94,5 @@ components:
 3. Click **Validate** – the file should pass without errors.
 
 ## Badges
-[Build] (CI status) [Coverage] (to be replaced) [Docker] (latest tag)
+[![CI](https://github.com/<owner>/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/tv-generator/actions/workflows/ci.yml)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io/<owner>/tv-generator-blue)](https://github.com/<owner>/tv-generator/pkgs/container/tv-generator)

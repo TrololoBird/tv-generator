@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Coin API
-  version: 1.0.35
+  version: 1.0.36
 servers:
   - url: https://scanner.tradingview.com
 paths:
