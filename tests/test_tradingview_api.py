@@ -17,7 +17,7 @@ from src.api.tradingview_api import TradingViewAPI
     ],
 )
 def test_scan_and_metainfo(tv_api_mock, scope):
-    tv_api_mock.get(
+    tv_api_mock.post(
         f"https://scanner.tradingview.com/{scope}/scan",
         json={"count": 0, "data": []},
     )
@@ -50,7 +50,7 @@ def test_scan_and_metainfo(tv_api_mock, scope):
 
 
 def test_scan_error(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         status_code=404,
     )
@@ -61,7 +61,7 @@ def test_scan_error(tv_api_mock):
 
 
 def test_scan_invalid_json(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         text="not-json",
     )
@@ -71,7 +71,7 @@ def test_scan_invalid_json(tv_api_mock):
 
 
 def test_scan_invalid_schema(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         json={"foo": "bar"},
     )

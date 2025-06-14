@@ -30,7 +30,7 @@ def _create_metainfo(path: Path) -> None:
 
 def test_cli_scan(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         json={"count": 0, "data": []},
     )
@@ -54,7 +54,7 @@ def test_cli_scan(tv_api_mock) -> None:
 
 def test_cli_scan_full_payload(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         json={"count": 0, "data": []},
     )
@@ -84,7 +84,7 @@ def test_cli_scan_full_payload(tv_api_mock) -> None:
 
 def test_cli_recommend(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         json={"count": 1, "data": [{"s": "AAPL", "d": ["buy"]}]},
     )
@@ -95,7 +95,7 @@ def test_cli_recommend(tv_api_mock) -> None:
 
 def test_cli_price(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         json={"count": 1, "data": [{"s": "AAPL", "d": [1.0]}]},
     )
@@ -297,7 +297,7 @@ def test_cli_generate_missing_results(tmp_path: Path) -> None:
 
 def test_cli_scan_error(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         status_code=500,
     )
@@ -312,7 +312,7 @@ def test_cli_scan_error(tv_api_mock) -> None:
 
 def test_cli_recommend_error(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )
@@ -324,7 +324,7 @@ def test_cli_recommend_error(tv_api_mock) -> None:
 
 def test_cli_price_error(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         json={},
     )
