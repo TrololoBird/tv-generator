@@ -140,7 +140,9 @@ def build_components_schemas(
         for idx in range(0, len(fields), 64):
             part_num = idx // 64 + 1
             part_name = f"{cap}FieldsPart{part_num:02d}"
-            props = {name: schema for name, schema in fields[idx : idx + 64]}
+            props = {
+                name: schema for name, schema in fields[idx : idx + 64]  # noqa: E203
+            }
             components[part_name] = {"type": "object", "properties": props}
             parts.append({"$ref": f"#/components/schemas/{part_name}"})
         components[f"{cap}Fields"] = {"allOf": parts}

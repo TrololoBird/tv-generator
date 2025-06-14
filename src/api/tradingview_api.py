@@ -74,9 +74,9 @@ class TradingViewAPI:
         logger.debug("Response status %s", r.status_code)
         try:
             r.raise_for_status()
-        except requests.HTTPError:
+        except requests.HTTPError as exc:
             logger.error("HTTP error: %s - %s", r.status_code, r.text)
-            raise
+            raise ValueError(f"TradingView HTTP {r.status_code}: {r.text}") from exc
         try:
             return cast(Dict[str, Any], r.json())
         except ValueError as exc:

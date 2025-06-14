@@ -1,5 +1,4 @@
 import pytest
-import requests
 from pydantic import ValidationError
 from src.api.tradingview_api import TradingViewAPI
 
@@ -56,9 +55,9 @@ def test_scan_error(tv_api_mock):
         status_code=404,
     )
     api = TradingViewAPI()
-    with pytest.raises(requests.exceptions.HTTPError) as exc:
+    with pytest.raises(ValueError) as exc:
         api.scan("crypto", {})
-    assert "404" in str(exc.value)
+    assert "TradingView HTTP 404" in str(exc.value)
 
 
 def test_scan_invalid_json(tv_api_mock):
@@ -89,7 +88,7 @@ def test_endpoint_error(tv_api_mock, endpoint):
     )
     api = TradingViewAPI()
     method = getattr(api, endpoint)
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(ValueError):
         method("crypto", {})
 
 
@@ -111,9 +110,19 @@ def test_metainfo_error(tv_api_mock):
         status_code=404,
     )
     api = TradingViewAPI()
-    with pytest.raises(requests.exceptions.HTTPError) as exc:
+    with pytest.raises(ValueError) as exc:
         api.metainfo("crypto", {"query": ""})
-    assert "404" in str(exc.value)
+    assert "TradingView HTTP 404" in str(exc.value)
+
+
+def test_metainfo_invalid_schema(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        json={"foo": "bar"},
+    )
+    api = TradingViewAPI()
+    with pytest.raises(ValidationError):
+        api.metainfo("crypto", {"query": ""})
 
 
 def test_scan_invalid_scope():
