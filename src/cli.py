@@ -305,7 +305,8 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
                 )
         meta_model = MetaInfoResponse(data=tv_fields)
         df = build_field_status(meta_model, scan)
-        df.to_csv(market_dir / "field_status.tsv", sep="\t", index=False)
+        tsv_text = df.to_csv(sep="\t", index=False)
+        (market_dir / "field_status.tsv").write_text(tsv_text.rstrip("\n"))
     except Exception as exc:  # pragma: no cover - click handles output
         error_log.write_text(str(exc))
         raise click.ClickException(str(exc))
