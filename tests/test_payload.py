@@ -68,3 +68,9 @@ def test_build_scan_payload_duplicate_columns():
 def test_build_scan_payload_strip_1d():
     payload = build_scan_payload(["A"], ["ADX+DI[1]|1D", "close"])
     assert payload["columns"] == ["ADX+DI[1]", "close"]
+
+
+@pytest.mark.parametrize("suffix", ["|3D", "|1W", "|10W"])
+def test_build_scan_payload_strip_other_suffixes(suffix):
+    payload = build_scan_payload(["A"], [f"close{suffix}"])
+    assert payload["columns"] == ["close"]
