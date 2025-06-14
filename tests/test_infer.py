@@ -57,6 +57,11 @@ def test_infer_type_series_mixed():
     assert infer_type(series2) == "string"
 
 
+def test_infer_type_series_mixed_date_and_number():
+    series = pd.Series(["2023-01-01", 1])
+    assert infer_type(series) == "string"
+
+
 def test_infer_type_large_numbers():
     assert infer_type(10**12) == "integer"
     assert infer_type("1e10") == "number"

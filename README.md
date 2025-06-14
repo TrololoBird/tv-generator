@@ -63,6 +63,11 @@ Timeframe codes map to minutes unless otherwise noted:
 1W                          -> 1 week
 ```
 
+## Type Inference
+The :func:`infer_type` utility guesses the OpenAPI scalar type from example
+values. Strings equal to ``"true"`` or ``"false"`` in any case are treated as
+boolean; other strings default to ``string``.
+
 ## OpenAPI File Structure
 The generated YAML contains:
 - `openapi` and `info` – version and title.
