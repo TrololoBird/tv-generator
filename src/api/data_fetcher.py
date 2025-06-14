@@ -5,32 +5,17 @@ from typing import Any, Dict, List
 from concurrent.futures import ThreadPoolExecutor
 
 from src.models import MetaInfoResponse, ScanResponse
+from src.api.tradingview_api import TradingViewAPI
 
-import requests
-from requests.adapters import HTTPAdapter, Retry
-
-
-def _get_session() -> requests.Session:
-    session = requests.Session()
-    retry = Retry(
-        total=3,
-        backoff_factor=0.5,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=["GET", "POST"],
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount("https://", adapter)
-    session.headers.setdefault("User-Agent", "tv-generator")
-    return session
+_API = TradingViewAPI()
 
 
 def fetch_metainfo(
     scope: str, api_base: str = "https://scanner.tradingview.com"
 ) -> Dict[str, Any]:
     """Return metainfo for a given scope using GET request."""
-    session = _get_session()
     url = f"{api_base.rstrip('/')}/{scope}/metainfo"
-    resp = session.get(url, timeout=30)
+    resp = _API.session.get(url, timeout=30)
     resp.raise_for_status()
     try:
         data = resp.json()
@@ -147,8 +132,7 @@ def full_scan(
             "symbols": {"tickers": tickers, "query": {"types": []}},
             "columns": cols,
         }
-        session = _get_session()
-        resp = session.post(url, json=payload, timeout=30)
+        resp = _API.session.post(url, json=payload, timeout=30)
         resp.raise_for_status()
         try:
             data = resp.json()
