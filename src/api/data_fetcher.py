@@ -122,6 +122,9 @@ def choose_tickers(
                 if symbol and symbol not in tickers:
                     tickers.append(symbol)
 
+    if not tickers:
+        raise ValueError("Cannot determine tickers: missing symbol field in metadata")
+
     return tickers[:limit]
 
 
@@ -154,27 +157,20 @@ def full_scan(
         ScanResponse.parse_obj(data)
         return data
 
-    result: dict[str, Any] | None = None
+    result_map: dict[str, list[Any]] = {sym: [] for sym in tickers}
     with ThreadPoolExecutor(max_workers=min(8, len(batches))) as executor:
         responses = list(executor.map(_scan, batches))
 
     for data in responses:
-        if result is None:
-            result = data
-        else:
-            res_rows = result.get("data", []) if isinstance(result, dict) else []
-            new_rows = data.get("data", []) if isinstance(data, dict) else []
-            for idx, row in enumerate(new_rows):
-                if idx < len(res_rows):
-                    dval = row.get("d") if isinstance(row, dict) else None
-                    res_d = (
-                        res_rows[idx].get("d")
-                        if isinstance(res_rows[idx], dict)
-                        else None
-                    )
-                    if isinstance(dval, list) and isinstance(res_d, list):
-                        res_d.extend(dval)
-    final: dict[str, Any] = result or {}
+        rows = data.get("data", []) if isinstance(data, dict) else []
+        for row in rows:
+            sym = row.get("s") if isinstance(row, dict) else None
+            dval = row.get("d") if isinstance(row, dict) else None
+            if isinstance(sym, str) and isinstance(dval, list):
+                result_map.setdefault(sym, []).extend(dval)
+
+    final_rows = [{"s": sym, "d": result_map.get(sym, [])} for sym in tickers]
+    final = {"data": final_rows, "count": len(final_rows)}
     ScanResponse.parse_obj(final)
     return final
 

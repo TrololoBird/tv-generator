@@ -267,16 +267,16 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
         else:
             meta = fetch_metainfo(market)
 
-            fields: list[dict[str, Any]] = []
+            fields_data: list[dict[str, Any]] = []
             if isinstance(meta.get("data"), dict) and isinstance(
                 meta["data"].get("fields"), list
             ):
-                fields = list(meta["data"].get("fields", []))
+                fields_data = list(meta["data"].get("fields", []))
             elif isinstance(meta.get("fields"), list):
-                fields = list(meta.get("fields", []))
+                fields_data = list(meta.get("fields", []))
 
             columns: list[str] = []
-            for item in fields:
+            for item in fields_data:
                 name = item.get("name") or item.get("id")
                 if name:
                     columns.append(str(name))

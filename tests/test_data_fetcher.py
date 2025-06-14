@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import requests
 
-from src.api.data_fetcher import fetch_metainfo, full_scan, save_json
+from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 
 
 def test_fetch_metainfo(tv_api_mock):
@@ -54,6 +54,32 @@ def test_full_scan_multi_batch(tv_api_mock):
     assert result["data"][0]["d"] == list(range(20)) + [99]
 
 
+def test_full_scan_batch_reorder(tv_api_mock):
+    first = {
+        "count": 2,
+        "data": [
+            {"s": "AAA", "d": [1]},
+            {"s": "BBB", "d": [3]},
+        ],
+    }
+    second = {
+        "count": 2,
+        "data": [
+            {"s": "BBB", "d": [4]},
+            {"s": "AAA", "d": [2]},
+        ],
+    }
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        [{"json": first}, {"json": second}],
+    )
+    columns = [f"c{i}" for i in range(21)]
+    result = full_scan("stocks", ["AAA", "BBB"], columns)
+    assert [row["s"] for row in result["data"]] == ["AAA", "BBB"]
+    assert result["data"][0]["d"] == [1, 2]
+    assert result["data"][1]["d"] == [3, 4]
+
+
 def test_full_scan_error(tv_api_mock):
     tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
@@ -68,3 +94,19 @@ def test_save_json(tmp_path: Path):
     out = tmp_path / "out.json"
     save_json(data, out)
     assert json.loads(out.read_text()) == data
+
+
+def test_choose_tickers_from_index_names() -> None:
+    meta = {
+        "data": {
+            "fields": [{"name": "s", "type": "string"}],
+            "index": {"names": ["AAA", "BBB", "CCC"]},
+        }
+    }
+    assert choose_tickers(meta, limit=2) == ["AAA", "BBB"]
+
+
+def test_choose_tickers_error() -> None:
+    meta = {"fields": [{"name": "close", "type": "number"}]}
+    with pytest.raises(ValueError):
+        choose_tickers(meta)

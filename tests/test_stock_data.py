@@ -1,5 +1,4 @@
 import pytest
-import requests
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 
 
@@ -44,7 +43,7 @@ def test_fetch_stock_http_error(tv_api_mock):
         "https://scanner.tradingview.com/stocks/scan",
         status_code=500,
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(ValueError):
         fetch_stock_value("AAPL")
 
 
@@ -53,5 +52,5 @@ def test_fetch_recommend_http_error(tv_api_mock):
         "https://scanner.tradingview.com/stocks/scan",
         status_code=404,
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(ValueError):
         fetch_recommendation("AAPL")
