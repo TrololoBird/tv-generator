@@ -33,3 +33,39 @@ def test_build_field_status_missing():
     scan = {"data": [{"d": [1]}, {"d": [2]}]}
     df = build_field_status(meta, scan)
     assert list(df["status"]) == ["ok", "error"]
+
+
+def test_build_field_status_full_ok():
+    meta = _meta([("f1", "integer"), ("f2", "string")])
+    scan = {"data": [{"d": [1, "a"]}, {"d": [2, "b"]}]}
+    df = build_field_status(meta, scan)
+    assert list(df["status"]) == ["ok", "ok"]
+    assert list(df["sample_value"]) == [1, "a"]
+
+
+def test_build_field_status_empty_row_error():
+    meta = _meta([("f1", "integer")])
+    scan = {"data": [{"d": []}]}
+    df = build_field_status(meta, scan)
+    assert df.loc[0, "status"] == "error"
+
+
+def test_build_field_status_all_null():
+    meta = _meta([("f1", "integer")])
+    scan = {"data": [{"d": [None]}, {"d": [None]}]}
+    df = build_field_status(meta, scan)
+    assert df.loc[0, "status"] == "null"
+
+
+def test_build_field_status_no_rows():
+    meta = _meta([("f1", "integer")])
+    scan = {"data": []}
+    df = build_field_status(meta, scan)
+    assert df.loc[0, "status"] == "null"
+
+
+def test_build_field_status_mixed_empty():
+    meta = _meta([("f1", "integer")])
+    scan = {"data": [{"d": [None]}, {"d": [""]}]}
+    df = build_field_status(meta, scan)
+    assert df.loc[0, "status"] == "empty"
