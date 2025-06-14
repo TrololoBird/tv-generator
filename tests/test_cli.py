@@ -186,6 +186,7 @@ def test_cli_search_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
+    assert "Expecting" in result.output
 
 
 def test_cli_history_invalid_payload() -> None:
@@ -387,11 +388,11 @@ def _mock_collect_api(monkeypatch) -> None:
     monkeypatch.setattr("src.cli.full_scan", fake_scan)
 
 
-def test_collect_full_success(monkeypatch):
+def test_collect_success(monkeypatch):
     runner = CliRunner()
     _mock_collect_api(monkeypatch)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--market", "crypto"])
+        result = runner.invoke(cli, ["collect", "--market", "crypto"])
         assert result.exit_code == 0
         base = Path("results/crypto")
         assert (base / "metainfo.json").exists()
@@ -402,15 +403,7 @@ def test_collect_full_success(monkeypatch):
         assert "open\tstring\tok\ta" in status_lines[2]
 
 
-def test_collect_full_alias(monkeypatch):
-    runner = CliRunner()
-    _mock_collect_api(monkeypatch)
-    with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--market", "crypto"])
-        assert result.exit_code == 0
-
-
-def test_collect_full_error(monkeypatch):
+def test_collect_error(monkeypatch):
     runner = CliRunner()
     monkeypatch.setattr(
         "src.cli.fetch_metainfo",
@@ -418,7 +411,7 @@ def test_collect_full_error(monkeypatch):
     )
     monkeypatch.setattr("src.cli.full_scan", lambda scope, tickers, columns: {})
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--market", "crypto"])
+        result = runner.invoke(cli, ["collect", "--market", "crypto"])
         assert result.exit_code != 0
         log = Path("results/crypto/error.log").read_text()
         assert log

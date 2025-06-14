@@ -80,7 +80,7 @@ def test_collect_full_auto_tickers(monkeypatch) -> None:
     monkeypatch.setattr("src.cli.save_json", lambda d, p: Path(p).write_text("{}"))
 
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--market", "coin"])
+        result = runner.invoke(cli, ["collect", "--market", "coin"])
         assert result.exit_code == 0, result.output
         assert len(sent["tickers"]) <= 10
 

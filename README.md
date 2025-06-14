@@ -9,7 +9,7 @@
 ### Using Poetry
 ```bash
 poetry install
-poetry run tvgen collect-full --market crypto
+poetry run tvgen collect --market crypto
 poetry run tvgen generate --market crypto
 poetry run tvgen validate --spec specs/crypto.yaml
 ```
@@ -25,7 +25,7 @@ The generation commands contact TradingView's public API. Ensure that `scanner.t
 ### Docker
 ```bash
 docker run --rm ghcr.io/<owner>/tvgen:latest \
-  tvgen collect-full --market crypto && \
+  tvgen collect --market crypto && \
   tvgen generate --market crypto
 ```
 
@@ -33,7 +33,7 @@ docker run --rm ghcr.io/<owner>/tvgen:latest \
 | Command      | Purpose                                   | Key Flags |
 |--------------|-------------------------------------------|-----------|
 | build        | collect+generate specs for all markets    | --indir • --outdir |
-| collect-full | download metainfo+scan, build TSV         | --market • --outdir • --tickers |
+| collect | download metainfo+scan, build TSV         | --market • --outdir • --tickers |
 | generate     | build OpenAPI spec                        | --market • --indir • --outdir • --max-size |
 | validate     | validate spec file                        | --spec |
 | preview      | show fields summary from spec             | --spec |
@@ -41,7 +41,7 @@ docker run --rm ghcr.io/<owner>/tvgen:latest \
 ### Short Examples
 ```bash
 # Collect metainfo and scan results
-tvgen collect-full --market crypto --outdir results
+tvgen collect --market crypto --outdir results
 
 # Generate specification from collected data
 tvgen generate --market crypto --indir results --outdir specs
@@ -51,7 +51,7 @@ tvgen validate --spec specs/crypto.yaml
 ```
 
 ## Daily CI Flow
-`collect-full` → `generate` → size-validate → commit
+`collect` → `generate` → size-validate → commit
 
 ## Field Name Format
 Indicators can include a timeframe suffix separated by `|`. For example `RSI|60` means the RSI value on a 60‑minute timeframe. `ADX+DI[1]|1D` refers to the `ADX+DI[1]` indicator on daily candles.

@@ -4,7 +4,7 @@ from pathlib import Path
 from src.cli import cli
 
 
-def test_collect_full(monkeypatch):
+def test_collect(monkeypatch):
     runner = CliRunner()
 
     meta = {
@@ -24,7 +24,7 @@ def test_collect_full(monkeypatch):
     monkeypatch.setattr("src.cli.save_json", lambda d, p: Path(p).write_text("{}"))
 
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--market", "crypto"])
+        result = runner.invoke(cli, ["collect", "--market", "crypto"])
         assert result.exit_code == 0
         assert scan_args["tickers"] == ["AAA", "BBB"]
         assert scan_args["columns"] == ["c1"]

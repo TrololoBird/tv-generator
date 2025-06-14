@@ -57,7 +57,7 @@ jobs:
           mkdir -p specs
           for market in crypto forex stocks futures; do
             mkdir -p results/$market
-            echo -e "field\tstatus\tvalue\nclose\tok\t1\nopen\tok\tabc" > results/$market/field_status.tsv
+            echo -e "field\ttv_type\tstatus\tsample_value\nclose\tinteger\tok\t1\nopen\tstring\tok\tabc" > results/$market/field_status.tsv
             echo '{ "market": "'$market'", "info": "Generated metadata" }' > results/$market/metainfo.json
             tvgen generate --market $market --outdir specs/openapi_${market}.yaml
             status=$?

@@ -3,6 +3,7 @@ import sys
 import json
 from pathlib import Path
 from src.constants import SCOPES
+import pandas as pd
 
 
 def generate_openapi_spec() -> None:
@@ -20,6 +21,27 @@ def generate_openapi_spec() -> None:
             scan_file.write_text(json.dumps({"data": []}), encoding="utf-8")
         if not status_file.exists():
             status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
+        else:
+            try:
+                df = pd.read_csv(status_file, sep="\t")
+                if list(df.columns) != ["field", "tv_type", "status", "sample_value"]:
+                    meta = json.loads(meta_file.read_text())
+                    fields = meta.get("data", {}).get("fields") or meta.get(
+                        "fields", []
+                    )
+                    mapping = {
+                        f.get("name") or f.get("id"): f.get("type", "")
+                        for f in fields
+                        if isinstance(f, dict)
+                    }
+                    if "sample_value" not in df.columns and "value" in df.columns:
+                        df = df.rename(columns={"value": "sample_value"})
+                    if "tv_type" not in df.columns:
+                        df["tv_type"] = df["field"].map(mapping).fillna("")
+                    df = df[["field", "tv_type", "status", "sample_value"]]
+                    df.to_csv(status_file, sep="\t", index=False)
+            except Exception:
+                status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
 
     try:
         for market in SCOPES:

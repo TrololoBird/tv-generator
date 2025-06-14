@@ -17,7 +17,7 @@ Welcome! This document explains how to work with this repository when acting as 
 The typical workflow is:
 
 ```
-tvgen collect-full --market crypto
+tvgen collect --market crypto
  tvgen generate --market crypto --outdir specs
  tvgen validate --spec specs/crypto.yaml
 ```
