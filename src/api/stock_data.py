@@ -1,5 +1,7 @@
 import logging
-from typing import Any
+from typing import Any, cast
+
+import requests
 
 from .tradingview_api import TradingViewAPI
 from pydantic import ValidationError
@@ -13,6 +15,9 @@ def _fetch_field(symbol: str, scope: str, column: str, error_msg: str) -> Any:
     payload = build_scan_payload([symbol], [column])
     try:
         data = api.scan(scope, payload)
+    except requests.exceptions.HTTPError as exc:
+        logger.error("HTTP error for %s in %s: %s", symbol, scope, exc)
+        raise ValueError(f"Error fetching data for {symbol}") from exc
     except ValidationError as exc:
         logger.error("Invalid scan response for %s in %s: %s", symbol, scope, exc)
         raise ValueError(f"{error_msg} for {symbol} in market {scope}") from exc
@@ -23,11 +28,13 @@ def _fetch_field(symbol: str, scope: str, column: str, error_msg: str) -> Any:
         raise ValueError(f"{error_msg} for {symbol} in market {scope}") from exc
 
 
-def fetch_recommendation(symbol: str, market: str = "stocks") -> Any:
+def fetch_recommendation(symbol: str, market: str = "stocks") -> str:
     """Return trading recommendation for a symbol."""
-    return _fetch_field(symbol, market, "Recommend.All", "Recommendation unavailable")
+    return cast(
+        str, _fetch_field(symbol, market, "Recommend.All", "Recommendation unavailable")
+    )
 
 
-def fetch_stock_value(symbol: str, market: str = "stocks") -> Any:
+def fetch_stock_value(symbol: str, market: str = "stocks") -> float:
     """Return current close price for a symbol."""
-    return _fetch_field(symbol, market, "close", "Price unavailable")
+    return cast(float, _fetch_field(symbol, market, "close", "Price unavailable"))
