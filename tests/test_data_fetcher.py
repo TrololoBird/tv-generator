@@ -4,7 +4,13 @@ from pathlib import Path
 import pytest
 import requests
 
-from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
+from src.api.data_fetcher import (
+    fetch_metainfo,
+    full_scan,
+    save_json,
+    choose_tickers,
+    MAX_COLUMNS_PER_SCAN,
+)
 
 
 def test_fetch_metainfo(tv_api_mock):
@@ -43,15 +49,15 @@ def test_full_scan_single_batch(tv_api_mock):
 
 
 def test_full_scan_multi_batch(tv_api_mock):
-    first = {"count": 1, "data": [{"s": "AAA", "d": list(range(20))}]}
+    first = {"count": 1, "data": [{"s": "AAA", "d": list(range(MAX_COLUMNS_PER_SCAN))}]}
     second = {"count": 1, "data": [{"s": "AAA", "d": [99]}]}
     tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         [{"json": first}, {"json": second}],
     )
-    columns = [f"c{i}" for i in range(21)]
+    columns = [f"c{i}" for i in range(MAX_COLUMNS_PER_SCAN + 1)]
     result = full_scan("stocks", ["AAA"], columns)
-    assert result["data"][0]["d"] == list(range(20)) + [99]
+    assert result["data"][0]["d"] == list(range(MAX_COLUMNS_PER_SCAN)) + [99]
 
 
 def test_full_scan_batch_reorder(tv_api_mock):
@@ -73,7 +79,7 @@ def test_full_scan_batch_reorder(tv_api_mock):
         "https://scanner.tradingview.com/stocks/scan",
         [{"json": first}, {"json": second}],
     )
-    columns = [f"c{i}" for i in range(21)]
+    columns = [f"c{i}" for i in range(MAX_COLUMNS_PER_SCAN + 1)]
     result = full_scan("stocks", ["AAA", "BBB"], columns)
     assert [row["s"] for row in result["data"]] == ["AAA", "BBB"]
     assert result["data"][0]["d"] == [1, 2]

@@ -89,6 +89,12 @@ components:
       pattern: "^[A-Z0-9_+\\[\\]]+\\|(1|5|15|30|60|120|240|1D|1W)$"
 ```
 
+## Scan Request Batching
+TradingView limits `/scan` requests to 20 columns at a time. The
+`full_scan` helper in `data_fetcher.py` therefore splits the list of
+columns into chunks of this size (`MAX_COLUMNS_PER_SCAN`) and combines
+the partial responses.
+
 ## Import into GPT Builder
 1. Choose **Add Action** → **Upload YAML**.
 2. Select `specs/<market>.yaml`.
