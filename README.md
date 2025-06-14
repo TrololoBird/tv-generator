@@ -82,9 +82,10 @@ components:
   schemas:
     NumericFieldNoTimeframe:
       type: string
-      enum: [RSI, EMA20]
+      # enum is built from the available numeric fields such as [close, volume, ...]
     NumericFieldWithTimeframe:
       type: string
+      # pattern uses the timeframe codes parsed from this README
       pattern: "^[A-Z0-9_+\\[\\]]+\\|(1|5|15|30|60|120|240|1D|1W)$"
 ```
 
