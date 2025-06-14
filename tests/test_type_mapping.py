@@ -8,5 +8,10 @@ def test_tv2ref_known_types(tv_type: str, ref: str) -> None:
 
 
 def test_tv2ref_unknown_type() -> None:
-    with pytest.raises(KeyError):
-        tv2ref("unknown")
+    ref = tv2ref("unknown")
+    assert ref == "#/components/schemas/Str"
+
+
+def test_tv2ref_new_types() -> None:
+    assert tv2ref("duration") == "#/components/schemas/Num"
+    assert tv2ref("percentage") == "#/components/schemas/Num"
