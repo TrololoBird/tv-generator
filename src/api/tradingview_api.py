@@ -7,7 +7,14 @@ from requests.adapters import HTTPAdapter, Retry
 import requests_cache
 
 from src.constants import SCOPES
-from src.models import MetaInfoResponse, ScanResponse
+from pydantic import ValidationError
+from src.models import (
+    MetaInfoResponse,
+    ScanResponse,
+    SearchResponse,
+    HistoryResponse,
+    SummaryResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -103,13 +110,28 @@ class TradingViewAPI:
         return data
 
     def search(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """POST /{scope}/search."""
-        return self._request(scope, "search", "POST", payload)
+        """POST /{scope}/search validated by ``SearchResponse``."""
+        data = self._request(scope, "search", "POST", payload)
+        try:
+            SearchResponse.parse_obj(data)
+        except ValidationError as exc:
+            raise ValueError("Invalid search response") from exc
+        return data
 
     def history(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """POST /{scope}/history."""
-        return self._request(scope, "history", "POST", payload)
+        """POST /{scope}/history validated by ``HistoryResponse``."""
+        data = self._request(scope, "history", "POST", payload)
+        try:
+            HistoryResponse.parse_obj(data)
+        except ValidationError as exc:
+            raise ValueError("Invalid history response") from exc
+        return data
 
     def summary(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """POST /{scope}/summary."""
-        return self._request(scope, "summary", "POST", payload)
+        """POST /{scope}/summary validated by ``SummaryResponse``."""
+        data = self._request(scope, "summary", "POST", payload)
+        try:
+            SummaryResponse.parse_obj(data)
+        except ValidationError as exc:
+            raise ValueError("Invalid summary response") from exc
+        return data
