@@ -11,8 +11,10 @@ def test_generate_yaml_unknown_field_type() -> None:
     object.__setattr__(field, "t", "unknown")
     meta = MetaInfoResponse(data=[field])
     tsv = pd.DataFrame()
-    with pytest.raises(KeyError):
-        generate_yaml("crypto", meta, tsv, None)
+    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    data = yaml.safe_load(yaml_str)
+    props = data["components"]["schemas"]["CryptoFields"]["properties"]
+    assert props["foo"]["$ref"] == "#/components/schemas/Str"
 
 
 def test_generate_yaml_empty_and_none_scan() -> None:

@@ -24,3 +24,9 @@ def test_scan_asset_validation() -> None:
 def test_scan_invalid() -> None:
     with pytest.raises(ValidationError):
         ScanResponse.parse_obj({"data": [{"d": []}]})
+
+
+def test_unknown_field_type_fallback() -> None:
+    data = {"fields": [{"name": "foo", "type": "mystery"}]}
+    model = MetaInfoResponse.parse_obj(data)
+    assert model.fields[0].t == "mystery"

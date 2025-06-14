@@ -1,13 +1,21 @@
 from __future__ import annotations
 
-from typing import Any, cast, Literal, Dict
+from typing import Any, cast, Dict
 
-from typing import Annotated
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field, constr, confloat, AliasChoices, RootModel
+from pydantic import (
+    BaseModel,
+    Field,
+    constr,
+    confloat,
+    AliasChoices,
+    RootModel,
+    field_validator,
+)
 
 # Accepted TradingView field types
-FieldType = Literal[
+KNOWN_FIELD_TYPES = [
     "number",
     "price",
     "fundamental_price",
@@ -24,7 +32,32 @@ FieldType = Literal[
     "time",
     "time-yyyymmdd",
     "array",
+    "duration",
+    "percentage",
 ]
+
+FieldTypeLiteral = Literal[
+    "number",
+    "price",
+    "fundamental_price",
+    "percent",
+    "integer",
+    "float",
+    "string",
+    "bool",
+    "boolean",
+    "text",
+    "map",
+    "set",
+    "interface",
+    "time",
+    "time-yyyymmdd",
+    "array",
+    "duration",
+    "percentage",
+]
+
+FieldType = Annotated[str, FieldTypeLiteral]
 
 
 class TVBaseModel(BaseModel):
@@ -46,6 +79,18 @@ class TVField(TVBaseModel):
         None
     )
     flags: list[str] | None = None
+
+    @field_validator("t", mode="before")
+    @classmethod
+    def _validate_type(cls, v: str) -> str:
+        if v not in KNOWN_FIELD_TYPES:
+            import warnings
+
+            warnings.warn(
+                f"Unknown TradingView field type '{v}', falling back to str",
+                RuntimeWarning,
+            )
+        return v
 
 
 class MetaInfoResponse(TVBaseModel):

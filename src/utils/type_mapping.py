@@ -18,6 +18,8 @@ TV_TYPE_TO_REF: dict[str, str] = {
     "time": "#/components/schemas/Time",
     "time-yyyymmdd": "#/components/schemas/Time",
     "array": "#/components/schemas/Array",
+    "duration": "#/components/schemas/Num",
+    "percentage": "#/components/schemas/Num",
 }
 
 
@@ -26,7 +28,13 @@ def tv2ref(tv_type: str) -> str:
     try:
         return TV_TYPE_TO_REF[tv_type]
     except KeyError:
-        raise KeyError(tv_type) from None
+        import warnings
+
+        warnings.warn(
+            f"Unknown TradingView field type '{tv_type}', falling back to string",
+            RuntimeWarning,
+        )
+        return "#/components/schemas/Str"
 
 
 __all__ = ["TV_TYPE_TO_REF", "tv2ref"]
