@@ -5,7 +5,11 @@ from datetime import datetime
 
 
 def infer_type(value: pd.Series | str | int | float | bool | None) -> str:
-    """Infer OpenAPI type from a sample value."""
+    """Infer OpenAPI type from a sample value.
+
+    Strings equal to ``"true"`` or ``"false"`` (case-insensitive) are
+    interpreted as boolean values.
+    """
     if isinstance(value, pd.Series):
         series = value.dropna()
         if series.empty:

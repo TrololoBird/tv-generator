@@ -1,28 +1,12 @@
-from src.utils.type_mapping import tv2ref
+from src.utils.type_mapping import tv2ref, TV_TYPE_TO_REF
 import pytest
 
 
-def test_tv2ref_known_types():
-    for t in [
-        "number",
-        "price",
-        "fundamental_price",
-        "percent",
-        "integer",
-        "float",
-    ]:
-        assert tv2ref(t) == "#/components/schemas/Num"
-
-    for t in ["bool", "boolean"]:
-        assert tv2ref(t) == "#/components/schemas/Bool"
-
-    for t in ["text", "map", "set", "interface", "string"]:
-        assert tv2ref(t) == "#/components/schemas/Str"
-
-    for t in ["time", "time-yyyymmdd"]:
-        assert tv2ref(t) == "#/components/schemas/Time"
+@pytest.mark.parametrize("tv_type,ref", TV_TYPE_TO_REF.items())
+def test_tv2ref_known_types(tv_type: str, ref: str) -> None:
+    assert tv2ref(tv_type) == ref
 
 
-def test_tv2ref_unknown_type():
+def test_tv2ref_unknown_type() -> None:
     with pytest.raises(KeyError):
         tv2ref("unknown")
