@@ -44,7 +44,7 @@ def test_tradingview_request_error() -> None:
 
 def test_cli_scan_invalid_schema(tv_api_mock) -> None:
     runner = CliRunner()
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/scan",
         json={"foo": "bar"},
     )

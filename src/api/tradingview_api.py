@@ -91,8 +91,8 @@ class TradingViewAPI:
         return f"{self.base_url}/{scope}/{endpoint}"
 
     def scan(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Send GET /{scope}/scan and return JSON validated by ``ScanResponse``."""
-        data = self._request(scope, "scan", "GET", payload)
+        """Send POST /{scope}/scan and return JSON validated by ``ScanResponse``."""
+        data = self._request(scope, "scan", "POST", payload)
         ScanResponse.parse_obj(data)
         return data
 
