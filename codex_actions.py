@@ -2,8 +2,12 @@ import subprocess
 import sys
 import json
 from pathlib import Path
-from src.constants import SCOPES
+
 import pandas as pd
+
+from src.constants import SCOPES
+
+STATUS_HEADER = "field\ttv_type\tstatus\tsample_value\n"
 
 
 def generate_openapi_spec() -> None:
@@ -20,7 +24,7 @@ def generate_openapi_spec() -> None:
         if not scan_file.exists():
             scan_file.write_text(json.dumps({"data": []}), encoding="utf-8")
         if not status_file.exists():
-            status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
+            status_file.write_text(STATUS_HEADER)
         else:
             try:
                 df = pd.read_csv(status_file, sep="\t")
@@ -41,7 +45,7 @@ def generate_openapi_spec() -> None:
                     df = df[["field", "tv_type", "status", "sample_value"]]
                     df.to_csv(status_file, sep="\t", index=False)
             except Exception:
-                status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
+                status_file.write_text(STATUS_HEADER)
 
     try:
         for market in SCOPES:

@@ -55,7 +55,7 @@ jobs:
           # Allow failures and surface warnings for easier debugging
           set +e
           mkdir -p specs
-          for market in crypto forex stocks futures; do
+          for market in america bond cfd coin crypto forex futures stocks; do
             mkdir -p results/$market
             echo -e "field\ttv_type\tstatus\tsample_value\nclose\tinteger\tok\t1\nopen\tstring\tok\tabc" > results/$market/field_status.tsv
             echo '{ "market": "'$market'", "info": "Generated metadata" }' > results/$market/metainfo.json

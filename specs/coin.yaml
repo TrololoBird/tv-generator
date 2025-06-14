@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Coin API
-  version: 1.0.31
+  version: 1.0.35
 servers:
   - url: https://scanner.tradingview.com
 paths:
@@ -131,7 +131,8 @@ components:
       items: {}
     NumericFieldNoTimeframe:
       type: string
-      enum: []
+      enum:
+        - close
     NumericFieldWithTimeframe:
       type: string
       pattern: ^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$
