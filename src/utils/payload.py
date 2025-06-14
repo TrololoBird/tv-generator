@@ -16,7 +16,12 @@ def build_scan_payload(
     symbols_list = list(symbols)
 
     def _normalize(col: str) -> str:
-        return col[:-3] if col.endswith("|1D") else col
+        """Strip multi-day/week timeframe suffixes from the column name."""
+        if "|" in col:
+            base, suffix = col.rsplit("|", 1)
+            if suffix and suffix[-1] in {"D", "W"} and suffix[:-1].isdigit():
+                return base
+        return col
 
     columns_list = [_normalize(c) for c in columns]
 
