@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, cast, Literal
+from typing import Any, cast, Literal, Dict
 
 from typing import Annotated
 
-from pydantic import BaseModel, Field, constr, confloat, AliasChoices
+from pydantic import BaseModel, Field, constr, confloat, AliasChoices, RootModel
 
 # Accepted TradingView field types
 FieldType = Literal[
@@ -88,4 +88,30 @@ class ScanResponse(TVBaseModel):
     )
 
 
-__all__ = ["TVField", "MetaInfoResponse", "ScanItem", "ScanResponse"]
+class GenericResponse(RootModel[Dict[str, Any]]):
+    """Generic mapping used for search/history/summary."""
+
+    root: Dict[str, Any]
+
+
+class SearchResponse(GenericResponse):
+    """Response model for ``/search`` endpoint."""
+
+
+class HistoryResponse(GenericResponse):
+    """Response model for ``/history`` endpoint."""
+
+
+class SummaryResponse(GenericResponse):
+    """Response model for ``/summary`` endpoint."""
+
+
+__all__ = [
+    "TVField",
+    "MetaInfoResponse",
+    "ScanItem",
+    "ScanResponse",
+    "SearchResponse",
+    "HistoryResponse",
+    "SummaryResponse",
+]

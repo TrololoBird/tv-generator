@@ -104,6 +104,18 @@ def test_endpoint_invalid_json(tv_api_mock, endpoint):
         method("crypto", {})
 
 
+@pytest.mark.parametrize("endpoint", ["search", "history", "summary"])
+def test_endpoint_invalid_schema(tv_api_mock, endpoint):
+    tv_api_mock.post(
+        f"https://scanner.tradingview.com/crypto/{endpoint}",
+        json=[1, 2, 3],
+    )
+    api = TradingViewAPI()
+    method = getattr(api, endpoint)
+    with pytest.raises(ValueError):
+        method("crypto", {})
+
+
 def test_metainfo_error(tv_api_mock):
     tv_api_mock.post(
         "https://scanner.tradingview.com/crypto/metainfo",
