@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, TypeVar
 
 import click
 import yaml
@@ -13,6 +13,7 @@ from importlib.metadata import PackageNotFoundError, version as pkg_version
 import requests
 from openapi_spec_validator import validate_spec
 from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
+from pydantic import ValidationError
 
 from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
@@ -26,11 +27,35 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
 
 try:
     _pkg_version = pkg_version("tv-generator")
 except PackageNotFoundError:  # pragma: no cover - dev environment
     _pkg_version = "0.0.0"
+
+
+def _with_error_handling(
+    func: Callable[..., T],
+    request_msg: str,
+    error_msg: str,
+    *args: Any,
+    **kwargs: Any,
+) -> T:
+    """Execute *func* converting common errors to ``ClickException``."""
+
+    try:
+        return func(*args, **kwargs)
+    except requests.exceptions.RequestException as exc:
+        logger.error("%s: %s", request_msg, exc)
+        if isinstance(exc, requests.HTTPError) and exc.response is not None:
+            r = exc.response
+            raise click.ClickException(f"HTTP {r.status_code}: {r.text}")
+        raise click.ClickException(str(exc))
+    except (ValueError, ValidationError) as exc:
+        logger.error("%s: %s", error_msg, exc)
+        raise click.ClickException(str(exc))
 
 
 @click.group()
@@ -89,17 +114,13 @@ def scan(
         json.loads(sort) if sort else None,
         json.loads(range_) if range_ else None,
     )
-    try:
-        result = api.scan(market, payload=payload)
-    except requests.exceptions.RequestException as exc:
-        logger.error("Scan request failed: %s", exc)
-        if isinstance(exc, requests.HTTPError) and exc.response is not None:
-            r = exc.response
-            raise click.ClickException(f"HTTP {r.status_code}: {r.text}")
-        raise click.ClickException(str(exc))
-    except ValueError as exc:
-        logger.error("Scan failed: %s", exc)
-        raise click.ClickException(str(exc))
+    result = _with_error_handling(
+        api.scan,
+        "Scan request failed",
+        "Scan failed",
+        market,
+        payload=payload,
+    )
     click.echo(json.dumps(result, indent=2))
 
 
@@ -173,16 +194,11 @@ def search(payload: str, market: str) -> None:
     """Call /{market}/search with the given payload."""
 
     api = TradingViewAPI()
-    try:
-        data = api.search(market, json.loads(payload))
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Search request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    except ValueError as exc:  # pragma: no cover - click handles output
-        logger.error("Search error: %s", exc)
-        raise click.ClickException(str(exc))
+    data = _with_error_handling(
+        lambda: api.search(market, json.loads(payload)),
+        "Search request failed",
+        "Search error",
+    )
     click.echo(json.dumps(data, indent=2))
 
 
@@ -193,16 +209,11 @@ def history(payload: str, market: str) -> None:
     """Call /{market}/history with the given payload."""
 
     api = TradingViewAPI()
-    try:
-        data = api.history(market, json.loads(payload))
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("History request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    except ValueError as exc:  # pragma: no cover - click handles output
-        logger.error("History error: %s", exc)
-        raise click.ClickException(str(exc))
+    data = _with_error_handling(
+        lambda: api.history(market, json.loads(payload)),
+        "History request failed",
+        "History error",
+    )
     click.echo(json.dumps(data, indent=2))
 
 
@@ -213,16 +224,11 @@ def summary(payload: str, market: str) -> None:
     """Call /{market}/summary with the given payload."""
 
     api = TradingViewAPI()
-    try:
-        data = api.summary(market, json.loads(payload))
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Summary request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    except ValueError as exc:  # pragma: no cover - click handles output
-        logger.error("Summary error: %s", exc)
-        raise click.ClickException(str(exc))
+    data = _with_error_handling(
+        lambda: api.summary(market, json.loads(payload)),
+        "Summary request failed",
+        "Summary error",
+    )
     click.echo(json.dumps(data, indent=2))
 
 
