@@ -93,6 +93,9 @@ def scan(
         result = api.scan(market, payload=payload)
     except requests.exceptions.RequestException as exc:
         logger.error("Scan request failed: %s", exc)
+        if isinstance(exc, requests.HTTPError) and exc.response is not None:
+            r = exc.response
+            raise click.ClickException(f"HTTP {r.status_code}: {r.text}")
         raise click.ClickException(str(exc))
     except ValueError as exc:
         logger.error("Scan failed: %s", exc)
@@ -223,7 +226,7 @@ def summary(payload: str, market: str) -> None:
     click.echo(json.dumps(data, indent=2))
 
 
-@cli.command("collect-full")
+@cli.command("collect")
 @click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
 @click.option(
     "--tickers",
@@ -243,7 +246,7 @@ def summary(payload: str, market: str) -> None:
     is_flag=True,
     help="Use existing JSON files instead of network requests",
 )
-def collect_full(market: str, tickers: str, outdir: Path, offline: bool) -> None:
+def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
     """Fetch metainfo and scan results saving JSON and TSV."""
 
     market_dir = outdir / market
@@ -308,9 +311,6 @@ def collect_full(market: str, tickers: str, outdir: Path, offline: bool) -> None
         raise click.ClickException(str(exc))
 
 
-cli.add_command(collect_full, name="collect")
-
-
 @cli.command()
 @click.option(
     "--indir",
@@ -343,7 +343,7 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
 
     def _process(market: str) -> None:
         click.echo(f"* {market}")
-        cb_collect = getattr(collect_full, "callback", None)
+        cb_collect = getattr(collect, "callback", None)
         if callable(cb_collect):
             offline_mode = offline or (indir / market / "metainfo.json").exists()
             cb_collect(market, "AUTO", indir, offline_mode)

@@ -36,7 +36,7 @@ def test_e2e_collect_and_generate(tmp_path, monkeypatch):
         out_dir = Path("tmp_res")
         result = runner.invoke(
             cli,
-            ["collect-full", "--market", "crypto", "--outdir", str(out_dir)],
+            ["collect", "--market", "crypto", "--outdir", str(out_dir)],
         )
         assert result.exit_code == 0
         market_dir = out_dir / "crypto"

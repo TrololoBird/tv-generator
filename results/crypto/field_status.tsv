@@ -1,3 +1,3 @@
-field	status	value
-close	ok	1
-open	ok	abc
+field	tv_type	status	sample_value
+close	integer	ok	1
+open	text	ok	abc

@@ -4,7 +4,7 @@ import click
 from click.testing import CliRunner
 
 from src.cli import cli
-from src.cli import collect_full as collect_full_cmd
+from src.cli import collect as collect_cmd
 
 
 def _create_metainfo(path: Path) -> None:
@@ -89,11 +89,11 @@ def test_generate_invalid_market() -> None:
     assert "Invalid value for '--market'" in result.output
 
 
-def test_collect_full_and_generate(monkeypatch) -> None:
+def test_collect_and_generate(monkeypatch) -> None:
     runner = CliRunner()
     _mock_collect_api(monkeypatch)
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect-full", "--market", "crypto"])
+        result = runner.invoke(cli, ["collect", "--market", "crypto"])
         assert result.exit_code == 0, result.output
         result = runner.invoke(
             cli,
@@ -105,9 +105,9 @@ def test_collect_full_and_generate(monkeypatch) -> None:
         assert "TODO" not in text
 
 
-def test_collect_full_invalid_market() -> None:
+def test_collect_invalid_market() -> None:
     runner = CliRunner()
-    result = runner.invoke(cli, ["collect-full", "--market", "bad"])
+    result = runner.invoke(cli, ["collect", "--market", "bad"])
     assert result.exit_code != 0
     assert "Invalid value for '--market'" in result.output
 
@@ -133,7 +133,7 @@ def test_build_error(monkeypatch) -> None:
     def boom(*_a, **_kw):
         raise click.ClickException("fail")
 
-    monkeypatch.setattr(collect_full_cmd, "callback", boom)
+    monkeypatch.setattr(collect_cmd, "callback", boom)
     with runner.isolated_filesystem():
         result = runner.invoke(cli, ["build"])
         assert result.exit_code != 0
