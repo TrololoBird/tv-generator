@@ -413,5 +413,6 @@ def test_collect_error(monkeypatch):
     with runner.isolated_filesystem():
         result = runner.invoke(cli, ["collect", "--market", "crypto"])
         assert result.exit_code != 0
+        assert "File not found" in result.output
         log = Path("results/crypto/error.log").read_text()
-        assert log
+        assert "FileNotFoundError: boom" in log

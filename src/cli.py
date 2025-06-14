@@ -307,8 +307,23 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
         df = build_field_status(meta_model, scan)
         tsv_text = df.to_csv(sep="\t", index=False)
         (market_dir / "field_status.tsv").write_text(tsv_text.rstrip("\n"))
+    except FileNotFoundError as exc:  # pragma: no cover - click handles output
+        with error_log.open("a") as fh:
+            fh.write(f"{type(exc).__name__}: {exc}\n")
+        raise click.ClickException("File not found")
+    except ValueError as exc:  # pragma: no cover - click handles output
+        with error_log.open("a") as fh:
+            fh.write(f"{type(exc).__name__}: {exc}\n")
+        raise click.ClickException("Invalid data")
+    except (
+        requests.exceptions.RequestException
+    ) as exc:  # pragma: no cover - click handles output
+        with error_log.open("a") as fh:
+            fh.write(f"{type(exc).__name__}: {exc}\n")
+        raise click.ClickException("Request failed")
     except Exception as exc:  # pragma: no cover - click handles output
-        error_log.write_text(str(exc))
+        with error_log.open("a") as fh:
+            fh.write(f"{type(exc).__name__}: {exc}\n")
         raise click.ClickException(str(exc))
 
 
