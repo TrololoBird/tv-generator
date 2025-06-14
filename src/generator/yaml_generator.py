@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
+import re
 
 import toml
 import yaml
@@ -11,6 +12,26 @@ if TYPE_CHECKING:  # pragma: no cover - type checking only
 
 from src.models import MetaInfoResponse
 from src.utils import tv2ref
+
+
+def _supported_timeframes() -> list[str]:
+    """Return list of supported timeframe codes parsed from README."""
+    root = Path(__file__).resolve().parents[2]
+    readme = root / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    match = re.search(r"Timeframe codes.*?```(.*?)```", text, re.S)
+    frames: list[str] = []
+    if match:
+        block = match.group(1)
+        for line in block.strip().splitlines():
+            left = line.split("->", 1)[0].strip()
+            for token in left.split(","):
+                token = token.strip()
+                if token:
+                    frames.append(token)
+    if not frames:
+        frames = ["1", "5", "15", "30", "60", "120", "240", "1D", "1W"]
+    return frames
 
 
 class _IndentedDumper(yaml.SafeDumper):
@@ -78,7 +99,7 @@ def collect_field_schemas(
         schema["description"] = _describe_field(field.n)
 
         base_name, _, _ = field.n.partition("|")
-        if "|" in field.n and base_name in {"RSI", "EMA20"}:
+        if "|" not in field.n and tv2ref(field.t).endswith("/Num"):
             no_tf_enum.add(base_name)
 
         values: list[Any] = []
@@ -130,9 +151,11 @@ def build_components_schemas(
         "type": "string",
         "enum": sorted(no_tf_enum),
     }
+    timeframes = _supported_timeframes()
+    tf_pattern = "|".join(map(re.escape, timeframes))
     components["NumericFieldWithTimeframe"] = {
         "type": "string",
-        "pattern": r"^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$",
+        "pattern": rf"^[A-Z0-9_+\[\]]+\|({tf_pattern})$",
     }
 
     if len(fields) > 64:

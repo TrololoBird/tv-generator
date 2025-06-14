@@ -59,7 +59,7 @@ def test_numeric_field_components() -> None:
     yaml_str = generate_yaml("crypto", meta, tsv, None)
     data = yaml.safe_load(yaml_str)
     schemas = data["components"]["schemas"]
-    assert schemas["NumericFieldNoTimeframe"]["enum"] == ["RSI"]
+    assert schemas["NumericFieldNoTimeframe"]["enum"] == []
     assert "pattern" in schemas["NumericFieldWithTimeframe"]
 
 
@@ -85,7 +85,7 @@ def test_collect_and_build_components() -> None:
     collected, no_tf = collect_field_schemas(meta, scan)
     assert collected[0][0] == "RSI|1D"
     assert "description" in collected[0][1]
-    assert no_tf == {"RSI"}
+    assert no_tf == set()
 
     components = build_components_schemas("Crypto", collected, no_tf)
     assert "CryptoFields" in components
@@ -96,3 +96,17 @@ def test_build_paths_section() -> None:
     paths = build_paths_section("crypto", "Crypto")
     assert "/crypto/scan" in paths
     assert "/crypto/metainfo" in paths
+
+
+def test_fields_split_into_parts() -> None:
+    fields = [TVField(name=f"f{i}", type="number") for i in range(130)]
+    meta = MetaInfoResponse(data=fields)
+    tsv = pd.DataFrame()
+    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    data = yaml.safe_load(yaml_str)
+    schemas = data["components"]["schemas"]
+    assert "CryptoFieldsPart01" in schemas
+    assert "CryptoFieldsPart02" in schemas
+    parts = schemas["CryptoFields"]["allOf"]
+    assert {"$ref": "#/components/schemas/CryptoFieldsPart01"} in parts
+    assert {"$ref": "#/components/schemas/CryptoFieldsPart02"} in parts
