@@ -59,7 +59,7 @@ jobs:
             mkdir -p results/$market
             echo -e "field\ttv_type\tstatus\tsample_value\nclose\tinteger\tok\t1\nopen\tstring\tok\tabc" > results/$market/field_status.tsv
             echo '{ "market": "'$market'", "info": "Generated metadata" }' > results/$market/metainfo.json
-            tvgen generate --market $market --outdir specs/openapi_${market}.yaml
+            tvgen generate --market $market --outdir specs
             status=$?
             if [ $status -ne 0 ]; then
               echo "::warning file=tvgen::tvgen failed for $market (likely due to network issues)"
@@ -68,8 +68,8 @@ jobs:
           set -e
       - name: Validate all generated specs
         run: |
-          if ls specs/openapi_*.yaml 1> /dev/null 2>&1; then
-            for spec in specs/openapi_*.yaml; do
+          if ls specs/*.yaml 1> /dev/null 2>&1; then
+            for spec in specs/*.yaml; do
               openapi-spec-validator "$spec" || exit 1
             done
             echo "All specs validated successfully!"
@@ -95,8 +95,8 @@ jobs:
       - name: Summarize workflow
         run: |
           echo "Format, lint, type-check, and tests completed"
-          if ls specs/openapi_*.yaml 1> /dev/null 2>&1; then
-            echo "Specs generated: $(ls specs/openapi_*.yaml | wc -l)"
+          if ls specs/*.yaml 1> /dev/null 2>&1; then
+            echo "Specs generated: $(ls specs/*.yaml | wc -l)"
           else
             echo "No specs generated"
           fi
