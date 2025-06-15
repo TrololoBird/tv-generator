@@ -3,7 +3,7 @@ import json
 import yaml
 from click.testing import CliRunner
 
-from src.meta.field_classifier import classify_fields
+from src.generator.yaml_generator import classify_fields
 from src.cli import cli
 
 

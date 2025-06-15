@@ -14,6 +14,7 @@ from src.models import MetaInfoResponse, TVField, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
 from src.utils import tv2ref
 from src.meta.versioning import get_current_version
+from src.utils.custom_patterns import _is_custom
 
 
 def get_project_version() -> str:
@@ -87,6 +88,61 @@ def _describe_field(name: str) -> str:
         base, tf = name.split("|", 1)
         return f"{_indicator_name(base)} on {_timeframe_desc(tf)} timeframe"
     return _indicator_name(name)
+
+
+_NUMERIC_TYPES = {
+    "number",
+    "price",
+    "fundamental_price",
+    "percent",
+    "integer",
+    "float",
+    "duration",
+    "percentage",
+}
+
+
+def classify_fields(columns: Dict[str, Dict[str, Any]]) -> Dict[str, list[str]]:
+    """Return field classification mapping."""
+
+    result: Dict[str, list[str]] = {
+        "numeric": [],
+        "string": [],
+        "custom": [],
+        "supports_timeframes": [],
+        "daily_only": [],
+        "discovered": [],
+    }
+
+    supports_tf: set[str] = set()
+
+    for name, info in columns.items():
+        base = name.split("|", 1)[0]
+        ftype = str(info.get("tv_type") or info.get("type") or "")
+        if ftype in _NUMERIC_TYPES:
+            result["numeric"].append(base)
+        else:
+            result["string"].append(base)
+
+        if _is_custom(base):
+            result["custom"].append(base)
+
+        if "|" in name:
+            supports_tf.add(base)
+
+        if str(info.get("source")) == "scan":
+            result["discovered"].append(base)
+
+    for base in result["numeric"]:
+        if base in supports_tf:
+            continue
+        if re.fullmatch(r"[A-Z]+[A-Z0-9\[\]]*", base):
+            result["daily_only"].append(base)
+
+    result["supports_timeframes"] = sorted(supports_tf)
+    for key in result:
+        result[key] = sorted(set(result[key]))
+    return result
 
 
 def collect_field_schemas(
@@ -463,8 +519,6 @@ def generate_for_market(
                 "type": item.get("type", "string"),
                 "source": item.get("source", "scan"),
             }
-
-    from src.meta.field_classifier import classify_fields
 
     classes = classify_fields(columns)
 
