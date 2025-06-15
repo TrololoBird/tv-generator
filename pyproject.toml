@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tv-generator"
-version = "1.0.43"
+version = "1.0.46"
 requires-python = ">=3.10"
 dependencies = [ "click>=8.2", "requests>=2.32", "pandas>=2.3", "PyYAML>=6.0", "openapi-spec-validator>=0.7", "toml>=0.10", "requests_cache>=1.2", "pydantic>=2.7",]
 
@@ -12,7 +12,7 @@ dependencies = [ "click>=8.2", "requests>=2.32", "pandas>=2.3", "PyYAML>=6.0", "
 tvgen = "src.cli:cli"
 
 [tool.setuptools]
-packages = [ "src", "src.api", "src.generator", "src.utils", "src.constants", "src.spec",]
+packages = [ "src", "src.api", "src.generator", "src.utils", "src.constants", "src.spec", "src.data",]
 
 [tool.mypy]
 ignore_missing_imports = true

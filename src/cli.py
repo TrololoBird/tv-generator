@@ -420,6 +420,38 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
             _process(market)
 
 
+@cli.command()
+@click.option(
+    "--market",
+    required=True,
+    type=click.Choice(SCOPES + ["all"]),
+    help="Market name or 'all'",
+)
+@click.option(
+    "--outdir",
+    type=click.Path(path_type=Path),
+    default="results",
+    show_default=True,
+    help="Directory to store results",
+)
+@click.option("--generate", is_flag=True, help="Run generate after refresh")
+def refresh(market: str, outdir: Path, generate: bool) -> None:
+    """Download latest data and update TSV files."""
+
+    from src.data.collector import refresh_market
+    from src.spec.generator import generate_spec_for_market
+
+    markets = SCOPES if market == "all" else [market]
+    for m in markets:
+        click.echo(f"* {m}")
+        refresh_market(m, outdir)
+        if generate:
+            try:
+                generate_spec_for_market(m, outdir, Path("specs"))
+            except Exception as exc:
+                logger.warning("Skipped %s: %s", m, exc)
+
+
 cli.add_command(build, name="build-all")
 
 
