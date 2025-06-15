@@ -18,18 +18,33 @@ def detect_all_markets(indir: str | Path) -> List[str]:
 
 
 def generate_spec_for_all_markets(
-    indir: Path, outdir: Path, max_size: int = 1_048_576
+    indir: Path,
+    outdir: Path,
+    max_size: int = 1_048_576,
+    *,
+    include_missing: bool = False,
 ) -> List[Path]:
     """Generate specs for all markets under ``indir``."""
     out_files: List[Path] = []
     for market in detect_all_markets(indir):
-        out_files.append(generate_spec_for_market(market, indir, outdir, max_size))
+        out_files.append(
+            generate_spec_for_market(
+                market, indir, outdir, max_size, include_missing=include_missing
+            )
+        )
     return out_files
 
 
 def generate_spec_for_market(
-    market: str, indir: Path, outdir: Path, max_size: int = 1_048_576
+    market: str,
+    indir: Path,
+    outdir: Path,
+    max_size: int = 1_048_576,
+    *,
+    include_missing: bool = False,
 ) -> Path:
     """Generate spec for a single market."""
 
-    return generate_for_market(market, indir, outdir, max_size)
+    return generate_for_market(
+        market, indir, outdir, max_size, include_missing=include_missing
+    )

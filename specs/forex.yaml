@@ -2,9 +2,9 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Forex API
-  version: 1.0.41
+  version: 1.0.42
 servers:
-  - url: https://scanner.tradingview.com
+- url: https://scanner.tradingview.com
 paths:
   /forex/scan:
     post:
@@ -104,18 +104,18 @@ paths:
       operationId: ForexNumeric
       x-openai-isConsequential: false
       parameters:
-        - name: symbol
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: field
-          in: query
-          required: true
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/NumericFieldWithTimeframe'
-              - $ref: '#/components/schemas/NumericFieldNoTimeframe'
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: field
+        in: query
+        required: true
+        schema:
+          oneOf:
+          - $ref: '#/components/schemas/NumericFieldWithTimeframe'
+          - $ref: '#/components/schemas/NumericFieldNoTimeframe'
       responses:
         '200':
           description: Successful response
@@ -161,7 +161,7 @@ components:
     NumericFieldNoTimeframe:
       type: string
       enum:
-        - close
+      - close
     NumericFieldWithTimeframe:
       type: string
       enum: []
@@ -202,8 +202,8 @@ components:
         range:
           type: object
       required:
-        - symbols
-        - columns
+      - symbols
+      - columns
     ForexScanResponse:
       type: object
       properties:

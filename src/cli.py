@@ -400,7 +400,7 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
             offline_mode = offline or (indir / market / "metainfo.json").exists()
             cb_collect(market, "AUTO", indir, offline_mode)
         try:
-            generate_for_market(market, indir, outdir, 1_048_576)
+            generate_for_market(market, indir, outdir, 1_048_576, include_missing=False)
         except FileNotFoundError as exc:
             raise click.ClickException(str(exc))
 
@@ -455,8 +455,18 @@ cli.add_command(build, name="build-all")
     is_flag=True,
     help="Fail on first market error when generating all",
 )
+@click.option(
+    "--include-missing",
+    is_flag=True,
+    help="Include auto-discovered fields in spec",
+)
 def generate(
-    market: str, indir: Path, outdir: Path, max_size: int, strict: bool
+    market: str,
+    indir: Path,
+    outdir: Path,
+    max_size: int,
+    strict: bool,
+    include_missing: bool,
 ) -> None:
     """Generate OpenAPI YAML using collected JSON and TSV."""
 
@@ -466,7 +476,9 @@ def generate(
             for m in detect_all_markets(indir):
                 try:
                     out_files.append(
-                        generate_spec_for_market(m, indir, outdir, max_size)
+                        generate_spec_for_market(
+                            m, indir, outdir, max_size, include_missing=include_missing
+                        )
                     )
                 except Exception as exc:
                     logger.warning("Skipped %s: %s: %s", m, type(exc).__name__, exc)
@@ -480,7 +492,9 @@ def generate(
                 names = ", ".join(f.name for f in out_files)
                 click.echo(f"\u2713 Generated: {names}")
         else:
-            out_file = generate_for_market(market, indir, outdir, max_size)
+            out_file = generate_for_market(
+                market, indir, outdir, max_size, include_missing=include_missing
+            )
             size_kb = out_file.stat().st_size // 1024
             click.echo(f"\u2713 {out_file.name} {size_kb} KB")
     except FileNotFoundError as exc:
@@ -585,6 +599,39 @@ def debug(market: str, verbose: bool) -> None:
 
     result = TradingViewAPI().diagnose_connection(market, verbose)
     click.echo(result)
+
+
+@cli.command("audit-missing-fields")
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+@click.option(
+    "--indir",
+    type=click.Path(path_type=Path),
+    default="results",
+    show_default=True,
+    help="Input directory",
+)
+@click.option("--outfile", type=click.Path(path_type=Path), help="Save result to file")
+def audit_missing_fields_cli(market: str, indir: Path, outfile: Path | None) -> None:
+    """Show fields present in scan.json but missing from metainfo."""
+
+    from src.analyzer.scan_audit import find_missing_fields
+
+    market_dir = indir / market
+    meta_file = market_dir / "metainfo.json"
+    scan_file = market_dir / "scan.json"
+    status_file = market_dir / "field_status.tsv"
+
+    try:
+        missing = find_missing_fields(meta_file, scan_file, status_file)
+    except FileNotFoundError as exc:
+        raise click.ClickException(str(exc))
+
+    lines = [f'Field "{m["name"]}" — inferred as {m["type"]}' for m in missing]
+    text = "\n".join(lines)
+    if outfile:
+        Path(outfile).write_text(text + "\n")
+    if text:
+        click.echo(text)
 
 
 @cli.command()
