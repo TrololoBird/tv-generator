@@ -582,5 +582,22 @@ def debug(market: str, verbose: bool) -> None:
     click.echo(result)
 
 
+@cli.command()
+@click.option(
+    "--outfile",
+    type=click.Path(path_type=Path),
+    default="README.generated.md",
+    show_default=True,
+    help="Output README file",
+)
+def docs(outfile: Path) -> None:
+    """Generate README file with CLI command list."""
+
+    from src.docs.readme_generator import generate_readme
+
+    out_path = generate_readme(outfile)
+    click.echo(f"\u2713 {out_path}")
+
+
 if __name__ == "__main__":
     cli()

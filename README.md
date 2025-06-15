@@ -1,116 +1,57 @@
 # tv-generator
 
-## Overview
+🧠 **tv-generator** — это CLI-инструмент для автоматической генерации OpenAPI 3.1 спецификаций на основе TradingView API `/scan` и `/metainfo`.
 
-`tv-generator` fetches TradingView metainfo and scan results and generates an OpenAPI 3.1 YAML specification suitable for GPT Builder custom actions.
+## 📦 Установка
 
-## Quick Start
-
-### Using Poetry
 ```bash
-poetry install
-poetry run tvgen collect --market crypto
-poetry run tvgen generate --market crypto
-poetry run tvgen validate --spec specs/crypto.yaml
-```
-You can also build the full set of markets:
-```bash
-poetry run tvgen build --indir results --outdir specs
-poetry run tvgen preview --spec specs/crypto.yaml
+git clone https://github.com/TrololoBird/tv-generator.git
+cd tv-generator
+pip install -e .[dev]
 ```
 
-## Network Requirements
-The generation commands contact TradingView's public API. Ensure that `scanner.tradingview.com` is reachable from your environment. GitHub-hosted runners may block this traffic; use a self-hosted runner or run the generator locally if needed.
+## 🚀 Быстрый старт
 
-## Environment Variables
-- `TV_BASE_URL` – переопределение хоста TradingView API (по умолчанию: `https://scanner.tradingview.com`)
-- `TV_CACHE` – вкл/выкл кэширования запросов (`true`/`false`, по умолчанию: `false`)
-
-## Version
-The project version is stored in `pyproject.toml` under `[project]`. The CLI reads this value for `tvgen --version`. Update it when publishing a new release.
-
-### Docker
 ```bash
-docker run --rm ghcr.io/<owner>/tv-generator:latest \
-  tvgen collect --market crypto && \
-  tvgen generate --market crypto
-```
-
-## CLI Overview
-| Command (alias) | Purpose                                       | Key Flags |
-|-----------------|-----------------------------------------------|-----------|
-| build / build-all | collect+generate specs for all markets        | `--indir` results, `--outdir` specs, `--workers` 1, `--offline` |
-| collect         | download metainfo+scan, build TSV             | `--market`, `--tickers` AUTO, `--outdir` results, `--offline` |
-| generate        | build OpenAPI spec                            | `--market`, `--indir` results, `--outdir` specs, `--max-size` 1048576 |
-| validate        | validate spec file                            | `--spec` |
-| preview         | show fields summary from spec                 | `--spec` |
-| debug           | diagnose TradingView connectivity             | `--market`, `--verbose` |
-
-### Short Examples
-```bash
-# Basic scan query
-tvgen scan --symbols BTCUSD,ETHUSD --columns close --market crypto
-
-# Collect metainfo and scan results
-tvgen collect --market crypto --outdir results
-
-# Generate specification from collected data
-tvgen generate --market crypto --indir results --outdir specs
-
-# Validate generated YAML
+tvgen collect --market crypto
+tvgen generate --market crypto --outdir specs
 tvgen validate --spec specs/crypto.yaml
 ```
 
-## Daily CI Flow
-`collect` → `generate` → size-validate → commit
+Однострочный пример: `tvgen generate --market crypto --outdir specs`
 
-## Field Name Format
-Indicators can include a timeframe suffix separated by `|`. For example `RSI|60` means the RSI value on a 60‑minute timeframe. `ADX+DI[1]|1D` refers to the `ADX+DI[1]` indicator on daily candles.
+## 🛠️ CLI команды
 
-Timeframe codes map to minutes unless otherwise noted:
+- `build` - Collect data and generate specs for all markets.
+- `build-all` - Collect data and generate specs for all markets.
+- `bundle` - Bundle all specifications under ``specs/`` directory.
+- `collect` - Fetch metainfo and scan results saving JSON and TSV.
+- `debug` - Diagnose TradingView connectivity for the given market.
+- `generate` - Generate OpenAPI YAML using collected JSON and TSV.
+- `history` - Call /{market}/history with the given payload.
+- `metainfo` - Fetch metainfo for given market via /{market}/metainfo.
+- `preview` - Show table with fields, type, enum and description.
+- `price` - Fetch last close price for a symbol.
+- `recommend` - Fetch trading recommendation for a symbol.
+- `scan` - Perform a basic scan request and print JSON.
+- `search` - Call /{market}/search with the given payload.
+- `summary` - Call /{market}/summary with the given payload.
+- `validate` - Validate an OpenAPI specification file.
+
+## 📁 Структура проекта
+
+- `src/` — исходный код CLI и генератора
+- `results/` — сохранённые ответы TradingView
+- `specs/` — итоговые спецификации OpenAPI
+
+## 🎯 Цель
+
+Генерация OpenAPI 3.1 спецификаций на основе TradingView.
+
+
+## Timeframe codes
 ```
 1, 5, 15, 30, 60, 120, 240   -> minutes
 1D                          -> 1 day
 1W                          -> 1 week
 ```
-
-## Type Inference
-The :func:`infer_type` utility guesses the OpenAPI scalar type from example
-values. Strings equal to ``"true"`` or ``"false"`` in any case are treated as
-boolean; other strings default to ``string``.
-
-## OpenAPI File Structure
-The generated YAML contains:
-- `openapi` and `info` – version and title.
-- `servers` – base TradingView endpoint.
-- `paths` – endpoints such as `/crypto/scan` or `/stocks/history`, each referencing request and response schemas.
-- `components/schemas` – base scalar types (`Num`, `Str`, `Bool`, `Time`, `Array`) and market specific objects. `<Scope>Fields` defines available fields. `<Scope>ScanRequest` describes the `/scan` payload and similar structures exist for `search`, `history` and `summary`.
-- `NumericFieldNoTimeframe`/`NumericFieldWithTimeframe` specify whether a field name includes a timeframe suffix.
-
-Example snippet:
-```yaml
-components:
-  schemas:
-    NumericFieldNoTimeframe:
-      type: string
-      # enum is built from the available numeric fields such as [close, volume, ...]
-    NumericFieldWithTimeframe:
-      type: string
-      # pattern uses the timeframe codes parsed from this README
-      pattern: "^[A-Z0-9_+\\[\\]]+\\|(1|5|15|30|60|120|240|1D|1W)$"
-```
-
-## Scan Request Batching
-TradingView limits `/scan` requests to 20 columns at a time. The
-`full_scan` helper in `data_fetcher.py` therefore splits the list of
-columns into chunks of this size (`MAX_COLUMNS_PER_SCAN`) and combines
-the partial responses.
-
-## Import into GPT Builder
-1. Choose **Add Action** → **Upload YAML**.
-2. Select `specs/<market>.yaml`.
-3. Click **Validate** – the file should pass without errors.
-
-## Badges
-[![CI](https://github.com/<owner>/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/tv-generator/actions/workflows/ci.yml)
-[![Docker](https://img.shields.io/badge/docker-ghcr.io/<owner>/tv-generator-blue)](https://github.com/<owner>/tv-generator/pkgs/container/tv-generator)
