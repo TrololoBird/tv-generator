@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import List
+import logging
 
 from src.generator.yaml_generator import generate_for_market
+
+logger = logging.getLogger(__name__)
 
 
 def detect_all_markets(indir: str | Path) -> List[str]:
@@ -20,5 +23,13 @@ def generate_spec_for_all_markets(
     """Generate specs for all markets under ``indir``."""
     out_files: List[Path] = []
     for market in detect_all_markets(indir):
-        out_files.append(generate_for_market(market, indir, outdir, max_size))
+        out_files.append(generate_spec_for_market(market, indir, outdir, max_size))
     return out_files
+
+
+def generate_spec_for_market(
+    market: str, indir: Path, outdir: Path, max_size: int = 1_048_576
+) -> Path:
+    """Generate spec for a single market."""
+
+    return generate_for_market(market, indir, outdir, max_size)

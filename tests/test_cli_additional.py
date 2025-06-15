@@ -182,3 +182,53 @@ def test_generate_all(tmp_path: Path) -> None:
         assert {"crypto.yaml", "forex.yaml", "stocks.yaml"}.issubset(files)
         assert len(files) >= 3
         assert "Generated" in result.output
+
+
+def test_generate_all_skip_broken() -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        _create_metainfo(Path("results") / "crypto" / "metainfo.json")
+        broken = Path("results") / "brokenmarket"
+        broken.mkdir(parents=True)
+        (broken / "metainfo.json").write_text("{bad}")
+        (broken / "scan.json").write_text("{}")
+        (broken / "field_status.tsv").write_text(
+            "field\ttv_type\tstatus\tsample_value\n"
+        )
+        result = runner.invoke(
+            cli,
+            ["generate", "--market", "all", "--indir", "results", "--outdir", "specs"],
+        )
+        assert result.exit_code == 0, result.output
+        assert "Skipped brokenmarket" in result.stderr
+        files = {p.name for p in Path("specs").glob("*.yaml")}
+        assert "crypto.yaml" in files
+
+
+def test_generate_all_strict_fail() -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        _create_metainfo(Path("results") / "crypto" / "metainfo.json")
+        broken = Path("results") / "brokenmarket"
+        broken.mkdir(parents=True)
+        (broken / "metainfo.json").write_text("{bad}")
+        (broken / "scan.json").write_text("{}")
+        (broken / "field_status.tsv").write_text(
+            "field\ttv_type\tstatus\tsample_value\n"
+        )
+        result = runner.invoke(
+            cli,
+            [
+                "generate",
+                "--market",
+                "all",
+                "--indir",
+                "results",
+                "--outdir",
+                "specs",
+                "--strict",
+            ],
+        )
+        assert result.exit_code != 0
+        assert result.exception is not None
+        assert result.exception.__class__.__name__ == "JSONDecodeError"
