@@ -1,4 +1,6 @@
 # Changelog
+## 1.0.43
+- Field classifier and advanced generate filters
 ## 1.0.42
 - Scan audit feature
 

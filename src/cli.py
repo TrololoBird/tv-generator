@@ -34,6 +34,7 @@ from src.meta.versioning import (
     bump_version as _bump_version,
     generate_changelog as _generate_changelog,
 )
+from src.meta import classify_fields
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -460,6 +461,30 @@ cli.add_command(build, name="build-all")
     is_flag=True,
     help="Include auto-discovered fields in spec",
 )
+@click.option(
+    "--include-type",
+    "include_types",
+    multiple=True,
+    type=click.Choice(["numeric", "string", "custom"]),
+    help="Include only fields of given type",
+)
+@click.option(
+    "--exclude-type",
+    "exclude_types",
+    multiple=True,
+    type=click.Choice(["discovered"]),
+    help="Exclude fields of given type",
+)
+@click.option(
+    "--only-timeframe-supported",
+    is_flag=True,
+    help="Include only fields supporting timeframes",
+)
+@click.option(
+    "--only-daily",
+    is_flag=True,
+    help="Include only daily timeframe fields",
+)
 def generate(
     market: str,
     indir: Path,
@@ -467,6 +492,10 @@ def generate(
     max_size: int,
     strict: bool,
     include_missing: bool,
+    include_types: tuple[str, ...],
+    exclude_types: tuple[str, ...],
+    only_timeframe_supported: bool,
+    only_daily: bool,
 ) -> None:
     """Generate OpenAPI YAML using collected JSON and TSV."""
 
@@ -477,7 +506,15 @@ def generate(
                 try:
                     out_files.append(
                         generate_spec_for_market(
-                            m, indir, outdir, max_size, include_missing=include_missing
+                            m,
+                            indir,
+                            outdir,
+                            max_size,
+                            include_missing=include_missing,
+                            include_types=include_types,
+                            exclude_types=exclude_types,
+                            only_timeframe_supported=only_timeframe_supported,
+                            only_daily=only_daily,
                         )
                     )
                 except Exception as exc:
@@ -493,7 +530,15 @@ def generate(
                 click.echo(f"\u2713 Generated: {names}")
         else:
             out_file = generate_for_market(
-                market, indir, outdir, max_size, include_missing=include_missing
+                market,
+                indir,
+                outdir,
+                max_size,
+                include_missing=include_missing,
+                include_types=include_types,
+                exclude_types=exclude_types,
+                only_timeframe_supported=only_timeframe_supported,
+                only_daily=only_daily,
             )
             size_kb = out_file.stat().st_size // 1024
             click.echo(f"\u2713 {out_file.name} {size_kb} KB")
@@ -599,6 +644,47 @@ def debug(market: str, verbose: bool) -> None:
 
     result = TradingViewAPI().diagnose_connection(market, verbose)
     click.echo(result)
+
+
+@cli.command("list-fields")
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+@click.option(
+    "--group-by", default="type", show_default=True, type=click.Choice(["type"])
+)
+def list_fields(market: str, group_by: str) -> None:
+    """List fields grouped by classification."""
+
+    market_dir = Path("results") / market
+    meta_file = market_dir / "metainfo.json"
+    scan_file = market_dir / "scan.json"
+    status_file = market_dir / "field_status.tsv"
+    try:
+        meta_data = json.loads(meta_file.read_text())
+        json.loads(scan_file.read_text())
+    except FileNotFoundError as exc:
+        raise click.ClickException(str(exc))
+
+    fields_json = meta_data.get("data", {}).get("fields") or meta_data.get("fields", [])
+    columns: dict[str, dict[str, Any]] = {}
+    for item in fields_json:
+        if isinstance(item, dict):
+            name = item.get("name") or item.get("id")
+            if name:
+                columns[name] = {"type": item.get("type", "string")}
+
+    from src.analyzer.scan_audit import find_missing_fields
+
+    missing = []
+    if status_file.exists():
+        missing = find_missing_fields(meta_file, scan_file, status_file)
+    for item in missing:
+        columns[item["name"]] = {"type": item.get("type", "string"), "source": "scan"}
+
+    info = classify_fields(columns)
+    if group_by == "type":
+        for key, values in info.items():
+            if values:
+                click.echo(f"{key}: {', '.join(sorted(values))}")
 
 
 @cli.command("audit-missing-fields")
