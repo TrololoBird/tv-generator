@@ -2,15 +2,16 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
+import json
 import re
 
 import toml
 import yaml
 
 if TYPE_CHECKING:  # pragma: no cover - type checking only
-    import pandas as pd
+    pass
 
-from src.models import MetaInfoResponse
+from src.models import MetaInfoResponse, TVField, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
 from src.utils import tv2ref
 
@@ -345,3 +346,55 @@ def generate_yaml(
     if len(yaml_str.encode()) > max_size:
         raise RuntimeError("YAML size exceeds limit")
     return yaml_str
+
+
+def generate_for_market(
+    market: str,
+    indir: Path,
+    outdir: Path,
+    max_size: int = 1_048_576,
+    api: TradingViewAPI | None = None,
+) -> Path:
+    """Generate YAML spec for ``market`` using data from ``indir``."""
+
+    market_dir = indir / market
+    meta_file = market_dir / "metainfo.json"
+    scan_file = market_dir / "scan.json"
+    status_file = market_dir / "field_status.tsv"
+
+    try:
+        meta_data = json.loads(meta_file.read_text())
+        scan_data = json.loads(scan_file.read_text())
+        status_file.read_text()
+    except FileNotFoundError:
+        raise
+
+    # Validate TradingView JSON
+    MetaInfoResponse.parse_obj(meta_data)
+    ScanResponse.parse_obj(scan_data)
+
+    fields_json = (
+        meta_data.get("fields") or meta_data.get("data", {}).get("fields") or []
+    )
+    tv_fields: list[TVField] = []
+    for f in fields_json:
+        if isinstance(f, dict):
+            name = f.get("name") or f.get("id")
+            if name is not None:
+                tv_fields.append(
+                    TVField.model_validate(
+                        {"name": name, "type": f.get("type", "string")}
+                    )
+                )
+
+    meta = MetaInfoResponse(data=tv_fields)
+
+    if api is None:
+        api = TradingViewAPI()
+
+    yaml_str = generate_yaml(market, meta, scan_data, max_size=max_size, api=api)
+
+    outdir.mkdir(parents=True, exist_ok=True)
+    out_file = outdir / f"{market}.yaml"
+    out_file.write_text(yaml_str)
+    return out_file

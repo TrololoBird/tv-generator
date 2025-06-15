@@ -1,5 +1,4 @@
 import yaml
-import pandas as pd
 import pytest
 from unittest import mock
 from src.generator.yaml_generator import (
