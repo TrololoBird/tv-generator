@@ -30,6 +30,12 @@ def get_version(path: Path | None = None) -> str:
     return str(version)
 
 
+def get_current_version() -> str:
+    """Return current project version using default pyproject path."""
+
+    return get_version()
+
+
 def _write_pyproject(data: dict, path: Path) -> None:
     path.write_text(toml.dumps(data))
 

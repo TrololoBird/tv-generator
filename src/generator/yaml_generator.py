@@ -5,7 +5,6 @@ from typing import Any, Dict, TYPE_CHECKING
 import json
 import re
 
-import toml
 import yaml
 
 if TYPE_CHECKING:  # pragma: no cover - type checking only
@@ -14,20 +13,13 @@ if TYPE_CHECKING:  # pragma: no cover - type checking only
 from src.models import MetaInfoResponse, TVField, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
 from src.utils import tv2ref
+from src.meta.versioning import get_current_version
 
 
 def get_project_version() -> str:
     """Return project version from pyproject.toml."""
 
-    root = Path(__file__).resolve().parents[2]
-    try:
-        data = toml.load(root / "pyproject.toml")
-    except FileNotFoundError as exc:  # pragma: no cover - missing pyproject
-        raise RuntimeError("Version not found in pyproject.toml") from exc
-    version = data.get("project", {}).get("version")
-    if not version:
-        raise RuntimeError("Version not found in pyproject.toml")
-    return str(version)
+    return get_current_version()
 
 
 def _supported_timeframes() -> list[str]:
