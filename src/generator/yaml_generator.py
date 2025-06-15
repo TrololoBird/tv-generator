@@ -15,6 +15,20 @@ from src.api.tradingview_api import TradingViewAPI
 from src.utils import tv2ref
 
 
+def get_project_version() -> str:
+    """Return project version from pyproject.toml."""
+
+    root = Path(__file__).resolve().parents[2]
+    try:
+        data = toml.load(root / "pyproject.toml")
+    except FileNotFoundError as exc:  # pragma: no cover - missing pyproject
+        raise RuntimeError("Version not found in pyproject.toml") from exc
+    version = data.get("project", {}).get("version")
+    if not version:
+        raise RuntimeError("Version not found in pyproject.toml")
+    return str(version)
+
+
 def _supported_timeframes() -> list[str]:
     """Return list of supported timeframe codes parsed from README."""
     root = Path(__file__).resolve().parents[2]
@@ -301,10 +315,9 @@ def generate_yaml(
     """Return OpenAPI YAML specification for a scope."""
 
     cap = scope.capitalize()
-    root = Path(__file__).resolve().parents[2]
     try:
-        version = toml.load(root / "pyproject.toml")["project"]["version"]
-    except FileNotFoundError:  # pragma: no cover - fallback for installed package
+        version = get_project_version()
+    except RuntimeError:  # pragma: no cover - fallback for installed package
         try:
             from importlib.metadata import PackageNotFoundError, version as pkg_version
 
