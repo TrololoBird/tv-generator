@@ -132,7 +132,8 @@ class TradingViewAPI:
                 exc.response.text if exc.response else "",
             )
             raise ValueError(
-                f"TradingView HTTP {status}: {exc.response.text if exc.response else ''}"
+                f"TradingView HTTP {status}: "
+                f"{exc.response.text if exc.response else ''}"
             ) from exc
         except requests.ConnectionError:
             return _scan_get()

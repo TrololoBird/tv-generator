@@ -56,7 +56,7 @@ def test_numeric_field_components() -> None:
     data = yaml.safe_load(yaml_str)
     schemas = data["components"]["schemas"]
     assert schemas["NumericFieldNoTimeframe"]["enum"] == []
-    assert "pattern" in schemas["NumericFieldWithTimeframe"]
+    assert "RSI|1D" in schemas["NumericFieldWithTimeframe"]["enum"]
 
 
 def test_symbol_field_ignored() -> None:
@@ -77,12 +77,12 @@ def test_collect_and_build_components() -> None:
     fields = [TVField(name="RSI|1D", type="number")]
     meta = MetaInfoResponse(data=fields)
     scan = {"data": [{"d": [55]}]}
-    collected, no_tf = collect_field_schemas(meta, scan)
+    collected, no_tf, with_tf = collect_field_schemas(meta, scan)
     assert collected[0][0] == "RSI|1D"
     assert "description" in collected[0][1]
     assert no_tf == set()
 
-    components = build_components_schemas("Crypto", collected, no_tf)
+    components = build_components_schemas("Crypto", collected, no_tf, with_tf)
     assert "CryptoFields" in components
     assert "NumericFieldNoTimeframe" in components
 
@@ -91,6 +91,7 @@ def test_build_paths_section() -> None:
     paths = build_paths_section("crypto", "Crypto")
     assert "/crypto/scan" in paths
     assert "/crypto/metainfo" in paths
+    assert "/crypto/numeric" in paths
 
 
 def test_fields_split_into_parts() -> None:

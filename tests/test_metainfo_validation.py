@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from click.testing import CliRunner
-from pydantic import ValidationError
 
 from src.cli import cli
 from src.api.tradingview_api import TradingViewAPI
