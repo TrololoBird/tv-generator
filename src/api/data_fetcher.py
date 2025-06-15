@@ -129,8 +129,39 @@ def full_scan(
         tickers = choose_tickers(meta_json, limit=10)
 
     api = TradingViewAPI(base_url=api_base)
+
+    # fetch latest metainfo to validate requested columns
+    metainfo = api.metainfo(scope, {"query": ""})
+    fields = metainfo.get("fields") or metainfo.get("data", {}).get("fields") or []
+    meta_columns = metainfo.get("columns", [])
+    filter_fields = (
+        metainfo.get("filter", {}).get("fields")
+        if isinstance(metainfo.get("filter"), dict)
+        else []
+    )
+    available = set()
+
+    def _name(item: Any) -> str | None:
+        if isinstance(item, dict):
+            return item.get("name") or item.get("id")
+        if hasattr(item, "n"):
+            return getattr(item, "n")
+        if isinstance(item, str):
+            return item
+        return None
+
+    for it in list(fields) + list(filter_fields) + list(meta_columns):
+        name = _name(it)
+        if isinstance(name, str):
+            available.add(name)
+
+    filtered_columns = [col for col in columns if col in available]
+
+    if not filtered_columns:
+        raise ValueError("No valid columns left after filtering")
+
     url = f"{api_base.rstrip('/')}/{scope}/scan"
-    batches = _chunks(columns, MAX_COLUMNS_PER_SCAN)
+    batches = _chunks(filtered_columns, MAX_COLUMNS_PER_SCAN)
 
     def _scan(cols: List[str]) -> Dict[str, Any]:
         payload = {
@@ -160,7 +191,11 @@ def full_scan(
                 result_map.setdefault(sym, []).extend(dval)
 
     final_rows = [{"s": sym, "d": result_map.get(sym, [])} for sym in tickers]
-    final = {"data": final_rows, "count": len(final_rows)}
+    final = {
+        "data": final_rows,
+        "count": len(final_rows),
+        "columns": filtered_columns,
+    }
     ScanResponse.parse_obj(final)
     return final
 

@@ -41,6 +41,15 @@ def test_fetch_metainfo_invalid_json(tv_api_mock):
 
 def test_full_scan_single_batch(tv_api_mock):
     tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/metainfo",
+        json={
+            "fields": [
+                {"name": "c1", "type": "number"},
+                {"name": "c2", "type": "number"},
+            ]
+        },
+    )
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         json={"count": 1, "data": [{"s": "AAA", "d": [1, 2]}]},
     )
@@ -49,6 +58,15 @@ def test_full_scan_single_batch(tv_api_mock):
 
 
 def test_full_scan_multi_batch(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/metainfo",
+        json={
+            "fields": [
+                {"name": f"c{i}", "type": "number"}
+                for i in range(MAX_COLUMNS_PER_SCAN + 1)
+            ]
+        },
+    )
     first = {"count": 1, "data": [{"s": "AAA", "d": list(range(MAX_COLUMNS_PER_SCAN))}]}
     second = {"count": 1, "data": [{"s": "AAA", "d": [99]}]}
     tv_api_mock.post(
@@ -61,6 +79,15 @@ def test_full_scan_multi_batch(tv_api_mock):
 
 
 def test_full_scan_batch_reorder(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/metainfo",
+        json={
+            "fields": [
+                {"name": f"c{i}", "type": "number"}
+                for i in range(MAX_COLUMNS_PER_SCAN + 1)
+            ]
+        },
+    )
     first = {
         "count": 2,
         "data": [
@@ -87,6 +114,10 @@ def test_full_scan_batch_reorder(tv_api_mock):
 
 
 def test_full_scan_error(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/metainfo",
+        json={"fields": [{"name": "c1", "type": "number"}]},
+    )
     tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         status_code=404,
