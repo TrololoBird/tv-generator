@@ -689,6 +689,73 @@ def bundle(format_: str, outfile: str) -> None:
     click.echo(f"\u2713 {out_path} {size_kb} KB")
 
 
+@cli.command("generate-if-needed")
+@click.option(
+    "--market",
+    required=True,
+    type=click.Choice(SCOPES + ["all"]),
+    help="Market name or 'all'",
+)
+@click.option(
+    "--strict", is_flag=True, help="Fail with exit code 1 if diff detects changes"
+)
+@click.option("--bundle", is_flag=True, help="Run 'bundle' after generation")
+@click.option("--validate", "validate_", is_flag=True, help="Validate generated YAML")
+def generate_if_needed(
+    market: str, strict: bool, bundle: bool, validate_: bool
+) -> None:
+    """Generate specs only when diff finds changes."""
+
+    from src.compare.cache_diff import diff_market
+
+    markets = SCOPES if market == "all" else [market]
+    changed: list[str] = []
+    for m in markets:
+        text, has_changes = diff_market(m, Path("results"), Path("cache"))
+        if has_changes:
+            add = len([l for l in text.splitlines() if l.startswith("[+]")])
+            rem = len([l for l in text.splitlines() if l.startswith("[-]")])
+            chg = len([l for l in text.splitlines() if l.startswith("[*]")])
+            parts = []
+            if add:
+                parts.append(f"{add} field{'s' if add != 1 else ''} added")
+            if rem:
+                parts.append(f"{rem} field{'s' if rem != 1 else ''} removed")
+            if chg:
+                parts.append(f"{chg} field{'s' if chg != 1 else ''} changed")
+            summary = ", ".join(parts)
+            click.echo(f"[+] {m} — {summary} → regenerating")
+            changed.append(m)
+        else:
+            click.echo(f"[✓] {m} — no changes")
+
+    if strict:
+        if changed:
+            raise SystemExit(1)
+        return
+
+    if not changed:
+        click.echo("No changes detected — skipping generation")
+        return
+
+    for m in changed:
+        generate_spec_for_market(m, Path("results"), Path("specs"))
+        if validate_:
+            try:
+                with open(f"specs/{m}.yaml", "r", encoding="utf-8") as fh:
+                    spec = yaml.safe_load(fh)
+                validate_spec(spec)
+            except (
+                FileNotFoundError,
+                yaml.YAMLError,
+                OpenAPISpecValidatorError,
+            ) as exc:
+                raise click.ClickException(str(exc))
+    if bundle:
+        bundle_all_specs("specs", "bundle.yaml")
+    click.echo("✅ Specs updated for: " + ", ".join(changed))
+
+
 @cli.command()
 @click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
 @click.option("--verbose", is_flag=True, help="Show full JSON output")

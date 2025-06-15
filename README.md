@@ -22,29 +22,30 @@ tvgen validate --spec specs/crypto.yaml
 
 ## 🛠️ CLI команды
 
+- `audit-missing-fields` - Show fields present in scan.json but missing from metainfo.
 - `build` - Collect data and generate specs for all markets.
 - `build-all` - Collect data and generate specs for all markets.
+- `bump-version` - Increment project version.
 - `bundle` - Bundle all specifications under ``specs/`` directory.
+- `changelog` - Generate CHANGELOG from git history.
 - `collect` - Fetch metainfo and scan results saving JSON and TSV.
-- `refresh` - Update metainfo, scan.json and field_status.tsv for markets.
-- `diff` - Compare results with cached versions.
 - `debug` - Diagnose TradingView connectivity for the given market.
-- `changelog` - Generate `CHANGELOG.md` from git history.
+- `diff` - Compare results with cached versions.
+- `docs` - Generate README file with CLI command list.
 - `generate` - Generate OpenAPI YAML using collected JSON and TSV.
-- `version` - Print current project version.
-- `bump-version` - Increment version in `pyproject.toml`.
+- `generate-if-needed` - Generate specs only when diff finds changes.
 - `history` - Call /{market}/history with the given payload.
+- `list-fields` - List fields grouped by classification.
 - `metainfo` - Fetch metainfo for given market via /{market}/metainfo.
 - `preview` - Show table with fields, type, enum and description.
 - `price` - Fetch last close price for a symbol.
 - `recommend` - Fetch trading recommendation for a symbol.
+- `refresh` - Download latest data and update TSV files.
 - `scan` - Perform a basic scan request and print JSON.
 - `search` - Call /{market}/search with the given payload.
 - `summary` - Call /{market}/summary with the given payload.
 - `validate` - Validate an OpenAPI specification file.
-
-Use `refresh` to ensure the latest TradingView data is saved before running
-`generate`. It overwrites existing JSON files for the chosen markets.
+- `version` - Show current package version.
 
 ## 📁 Структура проекта
 
@@ -52,33 +53,13 @@ Use `refresh` to ensure the latest TradingView data is saved before running
 - `results/` — сохранённые ответы TradingView
 - `specs/` — итоговые спецификации OpenAPI
 
-CI автоматически добавляет `CHANGELOG.md` в артефакты релиза и вызывает
-`tvgen changelog` перед загрузкой спецификаций.
-
 ## 🎯 Цель
 
 Генерация OpenAPI 3.1 спецификаций на основе TradingView.
-
 
 ## Timeframe codes
 ```
 1, 5, 15, 30, 60, 120, 240   -> minutes
 1D                          -> 1 day
 1W                          -> 1 week
-```
-
-## Отслеживание изменений (`tvgen diff`)
-
-Команда `tvgen diff` сравнивает файлы в каталоге `results/` с предыдущими
-копиями из `cache/`. Это позволяет увидеть новые или удалённые поля после
-обновления данных.
-
-```bash
-tvgen diff --market crypto
-```
-
-Отчёт можно сохранить в файл:
-
-```bash
-tvgen diff --market all --output diff.md
 ```
