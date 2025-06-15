@@ -99,12 +99,13 @@ def _describe_field(name: str) -> str:
 
 def collect_field_schemas(
     meta: MetaInfoResponse, scan: dict[str, Any] | None
-) -> tuple[list[tuple[str, Dict[str, Any]]], set[str]]:
-    """Return field schemas and numeric fields without timeframe."""
+) -> tuple[list[tuple[str, Dict[str, Any]]], set[str], set[str]]:
+    """Return field schemas and numeric field enums."""
 
     fields: list[tuple[str, Dict[str, Any]]] = []
     scan_rows = scan.get("data", []) if isinstance(scan, dict) else []
     no_tf_enum: set[str] = set()
+    with_tf_enum: set[str] = set()
     for idx, field in enumerate(meta.fields):
         flags = set(field.flags or [])
         if {"deprecated", "private"} & flags:
@@ -115,8 +116,11 @@ def collect_field_schemas(
         schema["description"] = _describe_field(field.n)
 
         base_name, _, _ = field.n.partition("|")
-        if "|" not in field.n and tv2ref(field.t).endswith("/Num"):
-            no_tf_enum.add(base_name)
+        if tv2ref(field.t).endswith("/Num"):
+            if "|" in field.n:
+                with_tf_enum.add(field.n)
+            else:
+                no_tf_enum.add(base_name)
 
         values: list[Any] = []
         for row in scan_rows:
@@ -143,11 +147,14 @@ def collect_field_schemas(
         fields.append((field.n, schema))
 
     fields.sort(key=lambda x: x[0])
-    return fields, no_tf_enum
+    return fields, no_tf_enum, with_tf_enum
 
 
 def build_components_schemas(
-    cap: str, fields: list[tuple[str, Dict[str, Any]]], no_tf_enum: set[str]
+    cap: str,
+    fields: list[tuple[str, Dict[str, Any]]],
+    no_tf_enum: set[str],
+    with_tf_enum: set[str],
 ) -> Dict[str, Any]:
     """Return OpenAPI components schemas section."""
 
@@ -171,7 +178,8 @@ def build_components_schemas(
     tf_pattern = "|".join(map(re.escape, timeframes))
     components["NumericFieldWithTimeframe"] = {
         "type": "string",
-        "pattern": rf"^[A-Z0-9_+\[\]]+\|({tf_pattern})$",
+        "enum": sorted(with_tf_enum),
+        "pattern": rf"^[A-Za-z0-9_.\[\]]+\|({tf_pattern})$",
     }
 
     if len(fields) > 64:
@@ -279,6 +287,45 @@ def build_paths_section(scope: str, cap: str) -> Dict[str, Any]:
     _add("history", "HistoryRequest", "HistoryResponse")
     _add("summary", "SummaryRequest", "SummaryResponse")
 
+    paths[f"/{scope}/numeric"] = {
+        "get": {
+            "summary": f"Get numeric field for {scope}",
+            "operationId": f"{cap}Numeric",
+            "x-openai-isConsequential": False,
+            "parameters": [
+                {
+                    "name": "symbol",
+                    "in": "query",
+                    "required": True,
+                    "schema": {"type": "string"},
+                },
+                {
+                    "name": "field",
+                    "in": "query",
+                    "required": True,
+                    "schema": {
+                        "oneOf": [
+                            {"$ref": "#/components/schemas/NumericFieldWithTimeframe"},
+                            {"$ref": "#/components/schemas/NumericFieldNoTimeframe"},
+                        ]
+                    },
+                },
+            ],
+            "responses": {
+                "200": {
+                    "description": "Successful response",
+                    "content": {
+                        "application/json": {
+                            "schema": {"$ref": "#/components/schemas/Num"}
+                        }
+                    },
+                },
+                "400": {"description": "Bad Request"},
+                "500": {"description": "Server Error"},
+            },
+        }
+    }
+
     paths[f"/{scope}/metainfo"] = {
         "post": {
             "summary": f"Get {scope} metainfo",
@@ -326,8 +373,8 @@ def generate_yaml(
         except PackageNotFoundError:  # pragma: no cover - dev environment
             version = "0.0.0"
 
-    fields, no_tf_enum = collect_field_schemas(meta, scan)
-    components = build_components_schemas(cap, fields, no_tf_enum)
+    fields, no_tf_enum, with_tf_enum = collect_field_schemas(meta, scan)
+    components = build_components_schemas(cap, fields, no_tf_enum, with_tf_enum)
     paths = build_paths_section(scope, cap)
 
     openapi: Dict[str, Any] = {
