@@ -1,0 +1,43 @@
+name: Generate & Validate OpenAPI Specs
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install .[dev]
+
+      - name: Generate specs
+        run: |
+          ./tvgen generate --market all --outdir specs
+          for file in specs/*.yaml; do
+            ./tvgen validate --spec "$file"
+          done
+          ./tvgen bundle --format yaml --outfile specs/bundle.yaml
+
+      - name: Upload specs as artifacts
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v3
+        with:
+          name: openapi-specs
+          path: specs/*.yaml
+
+      - name: Upload to release (if release)
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: specs/*.yaml
