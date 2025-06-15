@@ -172,9 +172,6 @@ components:
         close:
           $ref: '#/components/schemas/Num'
           description: Close
-        open:
-          $ref: '#/components/schemas/Str'
-          description: Open
     CryptoScanRequest:
       type: object
       properties:
