@@ -524,5 +524,15 @@ def preview(spec_file: Path) -> None:
     click.echo(df.to_string(index=False))
 
 
+@cli.command()
+@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+@click.option("--verbose", is_flag=True, help="Show full JSON output")
+def debug(market: str, verbose: bool) -> None:
+    """Diagnose TradingView connectivity for the given market."""
+
+    result = TradingViewAPI().diagnose_connection(market, verbose)
+    click.echo(result)
+
+
 if __name__ == "__main__":
     cli()

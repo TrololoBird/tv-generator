@@ -44,6 +44,7 @@ docker run --rm ghcr.io/<owner>/tv-generator:latest \
 | generate        | build OpenAPI spec                            | `--market`, `--indir` results, `--outdir` specs, `--max-size` 1048576 |
 | validate        | validate spec file                            | `--spec` |
 | preview         | show fields summary from spec                 | `--spec` |
+| debug           | diagnose TradingView connectivity             | `--market`, `--verbose` |
 
 ### Short Examples
 ```bash

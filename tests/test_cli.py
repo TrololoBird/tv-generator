@@ -540,3 +540,30 @@ def test_cli_validate_crypto_spec() -> None:
     result = runner.invoke(cli, ["validate", "--spec", str(spec)])
     assert result.exit_code == 0
     assert "Specification is valid" in result.output
+
+
+def test_cli_debug(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        json={"version": 1, "filters": [], "columns": []},
+    )
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"data": [], "columns": []},
+    )
+    result = runner.invoke(cli, ["debug", "--market", "crypto"])
+    assert result.exit_code == 0
+    assert "TradingView" in result.output
+    assert "[\u2713] GET /crypto/metainfo" in result.output
+
+
+def test_cli_debug_error(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/metainfo",
+        status_code=500,
+    )
+    result = runner.invoke(cli, ["debug", "--market", "crypto"])
+    assert result.exit_code == 0
+    assert "\u274c" in result.output
