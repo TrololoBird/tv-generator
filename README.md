@@ -27,7 +27,10 @@ tvgen validate --spec specs/crypto.yaml
 - `bundle` - Bundle all specifications under ``specs/`` directory.
 - `collect` - Fetch metainfo and scan results saving JSON and TSV.
 - `debug` - Diagnose TradingView connectivity for the given market.
+- `changelog` - Generate `CHANGELOG.md` from git history.
 - `generate` - Generate OpenAPI YAML using collected JSON and TSV.
+- `version` - Print current project version.
+- `bump-version` - Increment version in `pyproject.toml`.
 - `history` - Call /{market}/history with the given payload.
 - `metainfo` - Fetch metainfo for given market via /{market}/metainfo.
 - `preview` - Show table with fields, type, enum and description.
@@ -43,6 +46,9 @@ tvgen validate --spec specs/crypto.yaml
 - `src/` — исходный код CLI и генератора
 - `results/` — сохранённые ответы TradingView
 - `specs/` — итоговые спецификации OpenAPI
+
+CI автоматически добавляет `CHANGELOG.md` в артефакты релиза и вызывает
+`tvgen changelog` перед загрузкой спецификаций.
 
 ## 🎯 Цель
 

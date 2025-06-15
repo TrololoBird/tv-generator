@@ -28,16 +28,22 @@ jobs:
             ./tvgen validate --spec "$file"
           done
           ./tvgen bundle --format yaml --outfile specs/bundle.yaml
+      - name: Generate changelog
+        run: ./tvgen changelog
 
       - name: Upload specs as artifacts
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v3
         with:
           name: openapi-specs
-          path: specs/*.yaml
+          path: |
+            specs/*.yaml
+            CHANGELOG.md
 
       - name: Upload to release (if release)
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
-          files: specs/*.yaml
+          files: |
+            specs/*.yaml
+            CHANGELOG.md
