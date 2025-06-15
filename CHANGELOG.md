@@ -1,4 +1,6 @@
 # Changelog
+## 1.0.38
+- Support alternate field keys in metainfo responses
 ## 1.0.37
 - Version bump
 ## 1.0.36

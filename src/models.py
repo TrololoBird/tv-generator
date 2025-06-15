@@ -72,8 +72,14 @@ class TVBaseModel(BaseModel):
 class TVField(TVBaseModel):
     """TradingView field description."""
 
-    n: Annotated[str, constr(strip_whitespace=True, min_length=1)] = Field(alias="name")
-    t: FieldType = Field(alias="type")
+    n: Annotated[str, constr(strip_whitespace=True, min_length=1)] = Field(
+        serialization_alias="name",
+        validation_alias=AliasChoices("name", "id", "n"),
+    )
+    t: FieldType = Field(
+        serialization_alias="type",
+        validation_alias=AliasChoices("type", "t"),
+    )
     interval: Annotated[float, confloat(gt=0)] | None = None
     description: Annotated[str, constr(strip_whitespace=True, min_length=1)] | None = (
         None
