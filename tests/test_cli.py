@@ -498,3 +498,45 @@ def test_collect_error(monkeypatch):
         assert "File not found" in result.output
         log = Path("results/crypto/error.log").read_text()
         assert "FileNotFoundError: boom" in log
+
+
+def test_cli_recommend_btcusdt(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={"count": 1, "data": [{"s": "BTCUSDT", "d": ["buy"]}]},
+    )
+    result = runner.invoke(cli, ["recommend", "--symbol", "BTCUSDT"])
+    assert result.exit_code == 0
+    assert "buy" in result.output
+
+
+def test_cli_price_btcusdt(tv_api_mock) -> None:
+    runner = CliRunner()
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/scan",
+        json={"count": 1, "data": [{"s": "BTCUSDT", "d": [123.0]}]},
+    )
+    result = runner.invoke(cli, ["price", "--symbol", "BTCUSDT"])
+    assert result.exit_code == 0
+    assert "123.0" in result.output
+
+
+def test_cli_collect_crypto(monkeypatch) -> None:
+    runner = CliRunner()
+    _mock_collect_api(monkeypatch)
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["collect", "--market", "crypto"])
+        assert result.exit_code == 0
+        base = Path("results/crypto")
+        assert (base / "field_status.tsv").exists()
+        text = (base / "field_status.tsv").read_text()
+        assert "close\tinteger\tok\t1" in text
+
+
+def test_cli_validate_crypto_spec() -> None:
+    runner = CliRunner()
+    spec = Path("specs/crypto.yaml")
+    result = runner.invoke(cli, ["validate", "--spec", str(spec)])
+    assert result.exit_code == 0
+    assert "Specification is valid" in result.output
