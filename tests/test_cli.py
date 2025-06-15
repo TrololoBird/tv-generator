@@ -52,6 +52,26 @@ def test_cli_scan(tv_api_mock) -> None:
     assert "data" in result.output
 
 
+def test_cli_scan_invalid_filter(tv_api_mock) -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "scan",
+            "--symbols",
+            "BTCUSD",
+            "--columns",
+            "close",
+            "--market",
+            "crypto",
+            "--filter",
+            "{",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "Invalid JSON in option: --filter" in result.output
+
+
 def test_cli_scan_full_payload(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.post(
@@ -80,6 +100,66 @@ def test_cli_scan_full_payload(tv_api_mock) -> None:
     assert sent["filter2"] == {}
     assert sent["sort"] == {}
     assert sent["range"] == {}
+
+
+def test_cli_scan_invalid_sort(tv_api_mock) -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "scan",
+            "--symbols",
+            "BTCUSD",
+            "--columns",
+            "close",
+            "--market",
+            "crypto",
+            "--sort",
+            "{",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "Invalid JSON in option: --sort" in result.output
+
+
+def test_cli_scan_invalid_filter2(tv_api_mock) -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "scan",
+            "--symbols",
+            "BTCUSD",
+            "--columns",
+            "close",
+            "--market",
+            "crypto",
+            "--filter2",
+            "{",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "Invalid JSON in option: --filter2" in result.output
+
+
+def test_cli_scan_invalid_range(tv_api_mock) -> None:
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "scan",
+            "--symbols",
+            "BTCUSD",
+            "--columns",
+            "close",
+            "--market",
+            "crypto",
+            "--range",
+            "{",
+        ],
+    )
+    assert result.exit_code != 0
+    assert "Invalid JSON in option: --range" in result.output
 
 
 def test_cli_recommend(tv_api_mock) -> None:
@@ -186,7 +266,7 @@ def test_cli_search_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
-    assert "Expecting" in result.output
+    assert "Invalid JSON in option: --payload" in result.output
 
 
 def test_cli_history_invalid_payload() -> None:
@@ -197,6 +277,7 @@ def test_cli_history_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
+    assert "Invalid JSON in option: --payload" in result.output
 
 
 def test_cli_summary_invalid_payload() -> None:
@@ -207,6 +288,7 @@ def test_cli_summary_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
+    assert "Invalid JSON in option: --payload" in result.output
 
 
 def test_scan_cli_missing_scope():
