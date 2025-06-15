@@ -18,17 +18,11 @@ MAX_COLUMNS_PER_SCAN = 20
 def fetch_metainfo(
     scope: str, api_base: str = "https://scanner.tradingview.com"
 ) -> Dict[str, Any]:
-    """Return metainfo for a given scope using GET request."""
-    url = f"{api_base.rstrip('/')}/{scope}/metainfo"
-    resp = _API.session.get(url, timeout=30)
-    resp.raise_for_status()
-    try:
-        data = resp.json()
-    except ValueError as exc:  # pragma: no cover - should not happen in tests
-        raise ValueError("Invalid JSON received from TradingView") from exc
-    if not isinstance(data, dict):
-        raise ValueError("Invalid JSON structure from TradingView")
-    MetaInfoResponse.parse_obj(data)
+    """Return metainfo for a given scope using the TradingViewAPI."""
+
+    # ``TradingViewAPI.metainfo`` sends the POST request and validates
+    # the response via ``MetaInfoResponse``.
+    data = _API.metainfo(scope, {"query": ""})
     return data
 
 
