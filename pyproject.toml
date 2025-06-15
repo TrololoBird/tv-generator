@@ -12,7 +12,7 @@ dependencies = [ "click>=8.2", "requests>=2.32", "pandas>=2.3", "PyYAML>=6.0", "
 tvgen = "src.cli:cli"
 
 [tool.setuptools]
-packages = [ "src", "src.api", "src.generator", "src.utils", "src.constants",]
+packages = [ "src", "src.api", "src.generator", "src.utils", "src.constants", "src.spec",]
 
 [tool.mypy]
 ignore_missing_imports = true
