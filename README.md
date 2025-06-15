@@ -27,6 +27,7 @@ tvgen validate --spec specs/crypto.yaml
 - `bundle` - Bundle all specifications under ``specs/`` directory.
 - `collect` - Fetch metainfo and scan results saving JSON and TSV.
 - `refresh` - Update metainfo, scan.json and field_status.tsv for markets.
+- `diff` - Compare results with cached versions.
 - `debug` - Diagnose TradingView connectivity for the given market.
 - `changelog` - Generate `CHANGELOG.md` from git history.
 - `generate` - Generate OpenAPI YAML using collected JSON and TSV.
@@ -64,4 +65,20 @@ CI автоматически добавляет `CHANGELOG.md` в артефа�
 1, 5, 15, 30, 60, 120, 240   -> minutes
 1D                          -> 1 day
 1W                          -> 1 week
+```
+
+## Отслеживание изменений (`tvgen diff`)
+
+Команда `tvgen diff` сравнивает файлы в каталоге `results/` с предыдущими
+копиями из `cache/`. Это позволяет увидеть новые или удалённые поля после
+обновления данных.
+
+```bash
+tvgen diff --market crypto
+```
+
+Отчёт можно сохранить в файл:
+
+```bash
+tvgen diff --market all --output diff.md
 ```

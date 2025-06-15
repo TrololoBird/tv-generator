@@ -435,7 +435,15 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
     help="Directory to store results",
 )
 @click.option("--generate", is_flag=True, help="Run generate after refresh")
-def refresh(market: str, outdir: Path, generate: bool) -> None:
+@click.option("--diff", is_flag=True, help="Compare with cached results")
+@click.option(
+    "--fail-on-change",
+    is_flag=True,
+    help="Exit with code 1 if diff detects changes",
+)
+def refresh(
+    market: str, outdir: Path, generate: bool, diff: bool, fail_on_change: bool
+) -> None:
     """Download latest data and update TSV files."""
 
     from src.data.collector import refresh_market
@@ -444,7 +452,20 @@ def refresh(market: str, outdir: Path, generate: bool) -> None:
     markets = SCOPES if market == "all" else [market]
     for m in markets:
         click.echo(f"* {m}")
+        if diff:
+            from src.compare.cache_diff import backup_results
+
+            backup_results(m, outdir, Path("cache"))
         refresh_market(m, outdir)
+        if diff:
+            from src.compare.cache_diff import diff_market, update_cache
+
+            text, changed = diff_market(m, outdir, Path("cache"))
+            if text:
+                click.echo(text)
+            update_cache(m, outdir, Path("cache"))
+            if changed and fail_on_change:
+                raise SystemExit(1)
         if generate:
             try:
                 generate_spec_for_market(m, outdir, Path("specs"))
@@ -676,6 +697,37 @@ def debug(market: str, verbose: bool) -> None:
 
     result = TradingViewAPI().diagnose_connection(market, verbose)
     click.echo(result)
+
+
+@cli.command("diff")
+@click.option(
+    "--market",
+    required=True,
+    type=click.Choice(SCOPES + ["all"]),
+    help="Market name or 'all'",
+)
+@click.option(
+    "--output",
+    "output_file",
+    type=click.Path(path_type=Path),
+    help="Save report to file",
+)
+def diff_cmd(market: str, output_file: Path | None) -> None:
+    """Compare results with cached versions."""
+
+    from src.compare.cache_diff import diff_market
+
+    markets = SCOPES if market == "all" else [market]
+    chunks: list[str] = []
+    for m in markets:
+        text, _changed = diff_market(m, Path("results"), Path("cache"))
+        if text:
+            chunks.append(f"## {m}\n{text}")
+    report = "\n\n".join(chunks)
+    if output_file:
+        Path(output_file).write_text(report + "\n")
+    if report:
+        click.echo(report)
 
 
 @cli.command("list-fields")
