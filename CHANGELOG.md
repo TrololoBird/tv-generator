@@ -1,4 +1,6 @@
 # Changelog
+## 1.0.41
+- Version bump
 ## 1.0.40
 - Version bump
 ## 1.0.39

@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 from typing import Any, Dict, Optional, cast
 
 import requests
@@ -174,3 +175,45 @@ class TradingViewAPI:
         except ValidationError as exc:
             raise ValueError("Invalid summary response") from exc
         return data
+
+    def diagnose_connection(self, scope: str, verbose: bool = False) -> str:
+        """Check TradingView availability for *scope* via GET requests."""
+
+        lines = [f"\U0001f50d Checking TradingView API: market={scope}"]
+        for endpoint in ["metainfo", "scan"]:
+            url = f"{self.base_url}/{scope}/{endpoint}"
+            try:
+                r = self.session.get(url, timeout=self.timeout)
+                length = len(r.content)
+                status = f"{r.status_code} {r.reason}".strip()
+                r.raise_for_status()
+                lines.append(
+                    f"[\u2713] GET /{scope}/{endpoint} \u2192 {status}, {length} bytes"
+                )
+                if "application/json" in r.headers.get("content-type", ""):
+                    try:
+                        data = r.json()
+                        if verbose:
+                            lines.append(json.dumps(data, indent=2))
+                        else:
+                            lines.append(f"     keys: {list(data.keys())[:3]}")
+                    except ValueError as exc:  # pragma: no cover - unlikely
+                        lines.append(f"     JSON decode error: {exc}")
+            except Exception as exc:  # pragma: no cover - network issues
+                err = getattr(exc, "response", None)
+                if err is not None:
+                    status = f"{err.status_code} {err.reason}".strip()
+                    lines.append(f"[\u274c] GET /{scope}/{endpoint} \u2192 {status}")
+                    lines.append(f"     Error: {exc}")
+                else:
+                    msg = (
+                        f"[\u274c] GET /{scope}/{endpoint} "
+                        f"\u2192 {type(exc).__name__}: {exc}"
+                    )
+                    lines.append(msg)
+                lines.append("\u274c TradingView request failed")
+                return "\n".join(lines)
+
+        final_msg = "✅ TradingView доступен, структура ответа корректна"
+        lines.append(final_msg)
+        return "\n".join(lines)

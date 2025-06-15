@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Bond API
-  version: 1.0.36
+  version: 1.0.41
 servers:
   - url: https://scanner.tradingview.com
 paths:
@@ -98,6 +98,35 @@ paths:
           description: Bad Request
         '500':
           description: Server Error
+  /bond/numeric:
+    get:
+      summary: Get numeric field for bond
+      operationId: BondNumeric
+      x-openai-isConsequential: false
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: field
+          in: query
+          required: true
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/NumericFieldWithTimeframe'
+              - $ref: '#/components/schemas/NumericFieldNoTimeframe'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Num'
+        '400':
+          description: Bad Request
+        '500':
+          description: Server Error
   /bond/metainfo:
     post:
       summary: Get bond metainfo
@@ -135,7 +164,8 @@ components:
         - close
     NumericFieldWithTimeframe:
       type: string
-      pattern: ^[A-Z0-9_+\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$
+      enum: []
+      pattern: ^[A-Za-z0-9_.\[\]]+\|(1|5|15|30|60|120|240|1D|1W)$
     BondFields:
       type: object
       properties:
