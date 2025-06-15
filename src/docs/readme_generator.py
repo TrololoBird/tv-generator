@@ -26,6 +26,11 @@ def generate_readme(path: Path = Path("README.generated.md")) -> Path:
         "`/scan` и `/metainfo`."
     )
     lines.append("")
+    lines.append(
+        "🔗 Онлайн OpenAPI: "
+        "[crypto.yaml](https://trololobird.github.io/tv-generator/specs/crypto.yaml)"
+    )
+    lines.append("")
     lines.append("## 📦 Установка")
     lines.append("")
     lines.extend(
@@ -57,6 +62,17 @@ def generate_readme(path: Path = Path("README.generated.md")) -> Path:
     for name, help_text in _list_commands():
         lines.append(f"- `{name}` - {help_text}")
     lines.append("")
+    lines.append("## Публикация спецификаций")
+    lines.append("")
+    lines.extend(
+        [
+            "```bash",
+            "tvgen publish-pages --branch gh-pages",
+            "tvgen publish-release-assets --tag v1.0.48",
+            "```",
+            "",
+        ]
+    )
     lines.append("## 📁 Структура проекта")
     lines.append("")
     lines.extend(
