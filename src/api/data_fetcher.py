@@ -67,6 +67,12 @@ def choose_tickers(
             symbol_idx = idx
             break
 
+    body = meta_dict.get("body") or meta_dict.get("data", {})
+    if symbol_idx is None and isinstance(body, dict):
+        symbols_list = body.get("symbols") or []
+        if symbols_list:
+            return [s if isinstance(s, str) else s[0] for s in symbols_list][:limit]
+
     tickers: list[str] = []
 
     scan = meta_dict.get("scan")
