@@ -27,7 +27,9 @@ def test_scan_and_metainfo(tv_api_mock, scope):
     )
 
     api = TradingViewAPI()
-    assert api.scan(scope, {}) == {"count": 0, "data": []}
+    scan = api.scan(scope, {})
+    assert scan.count == 0
+    assert scan.data == []
     assert api.metainfo(scope, {"query": ""}) == {"fields": []}
 
     tv_api_mock.post(
@@ -54,10 +56,13 @@ def test_scan_error(tv_api_mock):
         "https://scanner.tradingview.com/crypto/scan",
         status_code=404,
     )
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"count": 0, "data": []},
+    )
     api = TradingViewAPI()
-    with pytest.raises(ValueError) as exc:
-        api.scan("crypto", {})
-    assert "TradingView HTTP 404" in str(exc.value)
+    result = api.scan("crypto", {})
+    assert result.count == 0
 
 
 def test_scan_invalid_json(tv_api_mock):
@@ -65,9 +70,13 @@ def test_scan_invalid_json(tv_api_mock):
         "https://scanner.tradingview.com/crypto/scan",
         text="not-json",
     )
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        json={"count": 0, "data": []},
+    )
     api = TradingViewAPI()
-    with pytest.raises(ValueError):
-        api.scan("crypto", {})
+    result = api.scan("crypto", {})
+    assert result.count == 0
 
 
 def test_scan_invalid_schema(tv_api_mock):

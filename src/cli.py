@@ -138,7 +138,7 @@ def scan(
         market,
         payload=payload,
     )
-    click.echo(json.dumps(result, indent=2))
+    click.echo(json.dumps(result.model_dump(by_alias=True), indent=2))
 
 
 @cli.command()

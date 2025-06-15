@@ -52,5 +52,9 @@ def test_fetch_recommend_http_error(tv_api_mock):
         "https://scanner.tradingview.com/stocks/scan",
         status_code=404,
     )
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/stocks/scan",
+        status_code=404,
+    )
     with pytest.raises(ValueError):
         fetch_recommendation("AAPL")
