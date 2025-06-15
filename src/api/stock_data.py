@@ -22,7 +22,7 @@ def _fetch_field(symbol: str, scope: str, column: str, error_msg: str) -> Any:
         logger.error("Invalid scan response for %s in %s: %s", symbol, scope, exc)
         raise ValueError(f"{error_msg} for {symbol} in market {scope}") from exc
     try:
-        return data["data"][0]["d"][0]
+        return data.data[0].d[0]
     except (KeyError, IndexError) as exc:
         logger.error("%s for %s in %s: %s", error_msg, symbol, scope, exc)
         raise ValueError(f"{error_msg} for {symbol} in market {scope}") from exc

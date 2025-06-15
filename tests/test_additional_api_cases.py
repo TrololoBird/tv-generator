@@ -15,6 +15,10 @@ def test_scan_request_exception(tv_api_mock):
         "https://scanner.tradingview.com/crypto/scan",
         exc=requests.exceptions.ConnectTimeout,
     )
+    tv_api_mock.get(
+        "https://scanner.tradingview.com/crypto/scan",
+        exc=requests.exceptions.ConnectTimeout,
+    )
     api = TradingViewAPI()
     with pytest.raises(requests.exceptions.RequestException):
         api.scan("crypto", {})

@@ -105,11 +105,41 @@ class TradingViewAPI:
             )
         return f"{self.base_url}/{scope}/{endpoint}"
 
-    def scan(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """Send POST /{scope}/scan and return JSON validated by ``ScanResponse``."""
-        data = self._request(scope, "scan", "POST", payload)
-        ScanResponse.parse_obj(data)
-        return data
+    def scan(self, scope: str, payload: Dict[str, Any]) -> ScanResponse:
+        """Send POST /{scope}/scan with fallback to GET if needed."""
+        url = self._url(scope, "scan")
+
+        def _scan_get() -> ScanResponse:
+            resp = self.session.get(url, timeout=self.timeout)
+            self._log_response(resp)
+            resp.raise_for_status()
+            data_g = cast(Dict[str, Any], resp.json())
+            return cast(ScanResponse, ScanResponse.parse_obj(data_g))
+
+        response: requests.Response | None = None
+        try:
+            response = self.session.post(url, json=payload, timeout=self.timeout)
+            self._log_response(response)
+            response.raise_for_status()
+            data = cast(Dict[str, Any], response.json())
+        except requests.HTTPError as exc:
+            status = response.status_code if response is not None else None
+            if status in (400, 404):
+                return _scan_get()
+            logger.error(
+                "HTTP error: %s - %s",
+                status,
+                exc.response.text if exc.response else "",
+            )
+            raise ValueError(
+                f"TradingView HTTP {status}: {exc.response.text if exc.response else ''}"
+            ) from exc
+        except requests.ConnectionError:
+            return _scan_get()
+        except ValueError:
+            return _scan_get()
+
+        return cast(ScanResponse, ScanResponse.parse_obj(data))
 
     def metainfo(self, scope: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch metainfo for scope validated by ``MetaInfoResponse``."""
