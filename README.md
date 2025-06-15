@@ -23,8 +23,11 @@ poetry run tvgen preview --spec specs/crypto.yaml
 The generation commands contact TradingView's public API. Ensure that `scanner.tradingview.com` is reachable from your environment. GitHub-hosted runners may block this traffic; use a self-hosted runner or run the generator locally if needed.
 
 ## Environment Variables
-- `TV_BASE_URL`: базовый URL TradingView API (по умолчанию scanner.tradingview.com)
-- `TV_CACHE`: если установлено, включает `requests-cache` для ускорения повторных запросов
+- `TV_BASE_URL` – переопределение хоста TradingView API (по умолчанию: `https://scanner.tradingview.com`)
+- `TV_CACHE` – вкл/выкл кэширования запросов (`true`/`false`, по умолчанию: `false`)
+
+## Version
+The project version is stored in `pyproject.toml` under `[project]`. The CLI reads this value for `tvgen --version`. Update it when publishing a new release.
 
 ### Docker
 ```bash
@@ -44,6 +47,9 @@ docker run --rm ghcr.io/<owner>/tv-generator:latest \
 
 ### Short Examples
 ```bash
+# Basic scan query
+tvgen scan --symbols BTCUSD,ETHUSD --columns close --market crypto
+
 # Collect metainfo and scan results
 tvgen collect --market crypto --outdir results
 
