@@ -69,7 +69,7 @@ def test_cli_scan_invalid_filter(tv_api_mock) -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "Invalid JSON in option: --filter" in result.output
+    assert "Invalid JSON in --filter" in result.output
 
 
 def test_cli_scan_full_payload(tv_api_mock) -> None:
@@ -119,7 +119,7 @@ def test_cli_scan_invalid_sort(tv_api_mock) -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "Invalid JSON in option: --sort" in result.output
+    assert "Invalid JSON in --sort" in result.output
 
 
 def test_cli_scan_invalid_filter2(tv_api_mock) -> None:
@@ -139,7 +139,7 @@ def test_cli_scan_invalid_filter2(tv_api_mock) -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "Invalid JSON in option: --filter2" in result.output
+    assert "Invalid JSON in --filter2" in result.output
 
 
 def test_cli_scan_invalid_range(tv_api_mock) -> None:
@@ -159,7 +159,7 @@ def test_cli_scan_invalid_range(tv_api_mock) -> None:
         ],
     )
     assert result.exit_code != 0
-    assert "Invalid JSON in option: --range" in result.output
+    assert "Invalid JSON in --range" in result.output
 
 
 def test_cli_recommend(tv_api_mock) -> None:
@@ -266,7 +266,7 @@ def test_cli_search_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
-    assert "Invalid JSON in option: --payload" in result.output
+    assert "Invalid JSON in --payload" in result.output
 
 
 def test_cli_history_invalid_payload() -> None:
@@ -277,7 +277,7 @@ def test_cli_history_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
-    assert "Invalid JSON in option: --payload" in result.output
+    assert "Invalid JSON in --payload" in result.output
 
 
 def test_cli_summary_invalid_payload() -> None:
@@ -288,7 +288,7 @@ def test_cli_summary_invalid_payload() -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
-    assert "Invalid JSON in option: --payload" in result.output
+    assert "Invalid JSON in --payload" in result.output
 
 
 def test_scan_cli_missing_scope():
@@ -389,7 +389,7 @@ def test_cli_scan_error(tv_api_mock) -> None:
     )
     assert result.exit_code != 0
     assert result.exception is not None
-    assert "500" in result.output
+    assert "TradingView request failed" in result.output
 
 
 def test_cli_recommend_error(tv_api_mock) -> None:
@@ -425,7 +425,7 @@ def test_cli_metainfo_error(tv_api_mock) -> None:
     result = runner.invoke(cli, ["metainfo", "--query", "t", "--market", "crypto"])
     assert result.exit_code != 0
     assert result.exception is not None
-    assert "500" in result.output
+    assert "TradingView request failed" in result.output
 
 
 def test_cli_validate_missing_file() -> None:

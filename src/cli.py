@@ -50,13 +50,18 @@ def _with_error_handling(
         return func(*args, **kwargs)
     except requests.exceptions.RequestException as exc:
         logger.error("%s: %s", request_msg, exc)
-        if isinstance(exc, requests.HTTPError) and exc.response is not None:
-            r = exc.response
-            raise click.ClickException(f"HTTP {r.status_code}: {r.text}")
-        raise click.ClickException(str(exc))
-    except (ValueError, ValidationError) as exc:
+        raise click.ClickException("TradingView request failed")
+    except (ValidationError, KeyError) as exc:
         logger.error("%s: %s", error_msg, exc)
         raise click.ClickException(str(exc))
+    except ValueError as exc:
+        logger.error("%s: %s", error_msg, exc)
+        msg = (
+            "TradingView request failed"
+            if str(exc).startswith("TradingView HTTP")
+            else str(exc)
+        )
+        raise click.ClickException(msg)
 
 
 def _parse_json_option(value: str | None, name: str) -> Any:
@@ -67,7 +72,7 @@ def _parse_json_option(value: str | None, name: str) -> Any:
     try:
         return json.loads(value)
     except JSONDecodeError:
-        raise click.ClickException(f"Invalid JSON in option: {name}")
+        raise click.ClickException(f"Invalid JSON in {name}")
 
 
 @click.group()
@@ -186,16 +191,11 @@ def metainfo(query: str, market: str) -> None:
     """Fetch metainfo for given market via /{market}/metainfo."""
 
     api = TradingViewAPI()
-    try:
-        data = api.metainfo(market, {"query": query})
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Metainfo request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    except ValueError as exc:  # pragma: no cover - click handles output
-        logger.error("Metainfo error: %s", exc)
-        raise click.ClickException(str(exc))
+    data = _with_error_handling(
+        lambda: api.metainfo(market, {"query": query}),
+        "Metainfo request failed",
+        "Metainfo error",
+    )
     click.echo(json.dumps(data, indent=2))
 
 
@@ -303,7 +303,12 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
                     columns.append(str(name))
 
             if tickers == "AUTO":
-                tickers_list = choose_tickers(meta)
+                try:
+                    tickers_list = choose_tickers(meta)
+                except ValueError as exc:
+                    with error_log.open("a") as fh:
+                        fh.write(f"{type(exc).__name__}: {exc}\n")
+                    raise click.ClickException("No symbols found in metainfo")
             else:
                 tickers_list = [t for t in tickers.split(",") if t]
 
@@ -341,7 +346,7 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
     ) as exc:  # pragma: no cover - click handles output
         with error_log.open("a") as fh:
             fh.write(f"{type(exc).__name__}: {exc}\n")
-        raise click.ClickException("Request failed")
+        raise click.ClickException("TradingView request failed")
     except Exception as exc:  # pragma: no cover - click handles output
         with error_log.open("a") as fh:
             fh.write(f"{type(exc).__name__}: {exc}\n")
