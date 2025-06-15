@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 
 import json
 import yaml
@@ -567,3 +568,60 @@ def test_cli_debug_error(tv_api_mock) -> None:
     result = runner.invoke(cli, ["debug", "--market", "crypto"])
     assert result.exit_code == 0
     assert "\u274c" in result.output
+
+
+def test_cli_version_command(monkeypatch) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        pyproject = Path("pyproject.toml")
+        pyproject.write_text("[project]\nversion = '1.2.3'\n")
+        from src import meta
+
+        monkeypatch.setattr(meta.versioning, "DEFAULT_PYPROJECT_PATH", pyproject)
+        result = runner.invoke(cli, ["version"])
+        assert result.exit_code == 0
+        assert "1.2.3" in result.output
+
+
+def test_cli_bump_version(monkeypatch) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        pyproject = Path("pyproject.toml")
+        pyproject.write_text("[project]\nversion = '0.1.0'\n")
+        (Path("specs")).mkdir()
+        (Path("specs") / "crypto.yaml").write_text("info:\n  version: 0.1.0\n")
+        from src import meta
+
+        monkeypatch.setattr(meta.versioning, "DEFAULT_PYPROJECT_PATH", pyproject)
+        monkeypatch.setattr(meta.versioning, "DEFAULT_SPECS_DIR", Path("specs"))
+        result = runner.invoke(cli, ["bump-version", "--type", "patch"])
+        assert result.exit_code == 0
+        assert "0.1.1" in result.output
+        text = pyproject.read_text()
+        assert "0.1.1" in text
+        spec_text = (Path("specs") / "crypto.yaml").read_text()
+        assert "0.1.1" in spec_text
+
+
+def test_cli_changelog(monkeypatch) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        pyproject = Path("pyproject.toml")
+        pyproject.write_text("[project]\nversion = '0.2.0'\n")
+        from src import meta
+
+        monkeypatch.setattr(meta.versioning, "DEFAULT_PYPROJECT_PATH", pyproject)
+        subprocess.run(["git", "init"], check=True)
+        subprocess.run(["git", "config", "user.email", "a@b.com"], check=True)
+        subprocess.run(["git", "config", "user.name", "a"], check=True)
+        Path("file.txt").write_text("a")
+        subprocess.run(["git", "add", "file.txt", "pyproject.toml"], check=True)
+        subprocess.run(["git", "commit", "-m", "feat: start"], check=True)
+        subprocess.run(["git", "tag", "v0.1.0"], check=True)
+        Path("file.txt").write_text("b")
+        subprocess.run(["git", "add", "file.txt"], check=True)
+        subprocess.run(["git", "commit", "-m", "fix: update"], check=True)
+        result = runner.invoke(cli, ["changelog"])
+        assert result.exit_code == 0
+        text = Path("CHANGELOG.md").read_text()
+        assert "fix: update" in text

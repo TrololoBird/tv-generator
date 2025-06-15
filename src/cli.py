@@ -29,6 +29,11 @@ from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
 from src.constants import SCOPES
 from src.spec.bundler import bundle_all_specs
+from src.meta.versioning import (
+    get_version as _get_version,
+    bump_version as _bump_version,
+    generate_changelog as _generate_changelog,
+)
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -597,6 +602,37 @@ def docs(outfile: Path) -> None:
 
     out_path = generate_readme(outfile)
     click.echo(f"\u2713 {out_path}")
+
+
+@cli.command()
+def version() -> None:
+    """Show current package version."""
+
+    click.echo(_get_version())
+
+
+@cli.command("bump-version")
+@click.option(
+    "--type",
+    "kind",
+    type=click.Choice(["patch", "minor", "major"]),
+    default="patch",
+    show_default=True,
+    help="Version part to bump",
+)
+def bump_version_cli(kind: str) -> None:
+    """Increment project version."""
+
+    new_version = _bump_version(kind)
+    click.echo(new_version)
+
+
+@cli.command()
+def changelog() -> None:
+    """Generate CHANGELOG from git history."""
+
+    path = _generate_changelog()
+    click.echo(f"\u2713 {path}")
 
 
 if __name__ == "__main__":
