@@ -625,3 +625,56 @@ def test_cli_changelog(monkeypatch) -> None:
         assert result.exit_code == 0
         text = Path("CHANGELOG.md").read_text()
         assert "fix: update" in text
+
+
+def test_cli_publish_pages() -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        Path("specs").mkdir()
+        Path("specs/crypto.yaml").write_text("openapi: 3.1.0\n")
+        Path("bundle.yaml").write_text("openapi: 3.1.0\n")
+        remote_path = str(Path("remote.git").resolve())
+        subprocess.run(["git", "init", "--bare", remote_path], check=True)
+        subprocess.run(["git", "init"], check=True)
+        subprocess.run(["git", "config", "user.email", "a@b.com"], check=True)
+        subprocess.run(["git", "config", "user.name", "a"], check=True)
+        subprocess.run(["git", "remote", "add", "origin", remote_path], check=True)
+        result = runner.invoke(cli, ["publish-pages", "--branch", "gh-pages"])
+        assert result.exit_code == 0, result.output
+        out = subprocess.run(
+            [
+                "git",
+                "-C",
+                "remote.git",
+                "ls-tree",
+                "-r",
+                "--name-only",
+                "refs/heads/gh-pages",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        assert "index.html" in out
+        assert "specs/crypto.yaml" in out
+
+
+def test_cli_publish_release_assets(monkeypatch) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        Path("specs").mkdir()
+        Path("specs/crypto.yaml").write_text("openapi: 3.1.0\n")
+        Path("bundle.yaml").write_text("openapi: 3.1.0\n")
+        Path("CHANGELOG.md").write_text("log")
+
+        calls: list[list[str]] = []
+
+        def fake_run(cmd, check=True, **_kw):
+            calls.append(cmd)
+            return subprocess.CompletedProcess(cmd, 0, "", "")
+
+        monkeypatch.setattr(subprocess, "run", fake_run)
+        result = runner.invoke(cli, ["publish-release-assets", "--tag", "v1.0"])
+        assert result.exit_code == 0, result.output
+        assert calls
+        assert calls[0][0] == "gh"

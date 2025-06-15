@@ -2,6 +2,8 @@
 
 🧠 **tv-generator** — это CLI-инструмент для автоматической генерации OpenAPI 3.1 спецификаций на основе TradingView API `/scan` и `/metainfo`.
 
+🔗 Онлайн OpenAPI: [crypto.yaml](https://trololobird.github.io/tv-generator/specs/crypto.yaml)
+
 ## 📦 Установка
 
 ```bash
@@ -39,6 +41,8 @@ tvgen validate --spec specs/crypto.yaml
 - `metainfo` - Fetch metainfo for given market via /{market}/metainfo.
 - `preview` - Show table with fields, type, enum and description.
 - `price` - Fetch last close price for a symbol.
+- `publish-pages` - Publish YAML specs to GitHub Pages branch.
+- `publish-release-assets` - Upload specs to GitHub release.
 - `recommend` - Fetch trading recommendation for a symbol.
 - `refresh` - Download latest data and update TSV files.
 - `scan` - Perform a basic scan request and print JSON.
@@ -46,6 +50,13 @@ tvgen validate --spec specs/crypto.yaml
 - `summary` - Call /{market}/summary with the given payload.
 - `validate` - Validate an OpenAPI specification file.
 - `version` - Show current package version.
+
+## Публикация спецификаций
+
+```bash
+tvgen publish-pages --branch gh-pages
+tvgen publish-release-assets --tag v1.0.48
+```
 
 ## 📁 Структура проекта
 

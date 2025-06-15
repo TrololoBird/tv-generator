@@ -713,9 +713,9 @@ def generate_if_needed(
     for m in markets:
         text, has_changes = diff_market(m, Path("results"), Path("cache"))
         if has_changes:
-            add = len([l for l in text.splitlines() if l.startswith("[+]")])
-            rem = len([l for l in text.splitlines() if l.startswith("[-]")])
-            chg = len([l for l in text.splitlines() if l.startswith("[*]")])
+            add = len([line for line in text.splitlines() if line.startswith("[+]")])
+            rem = len([line for line in text.splitlines() if line.startswith("[-]")])
+            chg = len([line for line in text.splitlines() if line.startswith("[*]")])
             parts = []
             if add:
                 parts.append(f"{add} field{'s' if add != 1 else ''} added")
@@ -886,6 +886,80 @@ def docs(outfile: Path) -> None:
 
     out_path = generate_readme(outfile)
     click.echo(f"\u2713 {out_path}")
+
+
+@cli.command("publish-pages")
+@click.option(
+    "--branch",
+    default="gh-pages",
+    show_default=True,
+    help="Target branch",
+)
+def publish_pages(branch: str) -> None:
+    """Publish YAML specs to GitHub Pages branch."""
+
+    import shutil
+    import subprocess
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        spec_dir = tmp_path / "specs"
+        spec_dir.mkdir(parents=True, exist_ok=True)
+        for spec_file in Path("specs").glob("*.yaml"):
+            shutil.copy2(spec_file, spec_dir / spec_file.name)
+        bundle_file = Path("bundle.yaml")
+        if bundle_file.exists():
+            shutil.copy2(bundle_file, spec_dir / bundle_file.name)
+        links = "".join(
+            f'<li><a href="specs/{f.name}">{f.name}</a></li>'
+            for f in spec_dir.glob("*.yaml")
+        )
+        (tmp_path / "index.html").write_text(f"<ul>{links}</ul>", encoding="utf-8")
+        subprocess.run(["git", "init"], cwd=tmp_path, check=True)
+        subprocess.run(["git", "checkout", "-b", branch], cwd=tmp_path, check=True)
+        subprocess.run(["git", "add", "."], cwd=tmp_path, check=True)
+        subprocess.run(
+            ["git", "commit", "-m", "Publish specs to GitHub Pages"],
+            cwd=tmp_path,
+            check=True,
+        )
+        try:
+            remote = subprocess.run(
+                ["git", "config", "--get", "remote.origin.url"],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+            subprocess.run(
+                ["git", "push", remote, f"HEAD:{branch}", "--force"],
+                cwd=tmp_path,
+                check=True,
+            )
+        except subprocess.CalledProcessError as exc:
+            raise click.ClickException("Git push failed") from exc
+    click.echo(f"\u2713 Published to {branch}")
+
+
+@cli.command("publish-release-assets")
+@click.option("--tag", required=True, help="Release tag")
+def publish_release_assets(tag: str) -> None:
+    """Upload specs to GitHub release."""
+
+    import subprocess
+
+    files = [str(p) for p in Path("specs").glob("*.yaml") if p.is_file()]
+    if Path("bundle.yaml").exists():
+        files.append("bundle.yaml")
+    if Path("CHANGELOG.md").exists():
+        files.append("CHANGELOG.md")
+
+    cmd = ["gh", "release", "upload", tag, "--clobber", *files]
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as exc:
+        raise click.ClickException("Release upload failed") from exc
+    click.echo("\u2713 Assets uploaded")
 
 
 @cli.command()
