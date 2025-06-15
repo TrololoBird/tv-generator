@@ -166,3 +166,19 @@ def test_preview_missing() -> None:
     result = runner.invoke(cli, ["preview", "--spec", "missing.yaml"])
     assert result.exit_code != 0
     assert "No such file" in result.output
+
+
+def test_generate_all(tmp_path: Path) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem():
+        for m in ["crypto", "forex", "stocks"]:
+            _create_metainfo(Path("results") / m / "metainfo.json")
+        result = runner.invoke(
+            cli,
+            ["generate", "--market", "all", "--indir", "results", "--outdir", "specs"],
+        )
+        assert result.exit_code == 0, result.output
+        files = {p.name for p in Path("specs").glob("*.yaml")}
+        assert {"crypto.yaml", "forex.yaml", "stocks.yaml"}.issubset(files)
+        assert len(files) >= 3
+        assert "Generated" in result.output

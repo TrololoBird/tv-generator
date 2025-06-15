@@ -20,6 +20,7 @@ from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
 from src.generator.yaml_generator import generate_for_market
+from src.spec.generator import generate_spec_for_all_markets
 from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
@@ -413,7 +414,12 @@ cli.add_command(build, name="build-all")
 
 
 @cli.command("generate")
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
+@click.option(
+    "--market",
+    required=True,
+    type=click.Choice(SCOPES + ["all"]),
+    help="Target market or 'all'",
+)
 @click.option(
     "--indir",
     type=click.Path(path_type=Path),
@@ -439,12 +445,16 @@ def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
     """Generate OpenAPI YAML using collected JSON and TSV."""
 
     try:
-        out_file = generate_for_market(market, indir, outdir, max_size)
+        if market == "all":
+            out_files = generate_spec_for_all_markets(indir, outdir, max_size)
+            names = ", ".join(f.name for f in out_files)
+            click.echo(f"\u2713 Generated: {names}")
+        else:
+            out_file = generate_for_market(market, indir, outdir, max_size)
+            size_kb = out_file.stat().st_size // 1024
+            click.echo(f"\u2713 {out_file.name} {size_kb} KB")
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
-
-    size_kb = out_file.stat().st_size // 1024
-    click.echo(f"\u2713 {out_file.name} {size_kb} KB")
 
 
 @cli.command()
