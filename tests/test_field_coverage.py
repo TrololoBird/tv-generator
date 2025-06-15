@@ -19,8 +19,7 @@ def _load_meta() -> MetaInfoResponse:
 
 def test_field_coverage() -> None:
     meta = _load_meta()
-    tsv = pd.DataFrame(columns=["field", "tv_type", "status", "sample_value"])
-    yaml_str = generate_yaml("coin", meta, tsv, None)
+    yaml_str = generate_yaml("coin", meta, None)
     spec = yaml.safe_load(yaml_str)
     props = spec["components"]["schemas"]["CoinFields"]["properties"]
     yaml_fields = set(props.keys())

@@ -21,9 +21,8 @@ def _sample_meta() -> MetaInfoResponse:
 
 def test_generate_yaml() -> None:
     meta = _sample_meta()
-    tsv = pd.DataFrame(columns=["field", "tv_type", "status", "sample_value"])
     with mock.patch("toml.load", return_value={"project": {"version": "1.2.3"}}):
-        yaml_str = generate_yaml("crypto", meta, tsv, None)
+        yaml_str = generate_yaml("crypto", meta, None)
     data = yaml.safe_load(yaml_str)
     assert data["info"]["version"] == "1.2.3"
     assert "/crypto/scan" in data["paths"]
@@ -43,10 +42,9 @@ def test_generate_yaml() -> None:
 
 def test_generate_yaml_size_limit() -> None:
     meta = _sample_meta()
-    tsv = pd.DataFrame()
     with mock.patch("toml.load", return_value={"project": {"version": "1.0"}}):
         with pytest.raises(RuntimeError):
-            generate_yaml("crypto", meta, tsv, None, max_size=10)
+            generate_yaml("crypto", meta, None, max_size=10)
 
 
 def test_numeric_field_components() -> None:
@@ -55,8 +53,7 @@ def test_numeric_field_components() -> None:
         TVField(name="ADX+DI[1]|60", type="number"),
     ]
     meta = MetaInfoResponse(data=fields)
-    tsv = pd.DataFrame()
-    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    yaml_str = generate_yaml("crypto", meta, None)
     data = yaml.safe_load(yaml_str)
     schemas = data["components"]["schemas"]
     assert schemas["NumericFieldNoTimeframe"]["enum"] == []
@@ -70,8 +67,7 @@ def test_symbol_field_ignored() -> None:
             TVField(name="close", type="integer"),
         ]
     )
-    tsv = pd.DataFrame()
-    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    yaml_str = generate_yaml("crypto", meta, None)
     data = yaml.safe_load(yaml_str)
     props = data["components"]["schemas"]["CryptoFields"]["properties"]
     assert "symbol" not in props
@@ -101,8 +97,7 @@ def test_build_paths_section() -> None:
 def test_fields_split_into_parts() -> None:
     fields = [TVField(name=f"f{i}", type="number") for i in range(130)]
     meta = MetaInfoResponse(data=fields)
-    tsv = pd.DataFrame()
-    yaml_str = generate_yaml("crypto", meta, tsv, None)
+    yaml_str = generate_yaml("crypto", meta, None)
     data = yaml.safe_load(yaml_str)
     schemas = data["components"]["schemas"]
     assert "CryptoFieldsPart01" in schemas
