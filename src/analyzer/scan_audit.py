@@ -39,11 +39,35 @@ def _collect_scan_fields(scan: dict[str, Any]) -> set[str]:
 
 
 def _infer_type(value: Any) -> str:
+    """Return a simple type label for *value*."""
+
     if isinstance(value, bool):
         return "boolean"
+
+    if isinstance(value, str):
+        if value.lower() in {"true", "false"}:
+            return "boolean"
+        try:
+            float(value)
+        except ValueError:
+            return "string"
+        else:
+            return "numeric"
+
+    try:
+        if pd.isna(value):
+            return "string"
+    except Exception:  # pragma: no cover - value not handled by pandas
+        pass
+
     if isinstance(value, (int, float)):
         return "numeric"
-    return "string"
+
+    try:
+        float(str(value))
+    except (ValueError, TypeError):
+        return "string"
+    return "numeric"
 
 
 def _infer_field_type(field: str, scan: dict[str, Any]) -> str:

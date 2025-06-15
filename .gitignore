@@ -16,3 +16,5 @@ htmlcov/
 .cache
 # OpenAPI
 openapi.yaml
+tv_generator.egg-info/
+results/
