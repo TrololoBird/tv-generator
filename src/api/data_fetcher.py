@@ -7,8 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 from src.models import MetaInfoResponse, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
 
-_API = TradingViewAPI()
-
 # TradingView's ``/scan`` endpoint returns at most 20 columns per request.
 # To obtain data for more fields we issue multiple requests in parallel,
 # splitting the columns list into batches of this size.
@@ -22,7 +20,8 @@ def fetch_metainfo(
 
     # ``TradingViewAPI.metainfo`` sends the POST request and validates
     # the response via ``MetaInfoResponse``.
-    data = _API.metainfo(scope, {"query": ""})
+    api = TradingViewAPI(base_url=api_base)
+    data = api.metainfo(scope, {"query": ""})
     return data
 
 
@@ -129,6 +128,7 @@ def full_scan(
         meta_json = fetch_metainfo(scope, api_base)
         tickers = choose_tickers(meta_json, limit=10)
 
+    api = TradingViewAPI(base_url=api_base)
     url = f"{api_base.rstrip('/')}/{scope}/scan"
     batches = _chunks(columns, MAX_COLUMNS_PER_SCAN)
 
@@ -137,7 +137,7 @@ def full_scan(
             "symbols": {"tickers": tickers, "query": {"types": []}},
             "columns": cols,
         }
-        resp = _API.session.post(url, json=payload, timeout=30)
+        resp = api.session.post(url, json=payload, timeout=30)
         resp.raise_for_status()
         try:
             data = resp.json()

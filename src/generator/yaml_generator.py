@@ -11,6 +11,7 @@ if TYPE_CHECKING:  # pragma: no cover - type checking only
     import pandas as pd
 
 from src.models import MetaInfoResponse
+from src.api.tradingview_api import TradingViewAPI
 from src.utils import tv2ref
 
 
@@ -295,6 +296,7 @@ def generate_yaml(
     scan: dict[str, Any] | None = None,
     server_url: str = "https://scanner.tradingview.com",
     max_size: int = 1_048_576,
+    api: TradingViewAPI | None = None,
 ) -> str:
     """Return OpenAPI YAML specification for a scope."""
 
