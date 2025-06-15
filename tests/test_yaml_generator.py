@@ -104,3 +104,17 @@ def test_fields_split_into_parts() -> None:
     parts = schemas["CryptoFields"]["allOf"]
     assert {"$ref": "#/components/schemas/CryptoFieldsPart01"} in parts
     assert {"$ref": "#/components/schemas/CryptoFieldsPart02"} in parts
+
+
+def test_fields_split_into_two_parts_at_hundred() -> None:
+    fields = [TVField(name=f"field{i}", type="number") for i in range(100)]
+    meta = MetaInfoResponse(data=fields)
+    yaml_str = generate_yaml("crypto", meta, None)
+    data = yaml.safe_load(yaml_str)
+    schemas = data["components"]["schemas"]
+    assert "CryptoFieldsPart01" in schemas
+    assert "CryptoFieldsPart02" in schemas
+    parts = schemas["CryptoFields"]["allOf"]
+    assert len(parts) == 2
+    assert {"$ref": "#/components/schemas/CryptoFieldsPart01"} in parts
+    assert {"$ref": "#/components/schemas/CryptoFieldsPart02"} in parts

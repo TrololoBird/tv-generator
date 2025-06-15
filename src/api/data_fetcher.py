@@ -148,7 +148,8 @@ def full_scan(
 
     result_map: dict[str, list[Any]] = {sym: [] for sym in tickers}
     with ThreadPoolExecutor(max_workers=min(8, len(batches))) as executor:
-        responses = list(executor.map(_scan, batches))
+        futures = [executor.submit(_scan, cols) for cols in batches]
+        responses = [future.result() for future in futures]
 
     for data in responses:
         rows = data.get("data", []) if isinstance(data, dict) else []
