@@ -28,6 +28,7 @@ from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_ti
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
 from src.constants import SCOPES
+from src.spec.bundler import bundle_all_specs
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -546,6 +547,29 @@ def preview(spec_file: Path) -> None:
 
     df = pd.DataFrame(rows, columns=["field", "type", "enum", "description"])
     click.echo(df.to_string(index=False))
+
+
+@cli.command()
+@click.option(
+    "--format",
+    "format_",
+    default="json",
+    show_default=True,
+    type=click.Choice(["json", "yaml"]),
+    help="Output format",
+)
+@click.option(
+    "--outfile", default="bundle.json", show_default=True, help="Bundle file path"
+)
+def bundle(format_: str, outfile: str) -> None:
+    """Bundle all specifications under ``specs/`` directory."""
+
+    try:
+        out_path = bundle_all_specs("specs/", outfile, format=format_)
+    except FileNotFoundError as exc:  # pragma: no cover - click handles output
+        raise click.ClickException(str(exc))
+    size_kb = Path(out_path).stat().st_size // 1024
+    click.echo(f"\u2713 {out_path} {size_kb} KB")
 
 
 @cli.command()
