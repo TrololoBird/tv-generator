@@ -352,6 +352,7 @@ def generate_yaml(
     max_size: int = 1_048_576,
     api: TradingViewAPI | None = None,
     missing_fields: list[dict[str, str]] | None = None,
+    description: str | None = None,
 ) -> str:
     """Return OpenAPI YAML specification for a scope."""
 
@@ -386,6 +387,7 @@ def generate_yaml(
         "info": {
             "title": f"Unofficial TradingView {cap} API",
             "version": version,
+            **({"description": description} if description else {}),
         },
         "servers": [{"url": server_url}],
         "paths": paths,
@@ -406,6 +408,10 @@ def generate_for_market(
     api: TradingViewAPI | None = None,
     *,
     include_missing: bool = False,
+    include_types: tuple[str, ...] = (),
+    exclude_types: tuple[str, ...] = (),
+    only_timeframe_supported: bool = False,
+    only_daily: bool = False,
 ) -> Path:
     """Generate YAML spec for ``market`` using data from ``indir``."""
 
@@ -450,6 +456,48 @@ def generate_for_market(
 
         missing_fields = find_missing_fields(meta_file, scan_file, status_file)
 
+    columns: dict[str, dict[str, Any]] = {f.n: {"type": f.t} for f in tv_fields}
+    if missing_fields:
+        for item in missing_fields:
+            columns[item["name"]] = {
+                "type": item.get("type", "string"),
+                "source": item.get("source", "scan"),
+            }
+
+    from src.meta.field_classifier import classify_fields
+
+    classes = classify_fields(columns)
+
+    def _keep(name: str) -> bool:
+        base = name.split("|", 1)[0]
+        if include_types and not any(base in classes.get(t, []) for t in include_types):
+            return False
+        if exclude_types and any(base in classes.get(t, []) for t in exclude_types):
+            return False
+        if only_timeframe_supported and base not in classes.get(
+            "supports_timeframes", []
+        ):
+            return False
+        if only_daily and base not in classes.get("daily_only", []):
+            return False
+        return True
+
+    tv_fields = [f for f in tv_fields if _keep(f.n)]
+    if missing_fields:
+        missing_fields = [m for m in missing_fields if _keep(m["name"])]
+    meta = MetaInfoResponse(data=tv_fields)
+
+    desc_parts: list[str] = []
+    if include_types:
+        desc_parts.append("include=" + ",".join(include_types))
+    if exclude_types:
+        desc_parts.append("exclude=" + ",".join(exclude_types))
+    if only_timeframe_supported:
+        desc_parts.append("timeframe")
+    if only_daily:
+        desc_parts.append("daily")
+    desc = "; ".join(desc_parts) if desc_parts else None
+
     yaml_str = generate_yaml(
         market,
         meta,
@@ -457,6 +505,7 @@ def generate_for_market(
         max_size=max_size,
         api=api,
         missing_fields=missing_fields,
+        description=desc,
     )
 
     outdir.mkdir(parents=True, exist_ok=True)
