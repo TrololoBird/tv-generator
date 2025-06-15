@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-oai-custom-action-schema-version: v1
 info:
   title: Unofficial TradingView Futures API
-  version: 1.0.46
+  version: 1.0.48
 servers:
   - url: https://scanner.tradingview.com
 paths:

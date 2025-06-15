@@ -1,4 +1,6 @@
 # Changelog
+## 1.0.48
+- Version bump
 ## 1.0.47
 - Add diff command and cache comparison
 
