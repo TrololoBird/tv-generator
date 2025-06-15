@@ -36,7 +36,12 @@ def test_fetch_metainfo_invalid_structure(tv_api_mock):
 def test_full_scan_auto_tickers(tv_api_mock, monkeypatch):
     tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/metainfo",
-        json={"fields": [{"name": "symbol", "type": "string"}]},
+        json={
+            "fields": [
+                {"name": "symbol", "type": "string"},
+                {"name": "c1", "type": "number"},
+            ]
+        },
     )
     tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
@@ -44,10 +49,14 @@ def test_full_scan_auto_tickers(tv_api_mock, monkeypatch):
     )
     monkeypatch.setattr(data_fetcher, "choose_tickers", lambda meta, limit=10: ["AAA"])
     result = full_scan("stocks", ["AUTO"], ["c1"])
-    assert result == {"count": 1, "data": [{"s": "AAA", "d": [1]}]}
+    assert result == {"count": 1, "data": [{"s": "AAA", "d": [1]}], "columns": ["c1"]}
 
 
 def test_full_scan_invalid_json(tv_api_mock):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/stocks/metainfo",
+        json={"fields": [{"name": "c1", "type": "number"}]},
+    )
     tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/scan",
         text="oops",
