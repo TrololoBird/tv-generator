@@ -10,8 +10,7 @@ def test_generate_yaml_large() -> None:
     for i in range(120):
         fields.append(TVField(name=f"f{i}", type=types[i % len(types)]))
     meta = MetaInfoResponse(data=fields)
-    tsv = pd.DataFrame(columns=["field", "tv_type", "status", "sample_value"])
-    yaml_str = generate_yaml("coin", meta, tsv, None)
+    yaml_str = generate_yaml("coin", meta, None)
     data = yaml.safe_load(yaml_str)
 
     schemas = data["components"]["schemas"]

@@ -64,7 +64,6 @@ def test_build_field_status_with_columns():
 
 def test_generate_yaml_server_url():
     meta = MetaInfoResponse(data=[TVField(name="close", type="integer")])
-    tsv = pd.DataFrame()
-    yaml_str = generate_yaml("crypto", meta, tsv, None, server_url="http://example.com")
+    yaml_str = generate_yaml("crypto", meta, None, server_url="http://example.com")
     data = yaml.safe_load(yaml_str)
     assert data["servers"][0]["url"] == "http://example.com"
