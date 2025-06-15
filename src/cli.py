@@ -20,7 +20,10 @@ from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
 from src.generator.yaml_generator import generate_for_market
-from src.spec.generator import generate_spec_for_all_markets
+from src.spec.generator import (
+    generate_spec_for_market,
+    detect_all_markets,
+)
 from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
@@ -441,14 +444,35 @@ cli.add_command(build, name="build-all")
     show_default=True,
     help="Maximum YAML size in bytes",
 )
-def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
+@click.option(
+    "--strict",
+    is_flag=True,
+    help="Fail on first market error when generating all",
+)
+def generate(
+    market: str, indir: Path, outdir: Path, max_size: int, strict: bool
+) -> None:
     """Generate OpenAPI YAML using collected JSON and TSV."""
 
     try:
         if market == "all":
-            out_files = generate_spec_for_all_markets(indir, outdir, max_size)
-            names = ", ".join(f.name for f in out_files)
-            click.echo(f"\u2713 Generated: {names}")
+            out_files = []
+            for m in detect_all_markets(indir):
+                try:
+                    out_files.append(
+                        generate_spec_for_market(m, indir, outdir, max_size)
+                    )
+                except Exception as exc:
+                    logger.warning("Skipped %s: %s: %s", m, type(exc).__name__, exc)
+                    if strict:
+                        raise
+                    click.echo(
+                        f"[⚠️] Skipped {m}: {type(exc).__name__}: {exc}",
+                        err=True,
+                    )
+            if out_files:
+                names = ", ".join(f.name for f in out_files)
+                click.echo(f"\u2713 Generated: {names}")
         else:
             out_file = generate_for_market(market, indir, outdir, max_size)
             size_kb = out_file.stat().st_size // 1024
