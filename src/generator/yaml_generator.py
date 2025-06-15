@@ -300,7 +300,15 @@ def generate_yaml(
 
     cap = scope.capitalize()
     root = Path(__file__).resolve().parents[2]
-    version = toml.load(root / "pyproject.toml")["project"]["version"]
+    try:
+        version = toml.load(root / "pyproject.toml")["project"]["version"]
+    except FileNotFoundError:  # pragma: no cover - fallback for installed package
+        try:
+            from importlib.metadata import PackageNotFoundError, version as pkg_version
+
+            version = pkg_version("tv-generator")
+        except PackageNotFoundError:  # pragma: no cover - dev environment
+            version = "0.0.0"
 
     fields, no_tf_enum = collect_field_schemas(meta, scan)
     components = build_components_schemas(cap, fields, no_tf_enum)
