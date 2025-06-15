@@ -78,7 +78,7 @@ class TradingViewAPI:
         except requests.exceptions.RequestException as exc:
             logger.error("Request error: %s", exc)
             raise
-        logger.debug("Response status %s", r.status_code)
+        self._log_response(r)
         try:
             r.raise_for_status()
         except requests.HTTPError as exc:
@@ -89,6 +89,14 @@ class TradingViewAPI:
         except ValueError as exc:
             logger.error("Invalid JSON: %s", r.text)
             raise ValueError("Invalid JSON received from TradingView") from exc
+
+    def _log_response(self, response: requests.Response) -> None:
+        """Log basic details about the HTTP response."""
+        logger.debug(
+            "Response: %s %s",
+            response.status_code,
+            response.headers.get("content-type", ""),
+        )
 
     def _url(self, scope: str, endpoint: str) -> str:
         if scope not in SCOPES:
