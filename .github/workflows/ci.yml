@@ -121,3 +121,7 @@ jobs:
       - name: Test
         run: |
           PYTHONPATH=$PWD pytest -q
+      - name: Build OpenAPI spec
+        run: tvgen generate --market crypto --outdir specs
+      - name: Validate OpenAPI spec
+        run: openapi-spec-validator specs/*.yaml
