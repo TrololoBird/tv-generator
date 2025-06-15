@@ -1,6 +1,5 @@
 import pandas as pd
 import yaml
-import pytest
 
 from src.generator.yaml_generator import generate_yaml
 from src.models import MetaInfoResponse, TVField

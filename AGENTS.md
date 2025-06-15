@@ -37,6 +37,9 @@ After validating the spec, commit your changes with an updated `CHANGELOG.md`.
 ### Common CLI Flags
 
 - `--market` – TradingView market name
+- `--tickers` – comma-separated list (default `AUTO`)
+- `--indir`/`--outdir` – input/output directories (default `results`/`specs`)
+- `--workers` – parallel workers for `build` (default `1`)
 - `--filter2`, `--sort`, `--range` – optional JSON for `scan`
 
 ⚠️ **Note**: `tvgen generate` requires `results/<market>/field_status.tsv`. Create a minimal file if it doesn't exist.
