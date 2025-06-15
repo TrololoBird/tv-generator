@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import json
-import re
 import shutil
 from pathlib import Path
 from typing import Dict, Tuple
 
 
-from src.utils.custom_patterns import _CUSTOM_PATTERNS, _is_custom
+from src.utils.custom_patterns import _is_custom
 
 
 def _load_meta_fields(path: Path) -> Dict[str, str]:

@@ -38,10 +38,13 @@ def test_skip_generation_when_no_changes(monkeypatch):
             called = True
             return spec
 
-        monkeypatch.setattr("src.cli.generate_spec_for_market", fake_generate)
-        result = runner.invoke(cli, ["generate-if-needed", "--market", "crypto"])
+        monkeypatch.setattr(
+            "src.spec.generator.generate_spec_for_market", fake_generate
+        )
+        result = runner.invoke(
+            cli, ["update", "--market", "crypto", "--diff", "--generate"]
+        )
         assert result.exit_code == 0, result.output
-        assert "No changes detected" in result.output
         assert not called
         assert spec.read_text() == "old: 1"
 
@@ -57,10 +60,13 @@ def test_generation_when_changed(monkeypatch):
             spec.write_text("new: 1")
             return spec
 
-        monkeypatch.setattr("src.cli.generate_spec_for_market", fake_generate)
-        result = runner.invoke(cli, ["generate-if-needed", "--market", "crypto"])
+        monkeypatch.setattr(
+            "src.spec.generator.generate_spec_for_market", fake_generate
+        )
+        result = runner.invoke(
+            cli, ["update", "--market", "crypto", "--diff", "--generate"]
+        )
         assert result.exit_code == 0, result.output
-        assert "regenerating" in result.output
         assert spec.read_text() == "new: 1"
 
 
@@ -75,14 +81,19 @@ def test_yaml_updated_only_when_changed(monkeypatch):
             spec.write_text("new: 1")
             return spec
 
-        monkeypatch.setattr("src.cli.generate_spec_for_market", fake_generate)
-        result = runner.invoke(cli, ["generate-if-needed", "--market", "crypto"])
+        monkeypatch.setattr(
+            "src.spec.generator.generate_spec_for_market", fake_generate
+        )
+        result = runner.invoke(
+            cli, ["update", "--market", "crypto", "--diff", "--generate"]
+        )
         assert result.exit_code == 0, result.output
         first_mtime = spec.stat().st_mtime
 
         # run again with no changes
         _create_market(Path("cache/crypto"), [("close", "integer"), ("open", "text")])
-        result = runner.invoke(cli, ["generate-if-needed", "--market", "crypto"])
+        result = runner.invoke(
+            cli, ["update", "--market", "crypto", "--diff", "--generate"]
+        )
         assert result.exit_code == 0, result.output
-        assert "No changes detected" in result.output
         assert spec.stat().st_mtime == first_mtime

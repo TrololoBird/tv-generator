@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict
 
-from src.utils.custom_patterns import _CUSTOM_PATTERNS, _is_custom
+from src.utils.custom_patterns import _is_custom
 
 # TradingView numeric types
 _NUMERIC_TYPES = {

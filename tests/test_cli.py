@@ -163,28 +163,6 @@ def test_cli_scan_invalid_range(tv_api_mock) -> None:
     assert "Invalid JSON in --range" in result.output
 
 
-def test_cli_recommend(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/scan",
-        json={"count": 1, "data": [{"s": "AAPL", "d": ["buy"]}]},
-    )
-    result = runner.invoke(cli, ["recommend", "--symbol", "AAPL"])
-    assert result.exit_code == 0
-    assert "buy" in result.output
-
-
-def test_cli_price(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/scan",
-        json={"count": 1, "data": [{"s": "AAPL", "d": [1.0]}]},
-    )
-    result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
-    assert result.exit_code == 0
-    assert "1.0" in result.output
-
-
 def test_cli_metainfo(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.post(
@@ -197,99 +175,6 @@ def test_cli_metainfo(tv_api_mock) -> None:
     )
     assert result.exit_code == 0
     assert "fields" in result.output
-
-
-def test_cli_search(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/search",
-        json={"result": []},
-    )
-    result = runner.invoke(
-        cli,
-        [
-            "search",
-            "--payload",
-            "{}",
-            "--market",
-            "crypto",
-        ],
-    )
-    assert result.exit_code == 0
-    assert "result" in result.output
-
-
-def test_cli_history(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/history",
-        json={"bars": []},
-    )
-    result = runner.invoke(
-        cli,
-        [
-            "history",
-            "--payload",
-            "{}",
-            "--market",
-            "stocks",
-        ],
-    )
-    assert result.exit_code == 0
-    assert "bars" in result.output
-
-
-def test_cli_summary(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/forex/summary",
-        json={"summary": []},
-    )
-    result = runner.invoke(
-        cli,
-        [
-            "summary",
-            "--payload",
-            "{}",
-            "--market",
-            "forex",
-        ],
-    )
-    assert result.exit_code == 0
-    assert "summary" in result.output
-
-
-def test_cli_search_invalid_payload() -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        ["search", "--payload", "{", "--market", "crypto"],
-    )
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "Invalid JSON in --payload" in result.output
-
-
-def test_cli_history_invalid_payload() -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        ["history", "--payload", "{", "--market", "crypto"],
-    )
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "Invalid JSON in --payload" in result.output
-
-
-def test_cli_summary_invalid_payload() -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        ["summary", "--payload", "{", "--market", "crypto"],
-    )
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "Invalid JSON in --payload" in result.output
 
 
 def test_scan_cli_missing_scope():
@@ -393,30 +278,6 @@ def test_cli_scan_error(tv_api_mock) -> None:
     assert "TradingView request failed" in result.output
 
 
-def test_cli_recommend_error(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/scan",
-        json={},
-    )
-    result = runner.invoke(cli, ["recommend", "--symbol", "AAPL"])
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "unavailable" in result.output
-
-
-def test_cli_price_error(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/scan",
-        json={},
-    )
-    result = runner.invoke(cli, ["price", "--symbol", "AAPL"])
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "unavailable" in result.output
-
-
 def test_cli_metainfo_error(tv_api_mock) -> None:
     runner = CliRunner()
     tv_api_mock.post(
@@ -501,28 +362,6 @@ def test_collect_error(monkeypatch):
         assert "FileNotFoundError: boom" in log
 
 
-def test_cli_recommend_btcusdt(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/scan",
-        json={"count": 1, "data": [{"s": "BTCUSDT", "d": ["buy"]}]},
-    )
-    result = runner.invoke(cli, ["recommend", "--symbol", "BTCUSDT"])
-    assert result.exit_code == 0
-    assert "buy" in result.output
-
-
-def test_cli_price_btcusdt(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/stocks/scan",
-        json={"count": 1, "data": [{"s": "BTCUSDT", "d": [123.0]}]},
-    )
-    result = runner.invoke(cli, ["price", "--symbol", "BTCUSDT"])
-    assert result.exit_code == 0
-    assert "123.0" in result.output
-
-
 def test_cli_collect_crypto(monkeypatch) -> None:
     runner = CliRunner()
     _mock_collect_api(monkeypatch)
@@ -541,33 +380,6 @@ def test_cli_validate_crypto_spec() -> None:
     result = runner.invoke(cli, ["validate", "--spec", str(spec)])
     assert result.exit_code == 0
     assert "Specification is valid" in result.output
-
-
-def test_cli_debug(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.get(
-        "https://scanner.tradingview.com/crypto/metainfo",
-        json={"version": 1, "filters": [], "columns": []},
-    )
-    tv_api_mock.get(
-        "https://scanner.tradingview.com/crypto/scan",
-        json={"data": [], "columns": []},
-    )
-    result = runner.invoke(cli, ["debug", "--market", "crypto"])
-    assert result.exit_code == 0
-    assert "TradingView" in result.output
-    assert "[\u2713] GET /crypto/metainfo" in result.output
-
-
-def test_cli_debug_error(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.get(
-        "https://scanner.tradingview.com/crypto/metainfo",
-        status_code=500,
-    )
-    result = runner.invoke(cli, ["debug", "--market", "crypto"])
-    assert result.exit_code == 0
-    assert "\u274c" in result.output
 
 
 def test_cli_version_command(monkeypatch) -> None:
@@ -625,56 +437,3 @@ def test_cli_changelog(monkeypatch) -> None:
         assert result.exit_code == 0
         text = Path("CHANGELOG.md").read_text()
         assert "fix: update" in text
-
-
-def test_cli_publish_pages() -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        Path("specs").mkdir()
-        Path("specs/crypto.yaml").write_text("openapi: 3.1.0\n")
-        Path("bundle.yaml").write_text("openapi: 3.1.0\n")
-        remote_path = str(Path("remote.git").resolve())
-        subprocess.run(["git", "init", "--bare", remote_path], check=True)
-        subprocess.run(["git", "init"], check=True)
-        subprocess.run(["git", "config", "user.email", "a@b.com"], check=True)
-        subprocess.run(["git", "config", "user.name", "a"], check=True)
-        subprocess.run(["git", "remote", "add", "origin", remote_path], check=True)
-        result = runner.invoke(cli, ["publish-pages", "--branch", "gh-pages"])
-        assert result.exit_code == 0, result.output
-        out = subprocess.run(
-            [
-                "git",
-                "-C",
-                "remote.git",
-                "ls-tree",
-                "-r",
-                "--name-only",
-                "refs/heads/gh-pages",
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout
-        assert "index.html" in out
-        assert "specs/crypto.yaml" in out
-
-
-def test_cli_publish_release_assets(monkeypatch) -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        Path("specs").mkdir()
-        Path("specs/crypto.yaml").write_text("openapi: 3.1.0\n")
-        Path("bundle.yaml").write_text("openapi: 3.1.0\n")
-        Path("CHANGELOG.md").write_text("log")
-
-        calls: list[list[str]] = []
-
-        def fake_run(cmd, check=True, **_kw):
-            calls.append(cmd)
-            return subprocess.CompletedProcess(cmd, 0, "", "")
-
-        monkeypatch.setattr(subprocess, "run", fake_run)
-        result = runner.invoke(cli, ["publish-release-assets", "--tag", "v1.0"])
-        assert result.exit_code == 0, result.output
-        assert calls
-        assert calls[0][0] == "gh"

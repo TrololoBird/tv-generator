@@ -22,7 +22,7 @@ def test_diff_added_removed_changed() -> None:
     with runner.isolated_filesystem():
         _create_market(Path("cache/crypto"), [("close", "integer"), ("open", "text")])
         _create_market(Path("results/crypto"), [("close", "text"), ("high", "integer")])
-        result = runner.invoke(cli, ["diff", "--market", "crypto"])
+        result = runner.invoke(cli, ["update", "--market", "crypto", "--diff"])
         assert result.exit_code == 0, result.output
         assert "[+] Added field: high" in result.output
         assert "[-] Removed field: open" in result.output
