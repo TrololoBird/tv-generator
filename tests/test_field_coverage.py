@@ -1,7 +1,6 @@
 from pathlib import Path
 import json
 import yaml
-import pandas as pd
 from src.generator.yaml_generator import generate_yaml
 from src.models import MetaInfoResponse, TVField
 

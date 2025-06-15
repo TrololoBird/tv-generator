@@ -1,4 +1,3 @@
-import pandas as pd
 import yaml
 
 from src.generator.yaml_generator import generate_yaml

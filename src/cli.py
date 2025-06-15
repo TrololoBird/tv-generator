@@ -19,10 +19,10 @@ from pydantic import ValidationError
 from src.api.tradingview_api import TradingViewAPI
 from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
-from src.generator.yaml_generator import generate_yaml
+from src.generator.yaml_generator import generate_for_market
 from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 from src.api.data_manager import build_field_status
-from src.models import TVField, MetaInfoResponse, ScanResponse
+from src.models import TVField, MetaInfoResponse
 from src.constants import SCOPES
 import pandas as pd
 
@@ -389,9 +389,10 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
         if callable(cb_collect):
             offline_mode = offline or (indir / market / "metainfo.json").exists()
             cb_collect(market, "AUTO", indir, offline_mode)
-        cb_generate = getattr(generate, "callback", None)
-        if callable(cb_generate):
-            cb_generate(market, indir, outdir, 1_048_576)
+        try:
+            generate_for_market(market, indir, outdir, 1_048_576)
+        except FileNotFoundError as exc:
+            raise click.ClickException(str(exc))
 
     if workers > 1:
         from concurrent.futures import ThreadPoolExecutor
@@ -437,40 +438,11 @@ cli.add_command(build, name="build-all")
 def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
     """Generate OpenAPI YAML using collected JSON and TSV."""
 
-    market_dir = indir / market
-    meta_file = market_dir / "metainfo.json"
-    scan_file = market_dir / "scan.json"
-    status_file = market_dir / "field_status.tsv"
-
     try:
-        meta_data = json.loads(meta_file.read_text())
-        scan_data = json.loads(scan_file.read_text())
-        tsv = pd.read_csv(status_file, sep="\t")
+        out_file = generate_for_market(market, indir, outdir, max_size)
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
 
-    # Validate TradingView JSON
-    MetaInfoResponse.parse_obj(meta_data)
-    ScanResponse.parse_obj(scan_data)
-
-    fields_json = (
-        meta_data.get("fields") or meta_data.get("data", {}).get("fields") or []
-    )
-    tv_fields = []
-    for f in fields_json:
-        if isinstance(f, dict):
-            name = f.get("name") or f.get("id")
-            if name is not None:
-                data = {"name": name, "type": f.get("type", "string")}
-                tv_fields.append(TVField.model_validate(data))
-    meta = MetaInfoResponse(data=tv_fields)
-
-    api = TradingViewAPI()
-    yaml_str = generate_yaml(market, meta, scan_data, max_size=max_size, api=api)
-
-    outdir.mkdir(parents=True, exist_ok=True)
-    out_file = outdir / f"{market}.yaml"
-    out_file.write_text(yaml_str)
     size_kb = out_file.stat().st_size // 1024
     click.echo(f"\u2713 {out_file.name} {size_kb} KB")
 
