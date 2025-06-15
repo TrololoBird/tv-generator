@@ -15,9 +15,7 @@ _API = TradingViewAPI()
 MAX_COLUMNS_PER_SCAN = 20
 
 
-def fetch_metainfo(
-    scope: str, api_base: str = "https://scanner.tradingview.com"
-) -> Dict[str, Any]:
+def fetch_metainfo(scope: str) -> Dict[str, Any]:
     """Return metainfo for a given scope using the TradingViewAPI."""
 
     # ``TradingViewAPI.metainfo`` sends the POST request and validates
@@ -126,7 +124,7 @@ def full_scan(
 ) -> Dict[str, Any]:
     """Perform a scan request splitting columns into batches."""
     if tickers == ["AUTO"]:
-        meta_json = fetch_metainfo(scope, api_base)
+        meta_json = fetch_metainfo(scope)
         tickers = choose_tickers(meta_json, limit=10)
 
     url = f"{api_base.rstrip('/')}/{scope}/scan"

@@ -1,4 +1,6 @@
 # Changelog
+## 1.0.38
+- Document additional environment variables and remove unused parameter
 ## 1.0.37
 - Version bump
 ## 1.0.36

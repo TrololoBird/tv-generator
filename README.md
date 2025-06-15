@@ -25,6 +25,8 @@ The generation commands contact TradingView's public API. Ensure that `scanner.t
 ## Environment Variables
 - `TV_BASE_URL`: базовый URL TradingView API (по умолчанию scanner.tradingview.com)
 - `TV_CACHE`: если установлено, включает `requests-cache` для ускорения повторных запросов
+- `TV_CACHE_EXPIRE`: время жизни кэша в секундах (по умолчанию 86400)
+- `TV_TIMEOUT`: тайм‑аут HTTP-запросов в секундах (по умолчанию 10)
 
 ### Docker
 ```bash
