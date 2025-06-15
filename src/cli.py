@@ -460,7 +460,13 @@ def generate(market: str, indir: Path, outdir: Path, max_size: int) -> None:
                 tv_fields.append(TVField.model_validate(data))
     meta = MetaInfoResponse(data=tv_fields)
 
-    yaml_str = generate_yaml(market, meta, scan_data, max_size=max_size)
+    yaml_str = generate_yaml(
+        market,
+        meta,
+        scan_data,
+        max_size=max_size,
+        api=TradingViewAPI(),
+    )
 
     outdir.mkdir(parents=True, exist_ok=True)
     out_file = outdir / f"{market}.yaml"
