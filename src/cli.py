@@ -17,7 +17,6 @@ from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
 from pydantic import ValidationError
 
 from src.api.tradingview_api import TradingViewAPI
-from src.api.stock_data import fetch_recommendation, fetch_stock_value
 from src.utils.payload import build_scan_payload
 from src.generator.yaml_generator import generate_for_market
 from src.spec.generator import (
@@ -34,7 +33,6 @@ from src.meta.versioning import (
     bump_version as _bump_version,
     generate_changelog as _generate_changelog,
 )
-from src.meta import classify_fields
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -153,44 +151,6 @@ def scan(
 
 
 @cli.command()
-@click.option("--symbol", required=True, help="Ticker symbol")
-@click.option("--market", default="stocks", show_default=True, help="Market name")
-def recommend(symbol: str, market: str) -> None:
-    """Fetch trading recommendation for a symbol."""
-
-    try:
-        value = fetch_recommendation(symbol, market)
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Recommendation request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    except ValueError as exc:  # pragma: no cover - click handles output
-        logger.error("Recommendation unavailable: %s", exc)
-        raise click.ClickException(str(exc))
-    click.echo(json.dumps(value, indent=2))
-
-
-@cli.command(name="price")
-@click.option("--symbol", required=True, help="Ticker symbol")
-@click.option("--market", default="stocks", show_default=True, help="Market name")
-def price(symbol: str, market: str) -> None:
-    """Fetch last close price for a symbol."""
-
-    try:
-        value = fetch_stock_value(symbol, market)
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        logger.error("Price request failed: %s", exc)
-        raise click.ClickException(str(exc))
-    except ValueError as exc:  # pragma: no cover - click handles output
-        logger.error("Price unavailable: %s", exc)
-        raise click.ClickException(str(exc))
-    click.echo(json.dumps(value, indent=2))
-
-
-@cli.command()
 @click.option("--query", required=True, help="Search query or market identifier")
 @click.option(
     "--market",
@@ -206,54 +166,6 @@ def metainfo(query: str, market: str) -> None:
         lambda: api.metainfo(market, {"query": query}),
         "Metainfo request failed",
         "Metainfo error",
-    )
-    click.echo(json.dumps(data, indent=2))
-
-
-@cli.command()
-@click.option("--payload", required=True, help="JSON payload")
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
-def search(payload: str, market: str) -> None:
-    """Call /{market}/search with the given payload."""
-
-    api = TradingViewAPI()
-    parsed = _parse_json_option(payload, "--payload")
-    data = _with_error_handling(
-        lambda: api.search(market, parsed),
-        "Search request failed",
-        "Search error",
-    )
-    click.echo(json.dumps(data, indent=2))
-
-
-@cli.command()
-@click.option("--payload", required=True, help="JSON payload")
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
-def history(payload: str, market: str) -> None:
-    """Call /{market}/history with the given payload."""
-
-    api = TradingViewAPI()
-    parsed = _parse_json_option(payload, "--payload")
-    data = _with_error_handling(
-        lambda: api.history(market, parsed),
-        "History request failed",
-        "History error",
-    )
-    click.echo(json.dumps(data, indent=2))
-
-
-@cli.command()
-@click.option("--payload", required=True, help="JSON payload")
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
-def summary(payload: str, market: str) -> None:
-    """Call /{market}/summary with the given payload."""
-
-    api = TradingViewAPI()
-    parsed = _parse_json_option(payload, "--payload")
-    data = _with_error_handling(
-        lambda: api.summary(market, parsed),
-        "Summary request failed",
-        "Summary error",
     )
     click.echo(json.dumps(data, indent=2))
 
@@ -434,17 +346,17 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
     show_default=True,
     help="Directory to store results",
 )
-@click.option("--generate", is_flag=True, help="Run generate after refresh")
+@click.option("--generate", is_flag=True, help="Run generate after update")
 @click.option("--diff", is_flag=True, help="Compare with cached results")
 @click.option(
     "--fail-on-change",
     is_flag=True,
     help="Exit with code 1 if diff detects changes",
 )
-def refresh(
+def update(
     market: str, outdir: Path, generate: bool, diff: bool, fail_on_change: bool
 ) -> None:
-    """Download latest data and update TSV files."""
+    """Update data, optionally diff and generate specs."""
 
     from src.data.collector import refresh_market
     from src.spec.generator import generate_spec_for_market
@@ -452,11 +364,7 @@ def refresh(
     markets = SCOPES if market == "all" else [market]
     for m in markets:
         click.echo(f"* {m}")
-        if diff:
-            from src.compare.cache_diff import backup_results
-
-            backup_results(m, outdir, Path("cache"))
-        refresh_market(m, outdir)
+        changed = False
         if diff:
             from src.compare.cache_diff import diff_market, update_cache
 
@@ -464,16 +372,20 @@ def refresh(
             if text:
                 click.echo(text)
             update_cache(m, outdir, Path("cache"))
+            if generate and changed:
+                try:
+                    generate_spec_for_market(m, outdir, Path("specs"))
+                except Exception as exc:
+                    logger.warning("Skipped %s: %s", m, exc)
             if changed and fail_on_change:
                 raise SystemExit(1)
+            continue
+        refresh_market(m, outdir)
         if generate:
             try:
                 generate_spec_for_market(m, outdir, Path("specs"))
             except Exception as exc:
                 logger.warning("Skipped %s: %s", m, exc)
-
-
-cli.add_command(build, name="build-all")
 
 
 @cli.command("generate")
@@ -613,7 +525,7 @@ def validate(spec_file: Path) -> None:
     try:
         with open(spec_file, "r", encoding="utf-8") as fh:
             spec = yaml.safe_load(fh)
-        validate_spec(spec)
+        validate_spec(spec, spec_url=str(spec_file))
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
     except (yaml.YAMLError, OpenAPISpecValidatorError, ValueError) as exc:
@@ -687,279 +599,6 @@ def bundle(format_: str, outfile: str) -> None:
         raise click.ClickException(str(exc))
     size_kb = Path(out_path).stat().st_size // 1024
     click.echo(f"\u2713 {out_path} {size_kb} KB")
-
-
-@cli.command("generate-if-needed")
-@click.option(
-    "--market",
-    required=True,
-    type=click.Choice(SCOPES + ["all"]),
-    help="Market name or 'all'",
-)
-@click.option(
-    "--strict", is_flag=True, help="Fail with exit code 1 if diff detects changes"
-)
-@click.option("--bundle", is_flag=True, help="Run 'bundle' after generation")
-@click.option("--validate", "validate_", is_flag=True, help="Validate generated YAML")
-def generate_if_needed(
-    market: str, strict: bool, bundle: bool, validate_: bool
-) -> None:
-    """Generate specs only when diff finds changes."""
-
-    from src.compare.cache_diff import diff_market
-
-    markets = SCOPES if market == "all" else [market]
-    changed: list[str] = []
-    for m in markets:
-        text, has_changes = diff_market(m, Path("results"), Path("cache"))
-        if has_changes:
-            add = len([line for line in text.splitlines() if line.startswith("[+]")])
-            rem = len([line for line in text.splitlines() if line.startswith("[-]")])
-            chg = len([line for line in text.splitlines() if line.startswith("[*]")])
-            parts = []
-            if add:
-                parts.append(f"{add} field{'s' if add != 1 else ''} added")
-            if rem:
-                parts.append(f"{rem} field{'s' if rem != 1 else ''} removed")
-            if chg:
-                parts.append(f"{chg} field{'s' if chg != 1 else ''} changed")
-            summary = ", ".join(parts)
-            click.echo(f"[+] {m} — {summary} → regenerating")
-            changed.append(m)
-        else:
-            click.echo(f"[✓] {m} — no changes")
-
-    if strict:
-        if changed:
-            raise SystemExit(1)
-        return
-
-    if not changed:
-        click.echo("No changes detected — skipping generation")
-        return
-
-    for m in changed:
-        generate_spec_for_market(m, Path("results"), Path("specs"))
-        if validate_:
-            try:
-                with open(f"specs/{m}.yaml", "r", encoding="utf-8") as fh:
-                    spec = yaml.safe_load(fh)
-                validate_spec(spec)
-            except (
-                FileNotFoundError,
-                yaml.YAMLError,
-                OpenAPISpecValidatorError,
-            ) as exc:
-                raise click.ClickException(str(exc))
-    if bundle:
-        bundle_all_specs("specs", "bundle.yaml")
-    click.echo("✅ Specs updated for: " + ", ".join(changed))
-
-
-@cli.command()
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
-@click.option("--verbose", is_flag=True, help="Show full JSON output")
-def debug(market: str, verbose: bool) -> None:
-    """Diagnose TradingView connectivity for the given market."""
-
-    result = TradingViewAPI().diagnose_connection(market, verbose)
-    click.echo(result)
-
-
-@cli.command("diff")
-@click.option(
-    "--market",
-    required=True,
-    type=click.Choice(SCOPES + ["all"]),
-    help="Market name or 'all'",
-)
-@click.option(
-    "--output",
-    "output_file",
-    type=click.Path(path_type=Path),
-    help="Save report to file",
-)
-def diff_cmd(market: str, output_file: Path | None) -> None:
-    """Compare results with cached versions."""
-
-    from src.compare.cache_diff import diff_market
-
-    markets = SCOPES if market == "all" else [market]
-    chunks: list[str] = []
-    for m in markets:
-        text, _changed = diff_market(m, Path("results"), Path("cache"))
-        if text:
-            chunks.append(f"## {m}\n{text}")
-    report = "\n\n".join(chunks)
-    if output_file:
-        Path(output_file).write_text(report + "\n")
-    if report:
-        click.echo(report)
-
-
-@cli.command("list-fields")
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
-@click.option(
-    "--group-by", default="type", show_default=True, type=click.Choice(["type"])
-)
-def list_fields(market: str, group_by: str) -> None:
-    """List fields grouped by classification."""
-
-    market_dir = Path("results") / market
-    meta_file = market_dir / "metainfo.json"
-    scan_file = market_dir / "scan.json"
-    status_file = market_dir / "field_status.tsv"
-    try:
-        meta_data = json.loads(meta_file.read_text())
-        json.loads(scan_file.read_text())
-    except FileNotFoundError as exc:
-        raise click.ClickException(str(exc))
-
-    fields_json = meta_data.get("data", {}).get("fields") or meta_data.get("fields", [])
-    columns: dict[str, dict[str, Any]] = {}
-    for item in fields_json:
-        if isinstance(item, dict):
-            name = item.get("name") or item.get("id")
-            if name:
-                columns[name] = {"type": item.get("type", "string")}
-
-    from src.analyzer.scan_audit import find_missing_fields
-
-    missing = []
-    if status_file.exists():
-        missing = find_missing_fields(meta_file, scan_file, status_file)
-    for item in missing:
-        columns[item["name"]] = {"type": item.get("type", "string"), "source": "scan"}
-
-    info = classify_fields(columns)
-    if group_by == "type":
-        for key, values in info.items():
-            if values:
-                click.echo(f"{key}: {', '.join(sorted(values))}")
-
-
-@cli.command("audit-missing-fields")
-@click.option("--market", required=True, type=click.Choice(SCOPES), help="Market name")
-@click.option(
-    "--indir",
-    type=click.Path(path_type=Path),
-    default="results",
-    show_default=True,
-    help="Input directory",
-)
-@click.option("--outfile", type=click.Path(path_type=Path), help="Save result to file")
-def audit_missing_fields_cli(market: str, indir: Path, outfile: Path | None) -> None:
-    """Show fields present in scan.json but missing from metainfo."""
-
-    from src.analyzer.scan_audit import find_missing_fields
-
-    market_dir = indir / market
-    meta_file = market_dir / "metainfo.json"
-    scan_file = market_dir / "scan.json"
-    status_file = market_dir / "field_status.tsv"
-
-    try:
-        missing = find_missing_fields(meta_file, scan_file, status_file)
-    except FileNotFoundError as exc:
-        raise click.ClickException(str(exc))
-
-    lines = [f'Field "{m["name"]}" — inferred as {m["type"]}' for m in missing]
-    text = "\n".join(lines)
-    if outfile:
-        Path(outfile).write_text(text + "\n")
-    if text:
-        click.echo(text)
-
-
-@cli.command()
-@click.option(
-    "--outfile",
-    type=click.Path(path_type=Path),
-    default="README.generated.md",
-    show_default=True,
-    help="Output README file",
-)
-def docs(outfile: Path) -> None:
-    """Generate README file with CLI command list."""
-
-    from src.docs.readme_generator import generate_readme
-
-    out_path = generate_readme(outfile)
-    click.echo(f"\u2713 {out_path}")
-
-
-@cli.command("publish-pages")
-@click.option(
-    "--branch",
-    default="gh-pages",
-    show_default=True,
-    help="Target branch",
-)
-def publish_pages(branch: str) -> None:
-    """Publish YAML specs to GitHub Pages branch."""
-
-    import shutil
-    import subprocess
-    import tempfile
-
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp_path = Path(tmp)
-        spec_dir = tmp_path / "specs"
-        spec_dir.mkdir(parents=True, exist_ok=True)
-        for spec_file in Path("specs").glob("*.yaml"):
-            shutil.copy2(spec_file, spec_dir / spec_file.name)
-        bundle_file = Path("bundle.yaml")
-        if bundle_file.exists():
-            shutil.copy2(bundle_file, spec_dir / bundle_file.name)
-        links = "".join(
-            f'<li><a href="specs/{f.name}">{f.name}</a></li>'
-            for f in spec_dir.glob("*.yaml")
-        )
-        (tmp_path / "index.html").write_text(f"<ul>{links}</ul>", encoding="utf-8")
-        subprocess.run(["git", "init"], cwd=tmp_path, check=True)
-        subprocess.run(["git", "checkout", "-b", branch], cwd=tmp_path, check=True)
-        subprocess.run(["git", "add", "."], cwd=tmp_path, check=True)
-        subprocess.run(
-            ["git", "commit", "-m", "Publish specs to GitHub Pages"],
-            cwd=tmp_path,
-            check=True,
-        )
-        try:
-            remote = subprocess.run(
-                ["git", "config", "--get", "remote.origin.url"],
-                capture_output=True,
-                text=True,
-                check=True,
-            ).stdout.strip()
-            subprocess.run(
-                ["git", "push", remote, f"HEAD:{branch}", "--force"],
-                cwd=tmp_path,
-                check=True,
-            )
-        except subprocess.CalledProcessError as exc:
-            raise click.ClickException("Git push failed") from exc
-    click.echo(f"\u2713 Published to {branch}")
-
-
-@cli.command("publish-release-assets")
-@click.option("--tag", required=True, help="Release tag")
-def publish_release_assets(tag: str) -> None:
-    """Upload specs to GitHub release."""
-
-    import subprocess
-
-    files = [str(p) for p in Path("specs").glob("*.yaml") if p.is_file()]
-    if Path("bundle.yaml").exists():
-        files.append("bundle.yaml")
-    if Path("CHANGELOG.md").exists():
-        files.append("CHANGELOG.md")
-
-    cmd = ["gh", "release", "upload", tag, "--clobber", *files]
-    try:
-        subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError as exc:
-        raise click.ClickException("Release upload failed") from exc
-    click.echo("\u2713 Assets uploaded")
 
 
 @cli.command()

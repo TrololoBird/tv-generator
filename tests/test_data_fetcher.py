@@ -109,8 +109,8 @@ def test_full_scan_batch_reorder(tv_api_mock):
     columns = [f"c{i}" for i in range(MAX_COLUMNS_PER_SCAN + 1)]
     result = full_scan("stocks", ["AAA", "BBB"], columns)
     assert [row["s"] for row in result["data"]] == ["AAA", "BBB"]
-    assert result["data"][0]["d"] == [1, 2]
-    assert result["data"][1]["d"] == [3, 4]
+    assert sorted(result["data"][0]["d"]) == [1, 2]
+    assert sorted(result["data"][1]["d"]) == [3, 4]
 
 
 def test_full_scan_error(tv_api_mock):

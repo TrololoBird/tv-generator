@@ -24,38 +24,23 @@ tvgen validate --spec specs/crypto.yaml
 
 ## 🛠️ CLI команды
 
-- `audit-missing-fields` - Show fields present in scan.json but missing from metainfo.
 - `build` - Collect data and generate specs for all markets.
-- `build-all` - Collect data and generate specs for all markets.
 - `bump-version` - Increment project version.
 - `bundle` - Bundle all specifications under ``specs/`` directory.
 - `changelog` - Generate CHANGELOG from git history.
 - `collect` - Fetch metainfo and scan results saving JSON and TSV.
-- `debug` - Diagnose TradingView connectivity for the given market.
-- `diff` - Compare results with cached versions.
-- `docs` - Generate README file with CLI command list.
 - `generate` - Generate OpenAPI YAML using collected JSON and TSV.
-- `generate-if-needed` - Generate specs only when diff finds changes.
-- `history` - Call /{market}/history with the given payload.
-- `list-fields` - List fields grouped by classification.
 - `metainfo` - Fetch metainfo for given market via /{market}/metainfo.
 - `preview` - Show table with fields, type, enum and description.
-- `price` - Fetch last close price for a symbol.
-- `publish-pages` - Publish YAML specs to GitHub Pages branch.
-- `publish-release-assets` - Upload specs to GitHub release.
-- `recommend` - Fetch trading recommendation for a symbol.
-- `refresh` - Download latest data and update TSV files.
 - `scan` - Perform a basic scan request and print JSON.
-- `search` - Call /{market}/search with the given payload.
-- `summary` - Call /{market}/summary with the given payload.
+- `update` - Update data, optionally diff and generate specs.
 - `validate` - Validate an OpenAPI specification file.
 - `version` - Show current package version.
 
 ## Публикация спецификаций
 
 ```bash
-tvgen publish-pages --branch gh-pages
-tvgen publish-release-assets --tag v1.0.48
+python scripts/publish_pages.py --branch gh-pages
 ```
 
 ## 📁 Структура проекта

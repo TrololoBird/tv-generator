@@ -5,7 +5,7 @@ import pandas as pd
 from src.cli import cli
 
 
-def test_refresh_command(tv_api_mock):
+def test_update_command(tv_api_mock):
     runner = CliRunner()
     meta = {
         "fields": [{"name": "close", "type": "integer"}],
@@ -16,7 +16,7 @@ def test_refresh_command(tv_api_mock):
     tv_api_mock.post("https://scanner.tradingview.com/crypto/scan", json=scan)
 
     with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["refresh", "--market", "crypto"])
+        result = runner.invoke(cli, ["update", "--market", "crypto"])
         assert result.exit_code == 0, result.output
         market_dir = Path("results/crypto")
         assert (market_dir / "metainfo.json").exists()
