@@ -14,7 +14,7 @@ from src.api.data_fetcher import (
 
 
 def test_fetch_metainfo(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/metainfo",
         json={"fields": []},
     )
@@ -22,16 +22,16 @@ def test_fetch_metainfo(tv_api_mock):
 
 
 def test_fetch_metainfo_error(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/metainfo",
         status_code=500,
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(ValueError):
         fetch_metainfo("stocks")
 
 
 def test_fetch_metainfo_invalid_json(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/metainfo",
         text="not-json",
     )

@@ -22,7 +22,7 @@ def test_scan_request_exception(tv_api_mock):
 
 
 def test_fetch_metainfo_invalid_structure(tv_api_mock):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/metainfo",
         json=[1, 2, 3],
     )
@@ -31,7 +31,7 @@ def test_fetch_metainfo_invalid_structure(tv_api_mock):
 
 
 def test_full_scan_auto_tickers(tv_api_mock, monkeypatch):
-    tv_api_mock.get(
+    tv_api_mock.post(
         "https://scanner.tradingview.com/stocks/metainfo",
         json={"fields": [{"name": "symbol", "type": "string"}]},
     )
