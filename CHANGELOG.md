@@ -1,4 +1,8 @@
 # Changelog
+## 1.0.46
+- Version bump
+## 1.0.45
+- Version bump
 ## 1.0.43
 - Field classifier and advanced generate filters
 ## 1.0.42

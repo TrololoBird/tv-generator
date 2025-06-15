@@ -26,6 +26,7 @@ tvgen validate --spec specs/crypto.yaml
 - `build-all` - Collect data and generate specs for all markets.
 - `bundle` - Bundle all specifications under ``specs/`` directory.
 - `collect` - Fetch metainfo and scan results saving JSON and TSV.
+- `refresh` - Update metainfo, scan.json and field_status.tsv for markets.
 - `debug` - Diagnose TradingView connectivity for the given market.
 - `changelog` - Generate `CHANGELOG.md` from git history.
 - `generate` - Generate OpenAPI YAML using collected JSON and TSV.
@@ -40,6 +41,9 @@ tvgen validate --spec specs/crypto.yaml
 - `search` - Call /{market}/search with the given payload.
 - `summary` - Call /{market}/summary with the given payload.
 - `validate` - Validate an OpenAPI specification file.
+
+Use `refresh` to ensure the latest TradingView data is saved before running
+`generate`. It overwrites existing JSON files for the chosen markets.
 
 ## 📁 Структура проекта
 
