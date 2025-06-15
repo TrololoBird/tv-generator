@@ -351,6 +351,7 @@ def generate_yaml(
     server_url: str = "https://scanner.tradingview.com",
     max_size: int = 1_048_576,
     api: TradingViewAPI | None = None,
+    missing_fields: list[dict[str, str]] | None = None,
 ) -> str:
     """Return OpenAPI YAML specification for a scope."""
 
@@ -367,6 +368,16 @@ def generate_yaml(
 
     fields, no_tf_enum, with_tf_enum = collect_field_schemas(meta, scan)
     components = build_components_schemas(cap, fields, no_tf_enum, with_tf_enum)
+    if missing_fields:
+        props = {}
+        for item in missing_fields:
+            t = item.get("type") or "string"
+            tmap = {"numeric": "number", "boolean": "boolean", "string": "string"}
+            props[item["name"]] = {
+                "type": tmap.get(t, "string"),
+                "description": "Auto-discovered field from TradingView scan.json",
+            }
+        components["MissingFields"] = {"type": "object", "properties": props}
     paths = build_paths_section(scope, cap)
 
     openapi: Dict[str, Any] = {
@@ -393,6 +404,8 @@ def generate_for_market(
     outdir: Path,
     max_size: int = 1_048_576,
     api: TradingViewAPI | None = None,
+    *,
+    include_missing: bool = False,
 ) -> Path:
     """Generate YAML spec for ``market`` using data from ``indir``."""
 
@@ -431,7 +444,20 @@ def generate_for_market(
     if api is None:
         api = TradingViewAPI()
 
-    yaml_str = generate_yaml(market, meta, scan_data, max_size=max_size, api=api)
+    missing_fields = None
+    if include_missing:
+        from src.analyzer.scan_audit import find_missing_fields
+
+        missing_fields = find_missing_fields(meta_file, scan_file, status_file)
+
+    yaml_str = generate_yaml(
+        market,
+        meta,
+        scan_data,
+        max_size=max_size,
+        api=api,
+        missing_fields=missing_fields,
+    )
 
     outdir.mkdir(parents=True, exist_ok=True)
     out_file = outdir / f"{market}.yaml"
