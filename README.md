@@ -22,6 +22,10 @@ poetry run tvgen preview --spec specs/crypto.yaml
 ## Network Requirements
 The generation commands contact TradingView's public API. Ensure that `scanner.tradingview.com` is reachable from your environment. GitHub-hosted runners may block this traffic; use a self-hosted runner or run the generator locally if needed.
 
+## Environment Variables
+- `TV_BASE_URL`: базовый URL TradingView API (по умолчанию scanner.tradingview.com)
+- `TV_CACHE`: если установлено, включает `requests-cache` для ускорения повторных запросов
+
 ### Docker
 ```bash
 docker run --rm ghcr.io/<owner>/tv-generator:latest \
