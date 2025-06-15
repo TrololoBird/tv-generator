@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from json import JSONDecodeError
 import logging
 from pathlib import Path
 from typing import Any, Callable, TypeVar
@@ -58,6 +59,17 @@ def _with_error_handling(
         raise click.ClickException(str(exc))
 
 
+def _parse_json_option(value: str | None, name: str) -> Any:
+    """Safely parse a JSON option or return ``None``."""
+
+    if value is None:
+        return None
+    try:
+        return json.loads(value)
+    except JSONDecodeError:
+        raise click.ClickException(f"Invalid JSON in option: {name}")
+
+
 @click.group()
 @click.option(
     "--verbose",
@@ -109,10 +121,10 @@ def scan(
     payload = build_scan_payload(
         symbols.split(","),
         columns.split(","),
-        json.loads(filter_) if filter_ else None,
-        json.loads(filter2) if filter2 else None,
-        json.loads(sort) if sort else None,
-        json.loads(range_) if range_ else None,
+        _parse_json_option(filter_, "--filter"),
+        _parse_json_option(filter2, "--filter2"),
+        _parse_json_option(sort, "--sort"),
+        _parse_json_option(range_, "--range"),
     )
     result = _with_error_handling(
         api.scan,
@@ -194,8 +206,9 @@ def search(payload: str, market: str) -> None:
     """Call /{market}/search with the given payload."""
 
     api = TradingViewAPI()
+    parsed = _parse_json_option(payload, "--payload")
     data = _with_error_handling(
-        lambda: api.search(market, json.loads(payload)),
+        lambda: api.search(market, parsed),
         "Search request failed",
         "Search error",
     )
@@ -209,8 +222,9 @@ def history(payload: str, market: str) -> None:
     """Call /{market}/history with the given payload."""
 
     api = TradingViewAPI()
+    parsed = _parse_json_option(payload, "--payload")
     data = _with_error_handling(
-        lambda: api.history(market, json.loads(payload)),
+        lambda: api.history(market, parsed),
         "History request failed",
         "History error",
     )
@@ -224,8 +238,9 @@ def summary(payload: str, market: str) -> None:
     """Call /{market}/summary with the given payload."""
 
     api = TradingViewAPI()
+    parsed = _parse_json_option(payload, "--payload")
     data = _with_error_handling(
-        lambda: api.summary(market, json.loads(payload)),
+        lambda: api.summary(market, parsed),
         "Summary request failed",
         "Summary error",
     )
