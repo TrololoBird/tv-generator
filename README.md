@@ -30,13 +30,13 @@ docker run --rm ghcr.io/<owner>/tv-generator:latest \
 ```
 
 ## CLI Overview
-| Command      | Purpose                                   | Key Flags |
-|--------------|-------------------------------------------|-----------|
-| build        | collect+generate specs for all markets    | --indir • --outdir |
-| collect | download metainfo+scan, build TSV         | --market • --outdir • --tickers |
-| generate     | build OpenAPI spec                        | --market • --indir • --outdir • --max-size |
-| validate     | validate spec file                        | --spec |
-| preview      | show fields summary from spec             | --spec |
+| Command (alias) | Purpose                                       | Key Flags |
+|-----------------|-----------------------------------------------|-----------|
+| build / build-all | collect+generate specs for all markets        | `--indir` results, `--outdir` specs, `--workers` 1, `--offline` |
+| collect         | download metainfo+scan, build TSV             | `--market`, `--tickers` AUTO, `--outdir` results, `--offline` |
+| generate        | build OpenAPI spec                            | `--market`, `--indir` results, `--outdir` specs, `--max-size` 1048576 |
+| validate        | validate spec file                            | `--spec` |
+| preview         | show fields summary from spec                 | `--spec` |
 
 ### Short Examples
 ```bash
