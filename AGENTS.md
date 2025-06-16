@@ -82,15 +82,12 @@ After validating the spec, commit your changes with an updated `CHANGELOG.md`.
 ## CLI Examples
 
 ```bash
-$ tvgen price --symbol AAPL
-1.0
-
 $ tvgen scan --symbols BTCUSD,ETHUSD --columns close --market crypto
-{
-  "count": 2,
-  "data": [
-    {"s": "BINANCE:BTCUSD", "d": [50000.0]},
-    {"s": "COINBASE:ETHUSD", "d": [48000.0]}
+  {
+    "count": 2,
+    "data": [
+      {"s": "BINANCE:BTCUSD", "d": [50000.0]},
+      {"s": "COINBASE:ETHUSD", "d": [48000.0]}
   ]
 }
 ```
@@ -102,8 +99,9 @@ GitHub Actions (see [ci.yml](.github/workflows/ci.yml)) automatically run:
 - `flake8 .`
 - `mypy src/`
 - `pytest -q`
-- `tvgen generate`
-- `openapi-spec-validator specs/*.yaml`
+- `tvgen build --indir results --outdir specs`
+- `tvgen validate --spec specs/*.yaml`
+- ensure each spec size is below 1MB
 
 Check the Actions tab on GitHub for run status. A scheduled workflow keeps specs up to date.
 

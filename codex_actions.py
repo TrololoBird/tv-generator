@@ -111,29 +111,6 @@ def format_code():
         raise
 
 
-def generate_if_needed() -> None:
-    """Run conditional generation for all markets."""
-
-    try:
-        subprocess.run(
-            [
-                "tvgen",
-                "generate-if-needed",
-                "--market",
-                "all",
-                "--bundle",
-                "--validate",
-            ],
-            check=True,
-        )
-    except FileNotFoundError:
-        print("tvgen command not found", file=sys.stderr)
-        raise
-    except subprocess.CalledProcessError as exc:
-        print(exc.stderr, file=sys.stderr)
-        raise
-
-
 def bump_version():
     """Bump patch version in pyproject.toml and update CHANGELOG."""
     import toml
