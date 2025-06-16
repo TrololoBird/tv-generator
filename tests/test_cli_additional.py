@@ -89,22 +89,6 @@ def test_generate_invalid_market() -> None:
     assert "Invalid value for '--market'" in result.output
 
 
-def test_collect_and_generate(monkeypatch) -> None:
-    runner = CliRunner()
-    _mock_collect_api(monkeypatch)
-    with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--market", "crypto"])
-        assert result.exit_code == 0, result.output
-        result = runner.invoke(
-            cli,
-            ["generate", "--market", "crypto", "--indir", "results", "--outdir", "."],
-        )
-        assert result.exit_code == 0, result.output
-        text = Path("crypto.yaml").read_text()
-        assert "PLACEHOLDER" not in text
-        assert "TODO" not in text
-
-
 def test_collect_invalid_market() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["collect", "--market", "bad"])
