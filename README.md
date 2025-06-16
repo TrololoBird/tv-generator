@@ -40,7 +40,7 @@ tvgen validate --spec specs/crypto.yaml
 ## Публикация спецификаций
 
 ```bash
-python scripts/publish_pages.py --branch gh-pages
+python .github/scripts/publish_pages.py --branch gh-pages
 ```
 
 ## 📁 Структура проекта
