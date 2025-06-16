@@ -5,28 +5,8 @@ import json
 import yaml
 from click.testing import CliRunner
 
+
 from src.cli import cli
-
-
-def _create_metainfo(path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    data = {
-        "data": {
-            "fields": [
-                {"name": "close", "type": "integer"},
-                {"name": "open", "type": "text"},
-            ]
-        }
-    }
-    path.write_text(json.dumps(data))
-    scan = {"count": 1, "data": [{"s": "AAA", "d": [1, "a"]}]}
-    (path.parent / "scan.json").write_text(json.dumps(scan))
-    tsv = (
-        "field\ttv_type\tstatus\tsample_value\n"
-        "close\tinteger\tok\t1\n"
-        "open\ttext\tok\ta\n"
-    )
-    (path.parent / "field_status.tsv").write_text(tsv)
 
 
 def test_cli_scan(tv_api_mock) -> None:
@@ -204,42 +184,6 @@ def test_generate_help() -> None:
     assert result.exit_code == 0
     assert "--market" in result.output
     assert "--indir" in result.output
-
-
-def test_cli_generate_and_validate(tmp_path: Path) -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        market_dir = Path("results") / "crypto"
-        _create_metainfo(market_dir / "metainfo.json")
-
-        out_file = Path("crypto.yaml")
-        result = runner.invoke(
-            cli,
-            [
-                "generate",
-                "--market",
-                "crypto",
-                "--indir",
-                str(Path("results")),
-                "--outdir",
-                str(Path(".")),
-            ],
-        )
-        assert result.exit_code == 0
-
-        result = runner.invoke(cli, ["validate", "--spec", str(out_file)])
-        assert result.exit_code == 0
-        data = yaml.safe_load(out_file.read_text())
-        assert "/crypto/scan" in data["paths"]
-        scan = data["paths"]["/crypto/scan"]["post"]
-        assert (
-            scan["requestBody"]["content"]["application/json"]["schema"]["$ref"]
-            == "#/components/schemas/CryptoScanRequest"
-        )
-        assert (
-            scan["responses"]["200"]["content"]["application/json"]["schema"]["$ref"]
-            == "#/components/schemas/CryptoScanResponse"
-        )
 
 
 def test_cli_generate_missing_results(tmp_path: Path) -> None:

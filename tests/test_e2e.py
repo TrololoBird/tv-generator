@@ -7,7 +7,7 @@ from openapi_spec_validator import validate_spec
 from src.cli import cli
 
 
-def test_e2e_collect_and_generate(tmp_path, monkeypatch):
+def test_cli_e2e_collect_generate_validate(monkeypatch) -> None:
     meta = {
         "data": {
             "fields": [
@@ -59,7 +59,14 @@ def test_e2e_collect_and_generate(tmp_path, monkeypatch):
         )
         assert result.exit_code == 0
 
-        spec = yaml.safe_load(spec_file.read_text())
+        result = runner.invoke(cli, ["validate", "--spec", str(spec_file)])
+        assert result.exit_code == 0
+
+        text = spec_file.read_text()
+        assert "PLACEHOLDER" not in text
+        assert "TODO" not in text
+
+        spec = yaml.safe_load(text)
         validate_spec(spec)
         fields = spec["components"]["schemas"]["CryptoFields"]["properties"]
         assert set(fields) == {
