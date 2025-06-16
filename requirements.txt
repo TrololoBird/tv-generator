@@ -12,3 +12,4 @@ types-PyYAML
 types-toml
 pytest
 black
+flake8

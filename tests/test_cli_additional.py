@@ -14,7 +14,8 @@ def _create_metainfo(path: Path) -> None:
             "fields": [
                 {"name": "close", "type": "integer"},
                 {"name": "open", "type": "text"},
-            ]
+            ],
+            "index": {"names": ["AAA"]},
         }
     }
     path.write_text(json.dumps(data))
@@ -132,6 +133,17 @@ def test_build_parallel(monkeypatch) -> None:
         assert result.exit_code == 0, result.output
         assert Path("specs/coin.yaml").exists()
         assert Path("specs/stocks.yaml").exists()
+
+
+def test_build_no_metainfo(monkeypatch) -> None:
+    runner = CliRunner()
+    monkeypatch.setattr("src.constants.SCOPES", ["coin"])
+    monkeypatch.setattr(collect_cmd, "callback", lambda *a, **kw: None)
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["build"])
+        assert result.exit_code == 0
+        assert "No symbols found in metainfo" in result.stderr
+        assert not Path("specs/coin.yaml").exists()
 
 
 def test_preview() -> None:

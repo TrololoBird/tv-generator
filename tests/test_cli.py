@@ -199,9 +199,8 @@ def test_cli_generate_missing_results(tmp_path: Path) -> None:
                 str(Path(".")),
             ],
         )
-        assert result.exit_code != 0
-        assert result.exception is not None
-        assert "No such file" in result.output
+        assert result.exit_code == 0
+        assert "No symbols found in metainfo" in result.stderr
 
 
 def test_cli_scan_error(tv_api_mock) -> None:
@@ -237,6 +236,13 @@ def test_cli_validate_missing_file() -> None:
     assert result.exit_code != 0
     assert result.exception is not None
     assert "No such file" in result.output
+
+
+def test_cli_validate_missing_option() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, ["validate"])
+    assert result.exit_code != 0
+    assert "--spec is required" in result.output
 
 
 def test_cli_validate_invalid_yaml(tmp_path: Path) -> None:
