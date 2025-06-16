@@ -12,7 +12,7 @@ if TYPE_CHECKING:  # pragma: no cover - type checking only
 
 from src.models import MetaInfoResponse, TVField, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
-from src.utils import tv2ref
+from src.utils.type_mapping import tv2ref
 from src.meta.versioning import get_current_version
 from src.utils.custom_patterns import _is_custom
 

@@ -67,7 +67,7 @@ def generate_readme(path: Path = Path("README.generated.md")) -> Path:
     lines.extend(
         [
             "```bash",
-            "python scripts/publish_pages.py --branch gh-pages",
+            "python .github/scripts/publish_pages.py --branch gh-pages",
             "```",
             "",
         ]
