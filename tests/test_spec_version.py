@@ -9,7 +9,12 @@ from src.meta import versioning
 
 def _create_metainfo(path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    data = {"data": {"fields": [{"name": "close", "type": "integer"}]}}
+    data = {
+        "data": {
+            "fields": [{"name": "close", "type": "integer"}],
+            "index": {"names": ["AAA"]},
+        }
+    }
     path.write_text(json.dumps(data))
     scan = {"count": 1, "data": [{"s": "AAA", "d": [1]}]}
     (path.parent / "scan.json").write_text(json.dumps(scan))

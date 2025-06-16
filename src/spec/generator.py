@@ -31,19 +31,19 @@ def generate_spec_for_all_markets(
     """Generate specs for all markets under ``indir``."""
     out_files: List[Path] = []
     for market in detect_all_markets(indir):
-        out_files.append(
-            generate_spec_for_market(
-                market,
-                indir,
-                outdir,
-                max_size,
-                include_missing=include_missing,
-                include_types=include_types,
-                exclude_types=exclude_types,
-                only_timeframe_supported=only_timeframe_supported,
-                only_daily=only_daily,
-            )
+        result = generate_spec_for_market(
+            market,
+            indir,
+            outdir,
+            max_size,
+            include_missing=include_missing,
+            include_types=include_types,
+            exclude_types=exclude_types,
+            only_timeframe_supported=only_timeframe_supported,
+            only_daily=only_daily,
         )
+        if result is not None:
+            out_files.append(result)
     return out_files
 
 
@@ -58,7 +58,7 @@ def generate_spec_for_market(
     exclude_types: tuple[str, ...] = (),
     only_timeframe_supported: bool = False,
     only_daily: bool = False,
-) -> Path:
+) -> Path | None:
     """Generate spec for a single market."""
 
     return generate_for_market(

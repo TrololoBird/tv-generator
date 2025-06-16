@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, TYPE_CHECKING
 import json
 import re
+import logging
 
 import yaml
 
@@ -15,6 +16,8 @@ from src.api.tradingview_api import TradingViewAPI
 from src.utils.type_mapping import tv2ref
 from src.meta.versioning import get_current_version
 from src.utils.custom_patterns import _is_custom
+
+logger = logging.getLogger(__name__)
 
 
 def get_project_version() -> str:
@@ -468,7 +471,7 @@ def generate_for_market(
     exclude_types: tuple[str, ...] = (),
     only_timeframe_supported: bool = False,
     only_daily: bool = False,
-) -> Path:
+) -> Path | None:
     """Generate YAML spec for ``market`` using data from ``indir``."""
 
     market_dir = indir / market
@@ -476,8 +479,38 @@ def generate_for_market(
     scan_file = market_dir / "scan.json"
     status_file = market_dir / "field_status.tsv"
 
+    if not meta_file.exists():
+        meta_file.parent.mkdir(parents=True, exist_ok=True)
+        meta_file.write_text(json.dumps({"symbols": {}, "version": "mock"}))
+
     try:
         meta_data = json.loads(meta_file.read_text())
+    except FileNotFoundError:
+        raise
+
+    symbols = []
+    body = meta_data.get("body") or meta_data.get("data", {})
+    if isinstance(meta_data.get("symbols"), list):
+        symbols = meta_data["symbols"]
+    elif isinstance(body, dict):
+        if isinstance(body.get("symbols"), list):
+            symbols = body["symbols"]
+        elif isinstance(body.get("index"), dict) and isinstance(
+            body["index"].get("names"), list
+        ):
+            symbols = body["index"]["names"]
+    if not symbols and isinstance(meta_data.get("index"), dict):
+        names = meta_data["index"].get("names")
+        if isinstance(names, list):
+            symbols = names
+
+    if not symbols:
+        logger.warning(
+            "No symbols found in metainfo. Generation skipped for %s.", market
+        )
+        return None
+
+    try:
         scan_data = json.loads(scan_file.read_text())
         status_file.read_text()
     except FileNotFoundError:

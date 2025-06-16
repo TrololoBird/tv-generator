@@ -20,6 +20,9 @@ tvgen generate --market crypto --outdir specs
 tvgen validate --spec specs/crypto.yaml
 ```
 
+If `results/<market>/metainfo.json` is missing, a mock file will be created and
+generation will be skipped with a warning.
+
 Однострочный пример: `tvgen generate --market crypto --outdir specs`
 
 ## 🛠️ CLI команды

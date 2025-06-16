@@ -43,7 +43,8 @@ def _prepare_files(base: Path) -> None:
                 {"name": "RSI|1D", "type": "number"},
                 {"name": "ADX|60", "type": "number"},
                 {"name": "sector", "type": "text"},
-            ]
+            ],
+            "index": {"names": ["AAA"]},
         }
     }
     (base / "metainfo.json").write_text(json.dumps(meta))

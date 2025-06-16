@@ -313,7 +313,15 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
             offline_mode = offline or (indir / market / "metainfo.json").exists()
             cb_collect(market, "AUTO", indir, offline_mode)
         try:
-            generate_for_market(market, indir, outdir, 1_048_576, include_missing=False)
+            out_file = generate_for_market(
+                market, indir, outdir, 1_048_576, include_missing=False
+            )
+            if out_file is None:
+                click.echo(
+                    "[warning] No symbols found in metainfo. "
+                    f"Generation skipped for {market}.",
+                    err=True,
+                )
         except FileNotFoundError as exc:
             raise click.ClickException(str(exc))
 
@@ -383,7 +391,13 @@ def update(
         refresh_market(m, outdir)
         if generate:
             try:
-                generate_spec_for_market(m, outdir, Path("specs"))
+                out_file = generate_spec_for_market(m, outdir, Path("specs"))
+                if out_file is None:
+                    click.echo(
+                        "[warning] No symbols found in metainfo. "
+                        f"Generation skipped for {m}.",
+                        err=True,
+                    )
             except Exception as exc:
                 logger.warning("Skipped %s: %s", m, exc)
 
@@ -469,19 +483,25 @@ def generate(
             out_files = []
             for m in detect_all_markets(indir):
                 try:
-                    out_files.append(
-                        generate_spec_for_market(
-                            m,
-                            indir,
-                            outdir,
-                            max_size,
-                            include_missing=include_missing,
-                            include_types=include_types,
-                            exclude_types=exclude_types,
-                            only_timeframe_supported=only_timeframe_supported,
-                            only_daily=only_daily,
-                        )
+                    out_file = generate_spec_for_market(
+                        m,
+                        indir,
+                        outdir,
+                        max_size,
+                        include_missing=include_missing,
+                        include_types=include_types,
+                        exclude_types=exclude_types,
+                        only_timeframe_supported=only_timeframe_supported,
+                        only_daily=only_daily,
                     )
+                    if out_file is None:
+                        click.echo(
+                            "[warning] No symbols found in metainfo. "
+                            f"Generation skipped for {m}.",
+                            err=True,
+                        )
+                    else:
+                        out_files.append(out_file)
                 except Exception as exc:
                     logger.warning("Skipped %s: %s: %s", m, type(exc).__name__, exc)
                     if strict:
@@ -505,8 +525,15 @@ def generate(
                 only_timeframe_supported=only_timeframe_supported,
                 only_daily=only_daily,
             )
-            size_kb = out_file.stat().st_size // 1024
-            click.echo(f"\u2713 {out_file.name} {size_kb} KB")
+            if out_file is None:
+                click.echo(
+                    "[warning] No symbols found in metainfo. "
+                    f"Generation skipped for {market}.",
+                    err=True,
+                )
+            else:
+                size_kb = out_file.stat().st_size // 1024
+                click.echo(f"\u2713 {out_file.name} {size_kb} KB")
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
 
@@ -516,11 +543,18 @@ def generate(
     "--spec",
     "spec_file",
     type=click.Path(path_type=Path),
-    required=True,
     help="Spec file to validate",
 )
-def validate(spec_file: Path) -> None:
+def validate(spec_file: Path | None) -> None:
     """Validate an OpenAPI specification file."""
+
+    if spec_file is None:
+        click.echo("Error: --spec is required", err=True)
+        click.echo(
+            "Example: tvgen validate --spec specs/crypto.yaml",
+            err=True,
+        )
+        raise SystemExit(1)
 
     try:
         with open(spec_file, "r", encoding="utf-8") as fh:

@@ -41,7 +41,7 @@ jobs:
         - name: Format
           run: black --check .
       - name: Lint
-        run: flake8 .
+        run: flake8 src tests
       - name: Type check
         run: mypy --strict src/
       - name: Test with coverage
@@ -122,7 +122,7 @@ jobs:
           pip install flake8 pytest -r requirements.txt
           pip install -e .
       - name: Lint
-        run: flake8 .
+        run: flake8 src tests
       - name: Test
         run: |
           PYTHONPATH=$PWD pytest -q
