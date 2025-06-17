@@ -6,11 +6,31 @@ import subprocess
 import toml
 import yaml
 
+"""Helpers for project version management and changelog generation."""
+
 DEFAULT_PYPROJECT_PATH = Path(__file__).resolve().parents[2] / "pyproject.toml"
 DEFAULT_SPECS_DIR = Path(__file__).resolve().parents[2] / "specs"
 
 
 def _load_pyproject(path: Path) -> dict:
+    """Load ``pyproject.toml`` as a dictionary.
+
+    Parameters
+    ----------
+    path : Path
+        Path to the ``pyproject.toml`` file.
+
+    Returns
+    -------
+    dict
+        Parsed TOML mapping.
+
+    Raises
+    ------
+    RuntimeError
+        If the file does not exist.
+    """
+
     try:
         return toml.load(path)
     except FileNotFoundError as exc:  # pragma: no cover
@@ -18,7 +38,24 @@ def _load_pyproject(path: Path) -> dict:
 
 
 def get_version(path: Path | None = None) -> str:
-    """Return project version from pyproject.toml."""
+    """Return project version from ``pyproject.toml``.
+
+    Parameters
+    ----------
+    path : Path | None, optional
+        Path to the ``pyproject.toml`` file. If ``None`` the default
+        repository file is used.
+
+    Returns
+    -------
+    str
+        Version string defined in the project metadata.
+
+    Raises
+    ------
+    RuntimeError
+        If the version cannot be found.
+    """
 
     path = path or DEFAULT_PYPROJECT_PATH
     data = _load_pyproject(path)
@@ -31,17 +68,32 @@ def get_version(path: Path | None = None) -> str:
 
 
 def get_current_version() -> str:
-    """Return current project version using default pyproject path."""
+    """Return current project version using default ``pyproject.toml``."""
 
     return get_version()
 
 
 def _write_pyproject(data: dict, path: Path) -> None:
+    """Write modified project metadata back to disk."""
+
     path.write_text(toml.dumps(data))
 
 
 def set_version(new_version: str, path: Path | None = None) -> None:
-    """Set project version in pyproject.toml."""
+    """Update the version string in ``pyproject.toml``.
+
+    Parameters
+    ----------
+    new_version : str
+        New semantic version value.
+    path : Path | None, optional
+        Location of ``pyproject.toml``. Defaults to the repository file.
+
+    Raises
+    ------
+    RuntimeError
+        If the version field cannot be located.
+    """
 
     path = path or DEFAULT_PYPROJECT_PATH
     data = _load_pyproject(path)
@@ -55,6 +107,26 @@ def set_version(new_version: str, path: Path | None = None) -> None:
 
 
 def _increment(version: str, kind: str) -> str:
+    """Return ``version`` incremented according to ``kind``.
+
+    Parameters
+    ----------
+    version : str
+        Base semantic version string.
+    kind : str
+        One of ``"patch"``, ``"minor"`` or ``"major"``.
+
+    Returns
+    -------
+    str
+        Incremented version string.
+
+    Raises
+    ------
+    ValueError
+        If ``kind`` is not a valid increment type.
+    """
+
     parts = [int(p) for p in version.split(".")]
     while len(parts) < 3:
         parts.append(0)
@@ -72,6 +144,8 @@ def _increment(version: str, kind: str) -> str:
 
 
 def _update_spec_files(version: str, specs_dir: Path) -> None:
+    """Update ``info.version`` field for all spec files in ``specs_dir``."""
+
     for spec_file in specs_dir.glob("*.yaml"):
         try:
             data = yaml.safe_load(spec_file.read_text())
@@ -85,7 +159,22 @@ def _update_spec_files(version: str, specs_dir: Path) -> None:
 def bump_version(
     kind: str, *, pyproject: Path | None = None, specs_dir: Path | None = None
 ) -> str:
-    """Increment version in pyproject.toml and specs."""
+    """Increment project version and update specifications.
+
+    Parameters
+    ----------
+    kind : str
+        Type of version bump: ``"patch"``, ``"minor"`` or ``"major"``.
+    pyproject : Path | None, optional
+        Path to ``pyproject.toml``. Defaults to repository file.
+    specs_dir : Path | None, optional
+        Directory containing YAML specs to update.
+
+    Returns
+    -------
+    str
+        The newly assigned version string.
+    """
 
     pyproject = pyproject or DEFAULT_PYPROJECT_PATH
     specs_dir = specs_dir or DEFAULT_SPECS_DIR
@@ -98,6 +187,8 @@ def bump_version(
 
 
 def _collect_commits(range_spec: str) -> list[str]:
+    """Return commit messages for the given git range."""
+
     try:
         result = subprocess.run(
             ["git", "log", "--oneline", "--no-merges", range_spec],
@@ -118,7 +209,21 @@ def _collect_commits(range_spec: str) -> list[str]:
 def generate_changelog(
     pyproject: Path | None = None, changelog: Path | None = None
 ) -> Path:
-    """Generate CHANGELOG from git history."""
+    """Create or update ``CHANGELOG.md`` using git history.
+
+    Parameters
+    ----------
+    pyproject : Path | None, optional
+        Project metadata file used to obtain the current version.
+    changelog : Path | None, optional
+        Target changelog file. Defaults to ``CHANGELOG.md`` in the
+        repository root.
+
+    Returns
+    -------
+    Path
+        Path to the generated changelog file.
+    """
 
     pyproject = pyproject or DEFAULT_PYPROJECT_PATH
     changelog = changelog or Path("CHANGELOG.md")

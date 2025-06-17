@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List
 
+"""Utilities for fetching TradingView metadata and scan results."""
+
 import pandas as pd
 
 import requests
@@ -14,7 +16,23 @@ logger = logging.getLogger(__name__)
 
 
 def refresh_market(market: str, outdir: Path | str = "results") -> None:
-    """Refresh TradingView data for ``market`` into ``outdir`` directory."""
+    """Download and store TradingView data for a market.
+
+    Parameters
+    ----------
+    market : str
+        Market identifier used by TradingView (e.g. ``"crypto"``).
+    outdir : Path | str, optional
+        Directory where the ``metainfo.json``, ``scan.json`` and
+        ``field_status.tsv`` files will be written. Defaults to ``"results"``.
+
+    Raises
+    ------
+    requests.exceptions.RequestException
+        If any network request fails.
+    ValueError
+        If the received data is malformed.
+    """
 
     outdir = Path(outdir)
     market_dir = outdir / market
