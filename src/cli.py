@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from json import JSONDecodeError
+import os
 import logging
 from pathlib import Path
 from typing import Any, Callable, TypeVar
@@ -80,8 +81,27 @@ def _parse_json_option(value: str | None, name: str) -> Any:
         return None
     try:
         return json.loads(value)
-    except JSONDecodeError:
+    except JSONDecodeError as exc:
+        logger.error("Invalid JSON in %s: %s", name, exc)
         raise click.ClickException(f"Invalid JSON in {name}")
+
+
+def _load_json_file(path: Path, max_size: int = 1_048_576) -> Any:
+    """Load a JSON file with size limit and error handling."""
+
+    try:
+        size = os.stat(path).st_size
+        if size > max_size:
+            logger.error("File too large: %s (%d bytes)", path, size)
+            raise click.ClickException(f"File too large: {path}")
+        with open(path, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        logger.error("File not found: %s", path)
+        raise
+    except JSONDecodeError as exc:
+        logger.error("Failed to parse JSON from %s: %s", path, exc)
+        raise click.ClickException(f"Invalid JSON in {path}")
 
 
 @click.group()
@@ -201,12 +221,8 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
     try:
         offline = offline or (meta_path.exists() and scan_path.exists())
         if offline:
-            meta = json.loads(meta_path.read_text())
-            scan = (
-                json.loads(scan_path.read_text())
-                if scan_path.exists()
-                else {"data": []}
-            )
+            meta = _load_json_file(meta_path)
+            scan = _load_json_file(scan_path) if scan_path.exists() else {"data": []}
             fields = meta.get("data", {}).get("fields") or meta.get("fields", [])
         else:
             meta = fetch_metainfo(market)
