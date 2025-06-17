@@ -1,5 +1,8 @@
 # tv-generator
 
+[![CI](https://github.com/TrololoBird/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/TrololoBird/tv-generator/actions/workflows/ci.yml)
+[![Coverage Status](https://codecov.io/gh/TrololoBird/tv-generator/branch/main/graph/badge.svg)](https://codecov.io/gh/TrololoBird/tv-generator)
+
 🧠 **tv-generator** — это CLI-инструмент для автоматической генерации OpenAPI 3.1 спецификаций на основе TradingView API `/scan` и `/metainfo`.
 
 🔗 Онлайн OpenAPI: [crypto.yaml](https://trololobird.github.io/tv-generator/specs/crypto.yaml)
