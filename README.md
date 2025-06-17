@@ -48,6 +48,15 @@ generation will be skipped with a warning.
 python .github/scripts/publish_pages.py --branch gh-pages
 ```
 
+## 📚 Генерация документации
+
+```bash
+cd docs
+make html
+```
+
+Результат появится в `docs/build/html/index.html`.
+
 ## 📁 Структура проекта
 
 - `src/` — исходный код CLI и генератора
