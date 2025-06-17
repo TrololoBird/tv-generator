@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.49
+- Pin package versions
+
 ## 1.0.48
 - Version bump
 ## 1.0.47
