@@ -26,7 +26,19 @@ TV_TYPE_TO_REF: Dict[str, str] = {
 
 
 def tv2ref(tv_type: str) -> str:
-    """Return an OpenAPI schema reference for a TradingView type."""
+    """Return the OpenAPI schema reference for a TradingView type.
+
+    Parameters
+    ----------
+    tv_type : str
+        Type name as used in TradingView metainfo.
+
+    Returns
+    -------
+    str
+        The corresponding ``#/components/schemas`` reference. Unknown
+        types fall back to ``Str`` and trigger a :class:`RuntimeWarning`.
+    """
     try:
         return TV_TYPE_TO_REF[tv_type]
     except KeyError:

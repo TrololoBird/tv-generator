@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterable, List
 
+"""Helpers for building TradingView scan request payloads."""
+
 
 def build_scan_payload(
     symbols: Iterable[str],
@@ -11,7 +13,35 @@ def build_scan_payload(
     sort: Dict[str, Any] | None = None,
     range_: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
-    """Return a scan payload for the given symbols and columns."""
+    """Return a payload suitable for TradingView ``/scan`` requests.
+
+    Parameters
+    ----------
+    symbols : Iterable[str]
+        Iterable of ticker symbols.
+    columns : Iterable[str]
+        Iterable of requested field names.
+    filter_ : dict[str, Any] | None, optional
+        Mapping for the ``filter`` section.
+    filter2 : dict[str, Any] | None, optional
+        Mapping for the ``filter2`` section.
+    sort : dict[str, Any] | None, optional
+        Sort specification.
+    range_ : dict[str, Any] | None, optional
+        Range specification.
+
+    Returns
+    -------
+    Dict[str, Any]
+        Dictionary ready to be posted to the TradingView API.
+
+    Raises
+    ------
+    ValueError
+        If ``symbols`` or ``columns`` are empty or contain duplicates.
+    TypeError
+        If ``filter_``, ``filter2``, ``sort`` or ``range_`` are not mappings.
+    """
 
     symbols_list: List[str] = list(symbols)
 
