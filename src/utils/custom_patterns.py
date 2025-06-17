@@ -1,8 +1,14 @@
 from __future__ import annotations
 
 import re
+from typing import List
 
-_CUSTOM_PATTERNS = [r"^TV_Custom\.", r"_impact_score$", r"^BTC_", r"^custom_"]
+_CUSTOM_PATTERNS: List[str] = [
+    r"^TV_Custom\.",
+    r"_impact_score$",
+    r"^BTC_",
+    r"^custom_",
+]
 
 
 def _is_custom(name: str) -> bool:

@@ -1,7 +1,9 @@
 """Mappings between TradingView types and OpenAPI schema references."""
 
+from typing import Dict
+
 # TradingView type to OpenAPI component reference mapping
-TV_TYPE_TO_REF: dict[str, str] = {
+TV_TYPE_TO_REF: Dict[str, str] = {
     "number": "#/components/schemas/Num",
     "price": "#/components/schemas/Num",
     "fundamental_price": "#/components/schemas/Num",
