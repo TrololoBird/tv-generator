@@ -9,7 +9,9 @@
 ```bash
 git clone https://github.com/TrololoBird/tv-generator.git
 cd tv-generator
-pip install -e .[dev]
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+pip install -e .
 ```
 
 ## 🚀 Быстрый старт
