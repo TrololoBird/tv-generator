@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, List
 
 
 def build_scan_payload(
@@ -13,7 +13,7 @@ def build_scan_payload(
 ) -> Dict[str, Any]:
     """Return a scan payload for the given symbols and columns."""
 
-    symbols_list = list(symbols)
+    symbols_list: List[str] = list(symbols)
 
     def _normalize(col: str) -> str:
         """Strip multi-day/week timeframe suffixes from the column name."""
@@ -23,7 +23,7 @@ def build_scan_payload(
                 return base
         return col
 
-    columns_list = [_normalize(c) for c in columns]
+    columns_list: List[str] = [_normalize(c) for c in columns]
 
     if not symbols_list:
         raise ValueError("symbols list cannot be empty")
@@ -32,7 +32,7 @@ def build_scan_payload(
     if len(set(columns_list)) != len(columns_list):
         raise ValueError("columns list contains duplicates")
 
-    payload = {
+    payload: Dict[str, Any] = {
         "symbols": {"tickers": symbols_list, "query": {"types": []}},
         "columns": columns_list,
     }
