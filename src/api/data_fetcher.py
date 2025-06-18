@@ -9,6 +9,7 @@ import requests
 
 from src.models import MetaInfoResponse, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
+from src.utils.fs import save_json as _write_json
 
 logger = logging.getLogger(__name__)
 
@@ -243,7 +244,6 @@ def full_scan(
 
 
 def save_json(data: Dict[str, Any], path: Path) -> None:
-    """Save dictionary as pretty JSON to given path."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=2)
+    """Save dictionary as pretty JSON to given ``path``."""
+
+    _write_json(data, path)

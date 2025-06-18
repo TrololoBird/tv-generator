@@ -24,13 +24,13 @@ from src.spec.generator import (
     generate_spec_for_market,
     detect_all_markets,
 )
-from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
+from src.api.data_fetcher import fetch_metainfo, full_scan, choose_tickers
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
 from src.exceptions import TVDataError
 from src.constants import SCOPES
 from src.spec.bundler import bundle_all_specs
-from src.utils.fs import load_json
+from src.utils.fs import load_json, save_json, load_yaml
 from src.utils.logging import log_exception, setup_logging
 from src.meta.versioning import (
     get_version as _get_version,
@@ -578,12 +578,11 @@ def validate(spec_file: Path | None) -> None:
         raise SystemExit(1)
 
     try:
-        with open(spec_file, "r", encoding="utf-8") as fh:
-            spec = yaml.safe_load(fh)
+        spec = load_yaml(spec_file, max_size=5_242_880)
         validate_spec(spec, spec_url=str(spec_file))
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
-    except (yaml.YAMLError, OpenAPISpecValidatorError, ValueError) as exc:
+    except (click.ClickException, OpenAPISpecValidatorError, ValueError) as exc:
         logger.error("Specification validation failed: %s", exc)
         raise click.ClickException(f"Validation failed: {exc}")
     click.echo("Specification is valid")
@@ -601,11 +600,11 @@ def preview(spec_file: Path) -> None:
     """Show table with fields, type, enum and description."""
 
     try:
-        data = yaml.safe_load(spec_file.read_text())
+        data = load_yaml(spec_file, max_size=5_242_880)
     except FileNotFoundError as exc:
         raise click.ClickException(str(exc))
-    except yaml.YAMLError as exc:
-        raise click.ClickException(str(exc))
+    except click.ClickException as exc:
+        raise exc
 
     schemas = data.get("components", {}).get("schemas", {})
     fields_schema = None
