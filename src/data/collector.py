@@ -71,10 +71,13 @@ def refresh_market(market: str, outdir: Path | str = "results") -> None:
         )
 
         save_json(meta, meta_path)
+        logger.debug("Saved %s (%d bytes)", meta_path, meta_path.stat().st_size)
         save_json(scan, scan_path)
+        logger.debug("Saved %s (%d bytes)", scan_path, scan_path.stat().st_size)
 
         meta_model = MetaInfoResponse(data=tv_fields)
         df: pd.DataFrame = build_field_status(meta_model, scan)
         status_path.write_text(df.to_csv(sep="\t", index=False).rstrip("\n"))
+        logger.debug("Saved %s (%d bytes)", status_path, status_path.stat().st_size)
     except (requests.exceptions.RequestException, ValueError) as exc:
         logger.warning("Failed to refresh %s: %s", market, exc)

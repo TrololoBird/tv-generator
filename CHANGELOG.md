@@ -1,4 +1,7 @@
 # Changelog
+## 1.0.50
+- Fix package configuration to exclude missing `src.constants` directory
+
 ## 1.0.49
 - Pin package versions
 
