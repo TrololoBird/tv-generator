@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from json import JSONDecodeError
 import logging
-import os
 from pathlib import Path
 from typing import Any, Callable, TypeVar
 

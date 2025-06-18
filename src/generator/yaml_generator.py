@@ -16,6 +16,8 @@ from src.api.tradingview_api import TradingViewAPI
 from src.utils.type_mapping import tv2ref
 from src.meta.versioning import get_current_version
 from src.utils.custom_patterns import _is_custom
+from src.constants import GenerationMode
+from src.utils.pathlib_ext import ensure_directory, ensure_file, market_paths
 
 logger = logging.getLogger(__name__)
 
@@ -420,6 +422,8 @@ def generate_yaml(
         version = get_project_version()
     except RuntimeError as exc:  # pragma: no cover - fallback for installed package
         logger.warning("pyproject.toml missing: %s", exc)
+        if not Path("pyproject.toml").exists():
+            logger.warning("pyproject.toml file not found")
         try:
             from importlib.metadata import PackageNotFoundError, version as pkg_version
 
@@ -461,36 +465,42 @@ def generate_yaml(
     return yaml_str
 
 
-def generate_for_market(
-    market: str,
-    indir: Path,
-    outdir: Path,
-    max_size: int = 1_048_576,
-    api: TradingViewAPI | None = None,
-    *,
-    include_missing: bool = False,
-    include_types: tuple[str, ...] = (),
-    exclude_types: tuple[str, ...] = (),
-    only_timeframe_supported: bool = False,
-    only_daily: bool = False,
-) -> Path | None:
-    """Generate YAML spec for ``market`` using data from ``indir``."""
+def _load_market_data(
+    meta_file: Path, scan_file: Path, status_file: Path
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Load TradingView JSON files for a market."""
 
-    market_dir = indir / market
-    meta_file = market_dir / "metainfo.json"
-    scan_file = market_dir / "scan.json"
-    status_file = market_dir / "field_status.tsv"
+    ensure_file(meta_file)
+    ensure_file(scan_file)
+    ensure_file(status_file)
+    meta_data = json.loads(meta_file.read_text())
+    scan_data = json.loads(scan_file.read_text())
+    return meta_data, scan_data
 
-    if not meta_file.exists():
-        meta_file.parent.mkdir(parents=True, exist_ok=True)
-        meta_file.write_text(json.dumps({"symbols": {}, "version": "mock"}))
 
-    try:
-        meta_data = json.loads(meta_file.read_text())
-    except FileNotFoundError:
-        raise
+def _parse_tv_fields(meta_data: dict[str, Any]) -> list[TVField]:
+    """Convert metainfo JSON to a list of :class:`TVField`."""
 
-    symbols = []
+    fields_json = (
+        meta_data.get("fields") or meta_data.get("data", {}).get("fields") or []
+    )
+    tv_fields: list[TVField] = []
+    for item in fields_json:
+        if isinstance(item, dict):
+            name = item.get("name") or item.get("id")
+            if name is not None:
+                tv_fields.append(
+                    TVField.model_validate(
+                        {"name": name, "type": item.get("type", "string")}
+                    )
+                )
+    return tv_fields
+
+
+def _extract_symbols(meta_data: dict[str, Any]) -> list[str]:
+    """Return list of symbols from TradingView metadata."""
+
+    symbols: list[str] = []
     body = meta_data.get("body") or meta_data.get("data", {})
     if isinstance(meta_data.get("symbols"), list):
         symbols = meta_data["symbols"]
@@ -505,6 +515,46 @@ def generate_for_market(
         names = meta_data["index"].get("names")
         if isinstance(names, list):
             symbols = names
+    return symbols
+
+
+def generate_for_market(
+    market: str,
+    indir: Path,
+    outdir: Path,
+    max_size: int = 1_048_576,
+    api: TradingViewAPI | None = None,
+    *,
+    generation: GenerationMode = "default",
+    include_missing: bool = False,
+    include_types: tuple[str, ...] = (),
+    exclude_types: tuple[str, ...] = (),
+    only_timeframe_supported: bool = False,
+    only_daily: bool = False,
+) -> Path | None:
+    """Generate YAML spec for ``market`` using data from ``indir``.
+
+    Parameters
+    ----------
+    generation:
+        Select generation behaviour. ``"include_missing"`` also processes
+        missing fields.
+    """
+
+    ensure_directory(indir)
+    if max_size <= 0:
+        raise ValueError("max_size must be positive")
+    include_missing = include_missing or generation == "include_missing"
+
+    meta_file, scan_file, status_file = market_paths(indir, market)
+
+    if not meta_file.exists():
+        meta_file.parent.mkdir(parents=True, exist_ok=True)
+        meta_file.write_text(json.dumps({"symbols": {}, "version": "mock"}))
+
+    meta_data, scan_data = _load_market_data(meta_file, scan_file, status_file)
+
+    symbols = _extract_symbols(meta_data)
 
     if not symbols:
         logger.warning(
@@ -512,29 +562,11 @@ def generate_for_market(
         )
         return None
 
-    try:
-        scan_data = json.loads(scan_file.read_text())
-        status_file.read_text()
-    except FileNotFoundError:
-        raise
-
     # Validate TradingView JSON
     MetaInfoResponse.parse_obj(meta_data)
     ScanResponse.parse_obj(scan_data)
 
-    fields_json = (
-        meta_data.get("fields") or meta_data.get("data", {}).get("fields") or []
-    )
-    tv_fields: list[TVField] = []
-    for f in fields_json:
-        if isinstance(f, dict):
-            name = f.get("name") or f.get("id")
-            if name is not None:
-                tv_fields.append(
-                    TVField.model_validate(
-                        {"name": name, "type": f.get("type", "string")}
-                    )
-                )
+    tv_fields = _parse_tv_fields(meta_data)
 
     meta = MetaInfoResponse(data=tv_fields)
 
