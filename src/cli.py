@@ -18,6 +18,7 @@ from openapi_spec_validator.exceptions import OpenAPISpecValidatorError
 from pydantic import ValidationError
 
 from src.api.tradingview_api import TradingViewAPI
+from src.exceptions import TVConnectionError
 from src.utils.payload import build_scan_payload
 from src.generator.yaml_generator import generate_for_market
 from src.spec.generator import (
@@ -61,7 +62,7 @@ def _with_error_handling(
 
     try:
         return func(*args, **kwargs)
-    except requests.exceptions.RequestException as exc:
+    except (requests.exceptions.RequestException, TVConnectionError) as exc:
         logger.error("%s: %s", request_msg, exc)
         raise click.ClickException("TradingView request failed")
     except (ValidationError, KeyError) as exc:
