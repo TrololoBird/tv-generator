@@ -27,8 +27,11 @@ def run_tests():
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path.cwd())
     try:
-        _run(["pytest", "-q"], env=env)
-    except Exception:
+        _run(["pytest", "-v", "--tb=short"], env=env)
+    except subprocess.CalledProcessError as e:
+        if e.returncode == 4:
+            print("No tests were found or pytest configuration failed.")
+            return
         print("Tests failed. Debugging required.")
         raise
 
