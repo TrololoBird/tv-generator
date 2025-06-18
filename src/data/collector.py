@@ -11,6 +11,7 @@ import requests
 from src.api.data_fetcher import fetch_metainfo, choose_tickers, full_scan, save_json
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
+from src.exceptions import TVDataError
 
 logger = logging.getLogger(__name__)
 
@@ -81,3 +82,4 @@ def refresh_market(market: str, outdir: Path | str = "results") -> None:
         logger.debug("Saved %s (%d bytes)", status_path, status_path.stat().st_size)
     except (requests.exceptions.RequestException, ValueError) as exc:
         logger.warning("Failed to refresh %s: %s", market, exc)
+        raise TVDataError(str(exc)) from exc
