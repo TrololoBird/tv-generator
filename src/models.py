@@ -1,3 +1,5 @@
+"""Pydantic models describing TradingView API structures."""
+
 from __future__ import annotations
 
 from typing import Annotated, Literal, cast

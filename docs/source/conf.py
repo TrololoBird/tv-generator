@@ -21,6 +21,15 @@ author = "TrololoBird"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx.ext.napoleon",
+]
+
+autodoc_mock_imports = [
+    "requests_cache",
+    "pandas",
+    "toml",
+    "openapi_spec_validator",
+    "pydantic_settings",
 ]
 
 autosummary_generate = True
