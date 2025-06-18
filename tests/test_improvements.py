@@ -41,3 +41,30 @@ def test_refresh_market_error(monkeypatch, tmp_path):
     monkeypatch.setattr(collector, "fetch_metainfo", fail_fetch)
     with pytest.raises(TVDataError):
         collector.refresh_market("crypto", tmp_path)
+
+
+def test_api_short_token_warning(monkeypatch, caplog):
+    monkeypatch.setenv("TV_API_TOKEN", "x" * 20)
+    reload(config)
+    importlib.reload(api_module)
+    monkeypatch.setattr(api_module.settings, "tv_api_token", "short")
+    with caplog.at_level(logging.WARNING):
+        with pytest.raises(ValueError):
+            api_module.TradingViewAPI()
+    assert any("too short" in r.getMessage() for r in caplog.records)
+
+
+def test_refresh_market_full_scan_exception(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        collector,
+        "fetch_metainfo",
+        lambda m: {"fields": [{"name": "close", "type": "integer"}]},
+    )
+    monkeypatch.setattr(collector, "choose_tickers", lambda *_a, **_k: ["AAA"])
+
+    def boom(*_a, **_kw):
+        raise requests.exceptions.RequestException("fail")
+
+    monkeypatch.setattr(collector, "full_scan", boom)
+    with pytest.raises(TVDataError):
+        collector.refresh_market("crypto", tmp_path)

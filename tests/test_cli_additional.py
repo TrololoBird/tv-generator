@@ -228,3 +228,17 @@ def test_generate_all_strict_fail() -> None:
         assert result.exit_code != 0
         assert result.exception is not None
         assert result.exception.__class__.__name__ == "JSONDecodeError"
+
+
+def test_build_generate_error(monkeypatch) -> None:
+    runner = CliRunner()
+    _mock_collect_api(monkeypatch)
+    monkeypatch.setattr("src.constants.SCOPES", ["coin"])
+
+    def boom(*_a, **_kw):
+        raise FileNotFoundError("missing")
+
+    monkeypatch.setattr("src.cli.generate_for_market", boom)
+    with runner.isolated_filesystem():
+        result = runner.invoke(cli, ["build"])
+        assert result.exit_code != 0
