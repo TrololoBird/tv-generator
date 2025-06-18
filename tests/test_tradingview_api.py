@@ -1,3 +1,4 @@
+import logging
 import pytest
 from pydantic import ValidationError
 from src.api.tradingview_api import TradingViewAPI
@@ -151,3 +152,18 @@ def test_scan_invalid_scope():
     api = TradingViewAPI()
     with pytest.raises(ValueError):
         api.scan("invalid", {})
+
+
+def test_invalid_json_logged(tv_api_mock, caplog):
+    tv_api_mock.post(
+        "https://scanner.tradingview.com/crypto/search",
+        text="bad json",
+    )
+    api = TradingViewAPI()
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ValueError):
+            api.search("crypto", {})
+    assert any(
+        "Invalid JSON" in r.getMessage() and "bad json" in r.getMessage()
+        for r in caplog.records
+    )
