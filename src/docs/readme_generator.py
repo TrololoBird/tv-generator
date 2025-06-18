@@ -55,6 +55,13 @@ def generate_readme(path: Path = Path("README.generated.md")) -> Path:
             "",
             "Однострочный пример: `tvgen generate --market crypto --outdir specs`",
             "",
+            "### Примеры CLI",
+            "```bash",
+            "tvgen scan --symbols BTCUSD,ETHUSD --columns close --market crypto",
+            "tvgen preview --market crypto | head",
+            "tvgen bundle --format yaml --outfile bundle.yaml",
+            "```",
+            "",
         ]
     )
     lines.append("## 🛠️ CLI команды")

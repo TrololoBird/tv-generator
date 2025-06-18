@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     tv_api_token: str | None = Field(
         default=None,
         env="TV_API_TOKEN",
-    )  # type: ignore[call-overload]
+    )  # type: ignore[call-arg]
 
     @field_validator("tv_api_token")
     def _validate_token(cls, value: str | None) -> str | None:

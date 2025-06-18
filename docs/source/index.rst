@@ -20,6 +20,12 @@ Usage
    tvgen build --indir results --outdir specs
    tvgen validate --spec specs/crypto.yaml
 
+.. code-block:: bash
+
+   tvgen scan --symbols BTCUSD,ETHUSD --market crypto --columns close
+   tvgen preview --market crypto | head
+   tvgen bundle --format yaml --outfile bundle.yaml
+
 
 
 Indices and tables

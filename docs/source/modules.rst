@@ -9,6 +9,7 @@ Modules
    src.api
    src.generator
    src.utils
+   src.models
    src.meta
    src.data
    src.spec

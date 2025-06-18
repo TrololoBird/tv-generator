@@ -1,8 +1,5 @@
 # tv-generator
 
-[![CI](https://github.com/TrololoBird/tv-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/TrololoBird/tv-generator/actions/workflows/ci.yml)
-[![Coverage Status](https://codecov.io/gh/TrololoBird/tv-generator/branch/main/graph/badge.svg)](https://codecov.io/gh/TrololoBird/tv-generator)
-
 🧠 **tv-generator** — это CLI-инструмент для автоматической генерации OpenAPI 3.1 спецификаций на основе TradingView API `/scan` и `/metainfo`.
 
 🔗 Онлайн OpenAPI: [crypto.yaml](https://trololobird.github.io/tv-generator/specs/crypto.yaml)
@@ -12,9 +9,7 @@
 ```bash
 git clone https://github.com/TrololoBird/tv-generator.git
 cd tv-generator
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
-pip install -e .
+pip install -e .[dev]
 ```
 
 ## 🚀 Быстрый старт
@@ -25,20 +20,14 @@ tvgen generate --market crypto --outdir specs
 tvgen validate --spec specs/crypto.yaml
 ```
 
-### Configuration
-
-The CLI optionally uses a ``TV_API_TOKEN`` environment variable for
-authenticated requests. If set, the token must be at least ten characters
-long. Example:
-
-```bash
-export TV_API_TOKEN=super_secret_token
-```
-
-If `results/<market>/metainfo.json` is missing, a mock file will be created and
-generation will be skipped with a warning.
-
 Однострочный пример: `tvgen generate --market crypto --outdir specs`
+
+### Примеры CLI
+```bash
+tvgen scan --symbols BTCUSD,ETHUSD --columns close --market crypto
+tvgen preview --market crypto | head
+tvgen bundle --format yaml --outfile bundle.yaml
+```
 
 ## 🛠️ CLI команды
 
@@ -60,15 +49,6 @@ generation will be skipped with a warning.
 ```bash
 python .github/scripts/publish_pages.py --branch gh-pages
 ```
-
-## 📚 Генерация документации
-
-```bash
-cd docs
-make html
-```
-
-Результат появится в `docs/build/html/index.html`.
 
 ## 📁 Структура проекта
 

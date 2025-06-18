@@ -19,3 +19,4 @@ openapi.yaml
 tv_generator.egg-info/
 results/
 tmp/
+docs/source/generated/

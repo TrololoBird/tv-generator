@@ -1,4 +1,22 @@
-"""Command line interface for TradingView utilities."""
+"""Command line interface for TradingView utilities.
+
+This module exposes the :data:`~click.Group` ``cli`` with multiple commands
+used to collect data from TradingView, build and validate OpenAPI
+specifications and manage the project. The most common commands are:
+
+``collect``
+    Download metainfo and scan results into the ``results/`` directory.
+
+``generate``
+    Convert downloaded JSON and TSV files into OpenAPI YAML specs.
+
+``validate``
+    Validate a generated specification with ``openapi-spec-validator``.
+
+Other helper commands include ``bundle`` for merging specs and
+``bump-version`` for version management. Run ``tvgen --help`` to see the full
+list.
+"""
 
 from __future__ import annotations
 
