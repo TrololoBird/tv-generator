@@ -17,7 +17,7 @@ from src.utils.type_mapping import tv2ref
 from src.meta.versioning import get_current_version
 from src.utils.custom_patterns import _is_custom
 from src.constants import GenerationMode
-from src.utils.pathlib_ext import ensure_directory, ensure_file, market_paths
+from src.utils.pathlib_ext import ensure_file, market_paths
 
 logger = logging.getLogger(__name__)
 
@@ -541,7 +541,7 @@ def generate_for_market(
         missing fields.
     """
 
-    ensure_directory(indir)
+    indir.mkdir(parents=True, exist_ok=True)
     if max_size <= 0:
         raise ValueError("max_size must be positive")
     include_missing = include_missing or generation == "include_missing"
@@ -551,6 +551,12 @@ def generate_for_market(
     if not meta_file.exists():
         meta_file.parent.mkdir(parents=True, exist_ok=True)
         meta_file.write_text(json.dumps({"symbols": {}, "version": "mock"}))
+
+    if not scan_file.exists():
+        scan_file.write_text(json.dumps({"data": []}))
+
+    if not status_file.exists():
+        status_file.write_text("field\ttv_type\tstatus\tsample_value\n")
 
     meta_data, scan_data = _load_market_data(meta_file, scan_file, status_file)
 
