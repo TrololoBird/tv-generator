@@ -1,11 +1,15 @@
 import json
+import logging
 from pathlib import Path
 from collections import Counter
 from typing import Any, Dict, List
 from concurrent.futures import ThreadPoolExecutor
+import requests
 
 from src.models import MetaInfoResponse, ScanResponse
 from src.api.tradingview_api import TradingViewAPI
+
+logger = logging.getLogger(__name__)
 
 # TradingView's ``/scan`` endpoint returns at most 20 columns per request.
 # To obtain data for more fields we issue multiple requests in parallel,
@@ -18,10 +22,43 @@ def fetch_metainfo(
 ) -> Dict[str, Any]:
     """Return metainfo for a given scope using the TradingViewAPI."""
 
-    # ``TradingViewAPI.metainfo`` sends the POST request and validates
-    # the response via ``MetaInfoResponse``.
     api = TradingViewAPI(base_url=api_base)
-    data = api.metainfo(scope, {"query": ""})
+    url = f"{api_base.rstrip('/')}/{scope}/metainfo"
+    payload = {"query": ""}
+
+    logger.info("[URL] %s", url)
+    logger.debug("[PAYLOAD] %s", payload)
+
+    resp = api.session.post(url, json=payload, timeout=api.timeout)
+    logger.info("[RESPONSE] %s", resp.status_code)
+    text = resp.text
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError as exc:
+        logger.warning("Metainfo HTTP error: %s - %s", resp.status_code, text[:200])
+        raise ValueError(f"TradingView HTTP {resp.status_code}: {text}") from exc
+
+    try:
+        data = resp.json()
+    except ValueError as exc:
+        logger.error("Invalid JSON: %s", text[:200])
+        Path("tmp").mkdir(exist_ok=True)
+        (Path("tmp") / f"{scope}_response.json").write_text(text)
+        raise ValueError("Invalid JSON received from TradingView") from exc
+    if not isinstance(data, dict):
+        logger.error("Metainfo is not a mapping: %r", data)
+        raise ValueError("Invalid metainfo structure")
+
+    logger.info("[JSON_KEYS] %s", list(data.keys()))
+
+    if "symbols" not in data:
+        Path("tmp").mkdir(exist_ok=True)
+        path = Path("tmp") / f"{scope}_response.json"
+        path.write_text(text)
+        logger.warning("Missing 'symbols' key, saved response to %s", path)
+        logger.info(text[:1000])
+
+    MetaInfoResponse.parse_obj(data)
     return data
 
 
