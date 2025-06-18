@@ -7,6 +7,8 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 import requests_cache
 
+from src.config import settings
+
 from src.constants import SCOPES
 from pydantic import ValidationError
 from src.models import (
@@ -65,6 +67,8 @@ class TradingViewAPI:
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("https://", adapter)
         self.session.headers.setdefault("User-Agent", "tv-generator")
+        if settings.tv_api_token:
+            self.session.headers["Authorization"] = f"Bearer {settings.tv_api_token}"
         self.base_url = base_url or os.environ.get("TV_BASE_URL", self.BASE_URL)
         self.timeout = int(os.environ.get("TV_TIMEOUT", timeout))
 

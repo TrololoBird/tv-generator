@@ -25,6 +25,16 @@ tvgen generate --market crypto --outdir specs
 tvgen validate --spec specs/crypto.yaml
 ```
 
+### Configuration
+
+The CLI optionally uses a ``TV_API_TOKEN`` environment variable for
+authenticated requests. If set, the token must be at least ten characters
+long. Example:
+
+```bash
+export TV_API_TOKEN=super_secret_token
+```
+
 If `results/<market>/metainfo.json` is missing, a mock file will be created and
 generation will be skipped with a warning.
 
