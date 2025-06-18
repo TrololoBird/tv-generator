@@ -122,7 +122,10 @@ jobs:
         run: |
           pip install poetry
           poetry install --no-interaction --no-root
-          poetry run pip install pytest-cov
+          poetry run pip install pytest-cov ruff
+
+      - name: Validate Ruff Installation
+        run: poetry run ruff --version || echo "Ruff installation failed"
 
       - name: Ruff (lint/fix check)
         run: poetry run ruff check .
