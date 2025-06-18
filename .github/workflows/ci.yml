@@ -88,6 +88,9 @@ jobs:
           else
             echo "::warning::No spec files generated to validate."
           fi
+
+      - name: Bundle specs
+        run: tvgen bundle --format yaml --outfile bundle.yaml
       - name: Check spec sizes
         run: |
           for spec in specs/*.yaml; do
@@ -97,12 +100,14 @@ jobs:
               exit 1
             fi
           done
-      - name: Upload specs as artifacts if they exist
-        if: failure() && hashFiles('specs/*') != ''
+      - name: Upload specs as artifacts
+        if: hashFiles('specs/*') != ''
         uses: actions/upload-artifact@v3
         with:
           name: generated-specs
-          path: specs/
+          path: |
+            specs/
+            bundle.yaml
           if-no-files-found: ignore
       - name: Summarize workflow
         run: |

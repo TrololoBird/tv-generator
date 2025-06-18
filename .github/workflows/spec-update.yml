@@ -56,6 +56,12 @@ jobs:
             extra="--server-url $SERVER_URL"
           fi
           poetry run tvgen build --indir results --outdir specs $extra || { echo "tvgen build failed"; exit 1; }
+
+      - name: Log generated specs
+        run: cat specs/*.yaml || echo "No generated specs found"
+
+      - name: Bundle specs
+        run: poetry run tvgen bundle --format yaml --outfile bundle.yaml || { echo "Bundle failed"; exit 1; }
       - name: Validate all generated specs
         run: |
           for spec in specs/*.yaml; do
@@ -67,6 +73,14 @@ jobs:
         with:
           name: results
           path: results/**
+
+      - name: Upload spec artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: specs
+          path: |
+            specs/*.yaml
+            bundle.yaml
       - name: Stash changes (if any)
         run: |
           git stash --include-untracked
