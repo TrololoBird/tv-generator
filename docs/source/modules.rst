@@ -14,3 +14,5 @@ Modules
    src.spec
    src.compare
    src.analyzer
+
+The modules above expose helper classes and the ``tvgen`` CLI.

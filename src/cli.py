@@ -27,6 +27,7 @@ from src.spec.generator import (
 from src.api.data_fetcher import fetch_metainfo, full_scan, save_json, choose_tickers
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
+from src.exceptions import TVDataError
 from src.constants import SCOPES
 from src.spec.bundler import bundle_all_specs
 from src.meta.versioning import (
@@ -350,6 +351,8 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
                 try:
                     f.result()
                 except Exception as exc:
+                    if logger.isEnabledFor(logging.DEBUG):
+                        raise
                     raise click.ClickException(str(exc))
     else:
         for market in SCOPES:
@@ -404,7 +407,12 @@ def update(
             if changed and fail_on_change:
                 raise SystemExit(1)
             continue
-        refresh_market(m, outdir)
+        try:
+            refresh_market(m, outdir)
+        except TVDataError as exc:
+            if logger.isEnabledFor(logging.DEBUG):
+                raise
+            raise click.ClickException(str(exc))
         if generate:
             try:
                 out_file = generate_spec_for_market(m, outdir, Path("specs"))

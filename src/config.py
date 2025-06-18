@@ -17,7 +17,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""
 
-    tv_api_token: str | None = Field(default=None, env="TV_API_TOKEN")
+    tv_api_token: str | None = Field(default=None, env="TV_API_TOKEN")  # type: ignore[call-arg]
 
     @field_validator("tv_api_token")
     def _validate_token(cls, value: str | None) -> str | None:

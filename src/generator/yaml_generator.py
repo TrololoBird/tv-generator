@@ -418,12 +418,14 @@ def generate_yaml(
     cap = scope.capitalize()
     try:
         version = get_project_version()
-    except RuntimeError:  # pragma: no cover - fallback for installed package
+    except RuntimeError as exc:  # pragma: no cover - fallback for installed package
+        logger.warning("pyproject.toml missing: %s", exc)
         try:
             from importlib.metadata import PackageNotFoundError, version as pkg_version
 
             version = pkg_version("tv-generator")
-        except PackageNotFoundError:  # pragma: no cover - dev environment
+        except PackageNotFoundError:
+            logger.warning("Package metadata not found; using default version")
             version = "0.0.0"
 
     fields, no_tf_enum, with_tf_enum = collect_field_schemas(meta, scan)

@@ -67,8 +67,12 @@ class TradingViewAPI:
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("https://", adapter)
         self.session.headers.setdefault("User-Agent", "tv-generator")
-        if settings.tv_api_token:
-            self.session.headers["Authorization"] = f"Bearer {settings.tv_api_token}"
+        token = settings.tv_api_token
+        if token is not None:
+            if len(token) < 10:
+                logger.warning("TV_API_TOKEN too short: %d", len(token))
+                raise ValueError("Invalid TV_API_TOKEN length")
+            self.session.headers["Authorization"] = f"Bearer {token}"
         self.base_url = base_url or os.environ.get("TV_BASE_URL", self.BASE_URL)
         self.timeout = int(os.environ.get("TV_TIMEOUT", timeout))
 
@@ -87,8 +91,14 @@ class TradingViewAPI:
         try:
             r.raise_for_status()
         except requests.HTTPError as exc:
-            logger.error("HTTP error: %s - %s", r.status_code, r.text)
-            raise ValueError(f"TradingView HTTP {r.status_code}: {r.text}") from exc
+            logger.error(
+                "HTTP error %s at %s: %s",
+                r.status_code,
+                url,
+                r.reason,
+            )
+            logger.debug("Response body: %s", r.text)
+            raise ValueError(f"TradingView HTTP {r.status_code}: {r.reason}") from exc
         try:
             return cast(Dict[str, Any], r.json())
         except ValueError as exc:

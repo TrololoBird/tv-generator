@@ -2,6 +2,7 @@ import json
 import logging
 from pathlib import Path
 from collections import Counter
+import itertools
 from typing import Any, Dict, List
 from concurrent.futures import ThreadPoolExecutor
 import requests
@@ -110,7 +111,7 @@ def choose_tickers(
         rows = scan.get("data")
         if isinstance(rows, list):
             counter: Counter[str] = Counter()
-            for row in rows:
+            for row in itertools.islice(rows, 10000):
                 dval = row.get("d") if isinstance(row, dict) else None
                 if (
                     isinstance(dval, list)

@@ -12,6 +12,14 @@ Welcome to tv-generator's documentation!
 
    modules
 
+Usage
+-----
+
+.. code-block:: bash
+
+   tvgen build --indir results --outdir specs
+   tvgen validate --spec specs/crypto.yaml
+
 
 
 Indices and tables
