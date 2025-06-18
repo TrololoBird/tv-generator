@@ -8,7 +8,7 @@ import requests
 import src.config as config
 import src.api.tradingview_api as api_module
 from src.data import collector
-from src.exceptions import TVDataError
+from src.exceptions import TVDataError, TVConnectionError
 
 
 def test_request_logging_sanitized(tv_api_mock, caplog):
@@ -20,7 +20,7 @@ def test_request_logging_sanitized(tv_api_mock, caplog):
     )
     api = api_module.TradingViewAPI()
     with caplog.at_level(logging.INFO):
-        with pytest.raises(ValueError):
+        with pytest.raises(TVConnectionError):
             api.search("crypto", {})
     assert not any("secret-body" in r.getMessage() for r in caplog.records)
 

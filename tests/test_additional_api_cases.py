@@ -3,6 +3,7 @@ import requests
 import yaml
 
 from src.api.tradingview_api import TradingViewAPI
+from src.exceptions import TVConnectionError
 from src.api import data_fetcher
 from src.api.data_fetcher import fetch_metainfo, full_scan
 from src.api.data_manager import build_field_status
@@ -20,7 +21,7 @@ def test_scan_request_exception(tv_api_mock):
         exc=requests.exceptions.ConnectTimeout,
     )
     api = TradingViewAPI()
-    with pytest.raises(requests.exceptions.RequestException):
+    with pytest.raises(TVConnectionError):
         api.scan("crypto", {})
 
 

@@ -11,6 +11,7 @@ from src.config import settings
 
 from src.constants import SCOPES
 from pydantic import ValidationError
+from src.exceptions import TVConnectionError
 from src.models import (
     MetaInfoResponse,
     ScanResponse,
@@ -85,8 +86,8 @@ class TradingViewAPI:
         try:
             r = self.session.request(method, url, json=payload, timeout=self.timeout)
         except requests.exceptions.RequestException as exc:
-            logger.error("Request error: %s", exc)
-            raise
+            logger.error("Request error for %s %s: %s", method.upper(), url, exc)
+            raise TVConnectionError(-1, url, method, str(exc)) from exc
         self._log_response(r)
         try:
             r.raise_for_status()
@@ -97,8 +98,7 @@ class TradingViewAPI:
                 url,
                 r.reason,
             )
-            logger.debug("Response body: %s", r.text)
-            raise ValueError(f"TradingView HTTP {r.status_code}: {r.reason}") from exc
+            raise TVConnectionError(r.status_code, url, method, r.reason) from exc
         try:
             return cast(Dict[str, Any], r.json())
         except ValueError as exc:
@@ -125,9 +125,24 @@ class TradingViewAPI:
         url = self._url(scope, "scan")
 
         def _scan_get() -> ScanResponse:
-            resp = self.session.get(url, timeout=self.timeout)
+            try:
+                resp = self.session.get(url, timeout=self.timeout)
+            except requests.exceptions.RequestException as exc:
+                logger.error("Request error for GET %s: %s", url, exc)
+                raise TVConnectionError(-1, url, "GET", str(exc)) from exc
             self._log_response(resp)
-            resp.raise_for_status()
+            try:
+                resp.raise_for_status()
+            except requests.HTTPError as exc:
+                logger.error(
+                    "HTTP error %s at %s: %s",
+                    resp.status_code,
+                    url,
+                    resp.reason,
+                )
+                raise TVConnectionError(
+                    resp.status_code, url, "GET", resp.reason
+                ) from exc
             data_g = cast(Dict[str, Any], resp.json())
             return cast(ScanResponse, ScanResponse.parse_obj(data_g))
 

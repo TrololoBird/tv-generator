@@ -1,6 +1,7 @@
 import pytest
 from pydantic import ValidationError
 from src.api.tradingview_api import TradingViewAPI
+from src.exceptions import TVConnectionError
 
 
 @pytest.mark.parametrize(
@@ -97,7 +98,7 @@ def test_endpoint_error(tv_api_mock, endpoint):
     )
     api = TradingViewAPI()
     method = getattr(api, endpoint)
-    with pytest.raises(ValueError):
+    with pytest.raises(TVConnectionError):
         method("crypto", {})
 
 
@@ -131,9 +132,9 @@ def test_metainfo_error(tv_api_mock):
         status_code=404,
     )
     api = TradingViewAPI()
-    with pytest.raises(ValueError) as exc:
+    with pytest.raises(TVConnectionError) as exc:
         api.metainfo("crypto", {"query": ""})
-    assert "TradingView HTTP 404" in str(exc.value)
+    assert exc.value.status == 404
 
 
 def test_metainfo_invalid_schema(tv_api_mock):
