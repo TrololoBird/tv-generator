@@ -36,12 +36,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install poetry
-          poetry install --no-interaction --no-root
+          # Install project along with required extras
+          poetry install --no-interaction
           poetry run pip install requests_mock yamllint openapi-spec-validator \
             types-requests types-PyYAML types-toml
-      - name: Debug tvgen installation
+      - name: Debug PATH
+        run: echo $PATH
+      - name: Validate tvgen Installation
         run: |
-          poetry run tvgen --help || echo "tvgen is not installed or not in PATH"
+          poetry run tvgen --version || echo "tvgen installation failed"
       - name: Export server URL
         if: env.SERVER_URL != ''
         run: echo "SERVER_URL=${SERVER_URL}" >> "$GITHUB_ENV"
