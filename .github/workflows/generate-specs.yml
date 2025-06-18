@@ -27,6 +27,7 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
           pip install black
+          pip install codex_actions
       - name: Run codex actions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
