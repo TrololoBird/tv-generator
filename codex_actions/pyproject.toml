@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex_actions"
+version = "0.1.0"
+
+[tool.setuptools]
+packages = ["codex_actions"]
+[tool.setuptools.package-dir]
+codex_actions = "."

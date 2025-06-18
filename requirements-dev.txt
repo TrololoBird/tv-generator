@@ -9,3 +9,4 @@ flake8==7.2.0
 mypy==1.9.0
 coverage
 Sphinx==7.2.6
+-e ./codex_actions

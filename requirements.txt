@@ -6,3 +6,4 @@ click==8.2.1
 toml==0.10.2
 requests_cache==1.2.1
 pydantic==2.11.7
+-e ./codex_actions
