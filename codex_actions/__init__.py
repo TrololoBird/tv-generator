@@ -1,11 +1,12 @@
 import subprocess
+import os
 from pathlib import Path
 import datetime
 import toml
 
 
-def _run(cmd):
-    subprocess.run(cmd, check=True)
+def _run(cmd, *, env=None):
+    subprocess.run(cmd, check=True, env=env)
 
 
 def generate_openapi_spec():
@@ -17,7 +18,9 @@ def validate_spec():
 
 
 def run_tests():
-    _run(["pytest", "-v"])
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(Path.cwd())
+    _run(["pytest", "-v"], env=env)
 
 
 def format_code():
