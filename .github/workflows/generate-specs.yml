@@ -28,6 +28,7 @@ jobs:
           pip install -e .
           pip install black
           pip install codex_actions
+          pip install pytest
       - name: Run codex actions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
