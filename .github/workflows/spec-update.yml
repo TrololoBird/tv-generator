@@ -41,7 +41,7 @@ jobs:
           poetry run pip install requests_mock yamllint openapi-spec-validator \
             types-requests types-PyYAML types-toml
       - name: Debug PATH
-        run: echo $PATH
+        run: echo "$PATH"
       - name: Validate tvgen Installation
         run: |
           poetry run tvgen --version || { echo "tvgen installation failed. Check dependencies or PATH settings."; exit 1; }
@@ -55,7 +55,7 @@ jobs:
           if [ -n "$SERVER_URL" ]; then
             extra="--server-url $SERVER_URL"
           fi
-          poetry run tvgen build --indir results --outdir specs $extra || { echo "tvgen build failed"; exit 1; }
+          poetry run tvgen build --indir results --outdir specs "$extra" || { echo "tvgen build failed"; exit 1; }
 
       - name: Log generated specs
         run: cat specs/*.yaml || echo "No generated specs found"
@@ -156,4 +156,4 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           pip install codecov
-          codecov -t $CODECOV_TOKEN
+          codecov -t "$CODECOV_TOKEN"
