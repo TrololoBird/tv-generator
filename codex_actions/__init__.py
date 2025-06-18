@@ -17,7 +17,7 @@ def validate_spec():
 
 
 def run_tests():
-    _run(["pytest", "-q"])
+    _run(["pytest", "-v"])
 
 
 def format_code():
