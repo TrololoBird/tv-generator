@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 from json import JSONDecodeError
-import os
 import logging
+import os
 from pathlib import Path
 from typing import Any, Callable, TypeVar
 
@@ -30,6 +30,8 @@ from src.models import TVField, MetaInfoResponse
 from src.exceptions import TVDataError
 from src.constants import SCOPES
 from src.spec.bundler import bundle_all_specs
+from src.utils.fs import load_json
+from src.utils.logging import log_exception, setup_logging
 from src.meta.versioning import (
     get_version as _get_version,
     bump_version as _bump_version,
@@ -87,22 +89,68 @@ def _parse_json_option(value: str | None, name: str) -> Any:
         raise click.ClickException(f"Invalid JSON in {name}")
 
 
-def _load_json_file(path: Path, max_size: int = 1_048_576) -> Any:
-    """Load a JSON file with size limit and error handling."""
+def _read_existing(market_dir: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Load previously downloaded metainfo and scan results."""
 
-    try:
-        size = os.stat(path).st_size
-        if size > max_size:
-            logger.error("File too large: %s (%d bytes)", path, size)
-            raise click.ClickException(f"File too large: {path}")
-        with open(path, "r", encoding="utf-8") as fh:
-            return json.load(fh)
-    except FileNotFoundError:
-        logger.error("File not found: %s", path)
-        raise
-    except JSONDecodeError as exc:
-        logger.error("Failed to parse JSON from %s: %s", path, exc)
-        raise click.ClickException(f"Invalid JSON in {path}")
+    meta_path = market_dir / "metainfo.json"
+    scan_path = market_dir / "scan.json"
+    meta = load_json(meta_path)
+    scan = load_json(scan_path) if scan_path.exists() else {"data": []}
+    return meta, scan
+
+
+def _fetch_remote(
+    market: str, tickers: str, market_dir: Path
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Fetch metainfo and scan data from TradingView."""
+
+    meta = fetch_metainfo(market)
+    fields_data: list[dict[str, Any]] = []
+    if isinstance(meta.get("data"), dict) and isinstance(
+        meta["data"].get("fields"), list
+    ):
+        fields_data = list(meta["data"].get("fields", []))
+    elif isinstance(meta.get("fields"), list):
+        fields_data = list(meta.get("fields", []))
+
+    columns: list[str] = []
+    for item in fields_data:
+        name = item.get("name") or item.get("id")
+        if name:
+            columns.append(str(name))
+
+    if tickers == "AUTO":
+        tickers_list = choose_tickers(meta)
+    else:
+        tickers_list = [t for t in tickers.split(",") if t]
+
+    scan = full_scan(market, tickers_list, columns)
+    save_json(meta, market_dir / "metainfo.json")
+    save_json(scan, market_dir / "scan.json")
+    return meta, scan
+
+
+def _generate_status(
+    market_dir: Path, meta: dict[str, Any], scan: dict[str, Any]
+) -> None:
+    """Generate TSV with field status information."""
+
+    fields = meta.get("data", {}).get("fields") or meta.get("fields", [])
+    tv_fields = []
+    columns = []
+    for item in fields:
+        name = item.get("name") or item.get("id")
+        if name:
+            columns.append(str(name))
+            tv_fields.append(
+                TVField.model_validate(
+                    {"name": name, "type": item.get("type", "string")}
+                )
+            )
+    meta_model = MetaInfoResponse(data=tv_fields)
+    df = build_field_status(meta_model, scan)
+    tsv_text = df.to_csv(sep="\t", index=False)
+    (market_dir / "field_status.tsv").write_text(tsv_text.rstrip("\n"))
 
 
 @click.group()
@@ -116,8 +164,7 @@ def _load_json_file(path: Path, max_size: int = 1_048_576) -> Any:
 @click.version_option(_pkg_version)
 def cli(verbose: bool) -> None:
     """TradingView command line utilities."""
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(level=level, format="%(levelname)s %(message)s")
+    setup_logging(verbose)
 
 
 @cli.command()
@@ -216,80 +263,28 @@ def collect(market: str, tickers: str, outdir: Path, offline: bool) -> None:
 
     market_dir = outdir / market
     market_dir.mkdir(parents=True, exist_ok=True)
-    meta_path = market_dir / "metainfo.json"
-    scan_path = market_dir / "scan.json"
     error_log = market_dir / "error.log"
     try:
-        offline = offline or (meta_path.exists() and scan_path.exists())
-        if offline:
-            meta = _load_json_file(meta_path)
-            scan = _load_json_file(scan_path) if scan_path.exists() else {"data": []}
-            fields = meta.get("data", {}).get("fields") or meta.get("fields", [])
+        meta_path = market_dir / "metainfo.json"
+        scan_path = market_dir / "scan.json"
+        offline_mode = offline or (meta_path.exists() and scan_path.exists())
+        if offline_mode:
+            meta, scan = _read_existing(market_dir)
         else:
-            meta = fetch_metainfo(market)
+            meta, scan = _fetch_remote(market, tickers, market_dir)
 
-            fields_data: list[dict[str, Any]] = []
-            if isinstance(meta.get("data"), dict) and isinstance(
-                meta["data"].get("fields"), list
-            ):
-                fields_data = list(meta["data"].get("fields", []))
-            elif isinstance(meta.get("fields"), list):
-                fields_data = list(meta.get("fields", []))
-
-            columns: list[str] = []
-            for item in fields_data:
-                name = item.get("name") or item.get("id")
-                if name:
-                    columns.append(str(name))
-
-            if tickers == "AUTO":
-                try:
-                    tickers_list = choose_tickers(meta)
-                except ValueError as exc:
-                    with error_log.open("a") as fh:
-                        fh.write(f"{type(exc).__name__}: {exc}\n")
-                    raise click.ClickException("No symbols found in metainfo")
-            else:
-                tickers_list = [t for t in tickers.split(",") if t]
-
-            scan = full_scan(market, tickers_list, columns)
-
-            save_json(meta, meta_path)
-            save_json(scan, scan_path)
-
-        fields = meta.get("data", {}).get("fields") or meta.get("fields", [])
-        tv_fields = []
-        columns = []
-        for item in fields:
-            name = item.get("name") or item.get("id")
-            if name:
-                columns.append(str(name))
-                tv_fields.append(
-                    TVField.model_validate(
-                        {"name": name, "type": item.get("type", "string")}
-                    )
-                )
-        meta_model = MetaInfoResponse(data=tv_fields)
-        df = build_field_status(meta_model, scan)
-        tsv_text = df.to_csv(sep="\t", index=False)
-        (market_dir / "field_status.tsv").write_text(tsv_text.rstrip("\n"))
+        _generate_status(market_dir, meta, scan)
     except FileNotFoundError as exc:  # pragma: no cover - click handles output
-        with error_log.open("a") as fh:
-            fh.write(f"{type(exc).__name__}: {exc}\n")
+        log_exception(exc, error_log)
         raise click.ClickException("File not found")
     except ValueError as exc:  # pragma: no cover - click handles output
-        with error_log.open("a") as fh:
-            fh.write(f"{type(exc).__name__}: {exc}\n")
+        log_exception(exc, error_log)
         raise click.ClickException("Invalid data")
-    except (
-        requests.exceptions.RequestException
-    ) as exc:  # pragma: no cover - click handles output
-        with error_log.open("a") as fh:
-            fh.write(f"{type(exc).__name__}: {exc}\n")
+    except requests.exceptions.RequestException as exc:  # pragma: no cover
+        log_exception(exc, error_log)
         raise click.ClickException("TradingView request failed")
     except Exception as exc:  # pragma: no cover - click handles output
-        with error_log.open("a") as fh:
-            fh.write(f"{type(exc).__name__}: {exc}\n")
+        log_exception(exc, error_log)
         raise click.ClickException(str(exc))
 
 
@@ -340,6 +335,8 @@ def build(indir: Path, outdir: Path, workers: int, offline: bool) -> None:
                     err=True,
                 )
         except FileNotFoundError as exc:
+            if logger.isEnabledFor(logging.DEBUG):
+                raise
             raise click.ClickException(str(exc))
 
     if workers > 1:
