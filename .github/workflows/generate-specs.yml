@@ -47,7 +47,11 @@ jobs:
 
           generate_openapi_spec()
           validate_spec()
-          run_tests()
+          try:
+              run_tests()
+          except subprocess.CalledProcessError as e:
+              print(f"Test suite failed: {e}")
+              raise
           format_code()
           bump_version()
 
