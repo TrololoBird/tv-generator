@@ -1,3 +1,6 @@
+
+## 1.0.53 - 2025-06-18
+- Automated update
 # Changelog
 ## 1.0.52 - 2025-06-18
 - Automated update
