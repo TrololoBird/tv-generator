@@ -6,7 +6,13 @@ import toml
 
 
 def _run(cmd, *, env=None):
-    subprocess.run(cmd, check=True, env=env)
+    try:
+        subprocess.run(cmd, check=True, env=env)
+    except subprocess.CalledProcessError as e:
+        print(f"Command '{e.cmd}' failed with exit code {e.returncode}")
+        if hasattr(e, "output") and e.output:
+            print(e.output)
+        raise
 
 
 def generate_openapi_spec():
@@ -20,7 +26,11 @@ def validate_spec():
 def run_tests():
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path.cwd())
-    _run(["pytest", "-v"], env=env)
+    try:
+        _run(["pytest", "-q"], env=env)
+    except Exception:
+        print("Tests failed. Debugging required.")
+        raise
 
 
 def format_code():
