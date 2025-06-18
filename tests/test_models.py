@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from src.models import MetaInfoResponse, ScanResponse
+from src.models import MetaInfoResponse, ScanResponse, TVField
 
 ASSETS = Path(__file__).parent / "assets"
 
@@ -30,3 +30,30 @@ def test_unknown_field_type_fallback() -> None:
     data = {"fields": [{"name": "foo", "type": "mystery"}]}
     model = MetaInfoResponse.parse_obj(data)
     assert model.fields[0].t == "mystery"
+
+
+def test_field_validators() -> None:
+    f = TVField.model_validate(
+        {
+            "name": "close",
+            "type": "float",
+            "flags": ["deprecated"],
+            "interval": "1",
+            "description": "close price",
+        }
+    )
+    assert f.interval == 1.0
+    assert f.flags == ["deprecated"]
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"name": "x", "type": "float", "flags": [1]},
+        {"name": "x", "type": "float", "interval": -1},
+        {"name": "x", "type": "float", "description": "   "},
+    ],
+)
+def test_field_invalid_payload(payload: dict) -> None:
+    with pytest.raises(ValidationError):
+        TVField.model_validate(payload)
