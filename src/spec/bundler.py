@@ -5,6 +5,8 @@ from typing import Dict, Any
 import json
 import yaml
 
+from src.utils.fs import load_yaml
+
 
 def bundle_all_specs(
     spec_dir: str | Path, outfile: str | Path, format: str = "json"
@@ -19,8 +21,7 @@ def bundle_all_specs(
     base = Path(spec_dir)
     data: Dict[str, Any] = {}
     for yaml_file in base.glob("*.yaml"):
-        with yaml_file.open("r", encoding="utf-8") as fh:
-            data[yaml_file.stem] = yaml.safe_load(fh)
+        data[yaml_file.stem] = load_yaml(yaml_file, max_size=5_242_880)
 
     out_path = Path(outfile)
     out_path.parent.mkdir(parents=True, exist_ok=True)

@@ -8,7 +8,8 @@ import pandas as pd
 
 import requests
 
-from src.api.data_fetcher import fetch_metainfo, choose_tickers, full_scan, save_json
+from src.api.data_fetcher import fetch_metainfo, choose_tickers, full_scan
+from src.utils.fs import save_json, cleanup_cache_file
 from src.api.data_manager import build_field_status
 from src.models import TVField, MetaInfoResponse
 from src.exceptions import TVDataError
@@ -16,7 +17,7 @@ from src.exceptions import TVDataError
 logger = logging.getLogger(__name__)
 
 
-def refresh_market(market: str, outdir: Path | str = "results") -> None:
+def refresh_market(market: str, outdir: Path | str = "results") -> bool:
     """Download and store TradingView data for a market.
 
     Parameters
@@ -26,6 +27,11 @@ def refresh_market(market: str, outdir: Path | str = "results") -> None:
     outdir : Path | str, optional
         Directory where the ``metainfo.json``, ``scan.json`` and
         ``field_status.tsv`` files will be written. Defaults to ``"results"``.
+
+    Returns
+    -------
+    bool
+        ``True`` on success.
 
     Raises
     ------
@@ -80,6 +86,8 @@ def refresh_market(market: str, outdir: Path | str = "results") -> None:
         df: pd.DataFrame = build_field_status(meta_model, scan)
         status_path.write_text(df.to_csv(sep="\t", index=False).rstrip("\n"))
         logger.debug("Saved %s (%d bytes)", status_path, status_path.stat().st_size)
+        cleanup_cache_file(Path("tv_api_cache.sqlite"))
+        return True
     except (requests.exceptions.RequestException, ValueError) as exc:
         logger.warning("Failed to refresh %s: %s", market, exc)
         raise TVDataError(str(exc)) from exc

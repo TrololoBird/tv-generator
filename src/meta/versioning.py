@@ -5,6 +5,7 @@ import datetime
 import subprocess
 import toml
 import yaml
+from src.utils.fs import load_yaml
 
 """Helpers for project version management and changelog generation."""
 
@@ -148,7 +149,7 @@ def _update_spec_files(version: str, specs_dir: Path) -> None:
 
     for spec_file in specs_dir.glob("*.yaml"):
         try:
-            data = yaml.safe_load(spec_file.read_text())
+            data = load_yaml(spec_file, max_size=5_242_880)
         except Exception:  # pragma: no cover - malformed YAML
             continue
         if isinstance(data, dict) and "info" in data:
