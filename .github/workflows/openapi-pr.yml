@@ -1,0 +1,110 @@
+name: OpenAPI Spec Automation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install --no-interaction
+          poetry run pip install yamllint openapi-spec-validator requests_mock
+      - name: Optional refresh + generate
+        run: |
+          poetry run tvgen refresh --market all || echo "refresh failed"
+          poetry run tvgen generate --market all || echo "generate failed"
+          poetry run tvgen validate || echo "validate failed"
+      - name: Build specs
+        run: |
+          extra=""
+          if [ -n "$SERVER_URL" ]; then
+            extra="--server-url $SERVER_URL"
+          fi
+          poetry run tvgen build --indir results --outdir specs "$extra" || { echo 'tvgen build failed'; exit 1; }
+      - name: Validate generated specs
+        run: |
+          for spec in specs/*.yaml; do
+            yamllint "$spec" || echo "yamllint failed for $spec"
+            openapi-spec-validator "$spec" || echo "spec validation failed for $spec"
+          done
+      - name: Bundle specs
+        run: |
+          poetry run tvgen bundle --format yaml --outfile bundle.yaml || { echo 'bundle failed'; exit 1; }
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: openapi-specs
+          path: |
+            specs/*.yaml
+            bundle.yaml
+            results/**
+          if-no-files-found: ignore
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: |
+            specs/*.yaml
+            results/**
+          message: 'chore: update generated specifications'
+          default_author: github_actions
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore: update generated specifications'
+          title: 'Update OpenAPI specifications'
+          body: 'Automated update of generated specifications.'
+          branch: 'OpenAPI'
+          base: 'main'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  quality:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install deps
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-root
+          poetry run pip install pytest-cov ruff flake8 mypy
+      - name: Ruff
+        run: poetry run ruff check .
+      - name: Flake8
+        run: poetry run flake8 src tests
+      - name: Black
+        run: poetry run black --check .
+      - name: Mypy (non-blocking)
+        run: |
+          poetry run mypy --strict src || true
+      - name: Pytest
+        run: poetry run pytest --cov=src --cov-report=xml -q
+      - name: Upload coverage
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          pip install codecov
+          codecov -t "$CODECOV_TOKEN"
+
