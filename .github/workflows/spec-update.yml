@@ -3,105 +3,106 @@
 name: Update Specs
 
 on:
-  workflow_dispatch: {}  # yamllint disable-line rule:truthy
+  push:
+    branches: [main]
+  workflow_dispatch: {}
   schedule:
     - cron: '0 3 * * *'
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
 
 jobs:
-  build:
+  generate:
     permissions:
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
     env:
       SERVER_URL: ${{ secrets.SERVER_URL }}
-    strategy:
-      matrix:
-        python-version: ['3.10']
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Actionlint
-        uses: rhysd/actionlint@v1.7.7
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
+
+      - name: Cache poetry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pypoetry
+            ~/.cache/pip
+          key: ${{ runner.os }}-poetry-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: ${{ runner.os }}-poetry-${{ matrix.python-version }}-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install poetry
-          # Install project along with required extras
-          poetry install --no-interaction
-          poetry run pip install requests_mock yamllint openapi-spec-validator \
-            types-requests types-PyYAML types-toml
-      - name: Debug PATH
-        run: echo "$PATH"
-      - name: Validate tvgen Installation
+          poetry install --no-interaction --no-root
+          poetry run pip install requests_mock yamllint openapi-spec-validator safety pip-audit
+
+      - name: Show versions
         run: |
-          poetry run tvgen --version || { echo "tvgen installation failed. Check dependencies or PATH settings."; exit 1; }
-      - name: Export server URL
-        if: env.SERVER_URL != ''
-        run: echo "SERVER_URL=${SERVER_URL}" >> "$GITHUB_ENV"
+          python --version
+          poetry --version
+          poetry run tvgen --version
+
+      - name: Refresh and generate specs
+        run: |
+          set -euo pipefail
+          poetry run tvgen refresh --market all
+          poetry run tvgen generate --market all
+          poetry run tvgen validate
 
       - name: Build specs
         run: |
+          set -euo pipefail
           extra=""
-          if [ -n "$SERVER_URL" ]; then
-            extra="--server-url $SERVER_URL"
+          if [ -n "${SERVER_URL}" ]; then
+            extra="--server-url ${SERVER_URL}"
           fi
-          poetry run tvgen build --indir results --outdir specs "$extra" || { echo "tvgen build failed"; exit 1; }
-
-      - name: Log generated specs
-        run: cat specs/*.yaml || echo "No generated specs found"
+          poetry run tvgen build --indir results --outdir specs ${extra}
 
       - name: Bundle specs
-        run: poetry run tvgen bundle --format yaml --outfile bundle.yaml || { echo "Bundle failed"; exit 1; }
-      - name: Validate all generated specs
+        run: poetry run tvgen bundle --format yaml --outfile bundle.yaml
+
+      - name: Validate specs
         run: |
           for spec in specs/*.yaml; do
-            yamllint "$spec" || echo "YAML validation failed for $spec"
-            openapi-spec-validator "$spec" || echo "OpenAPI validation failed for $spec"
+            yamllint "$spec"
+            openapi-spec-validator "$spec"
           done
-      - name: Upload results artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: results
-          path: results/**
 
-      - name: Upload spec artifacts
+      - name: Security audit
+        run: |
+          poetry run safety check -r requirements.txt -r requirements-dev.txt
+          poetry run pip-audit
+
+      - name: Check lock file
+        run: poetry lock --check
+
+      - name: Update README
+        run: poetry run tvgen docs > README.md
+
+      - name: Upload artifacts
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: specs
+          name: specs-${{ matrix.python-version }}
           path: |
             specs/*.yaml
             bundle.yaml
-      - name: Stash changes (if any)
-        run: |
-          git stash --include-untracked
-
-      - name: Apply stashed changes
-        run: |
-          git stash pop || echo "No stashed changes to apply"
-
-      - name: Pull latest changes from remote
-        run: |
-          git fetch origin main
-          git merge origin/main
-
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: |
-            specs/*.yaml
-            results/**
-          message: 'chore: update generated specifications'
-          default_author: github_actions
+          if-no-files-found: error
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
@@ -109,51 +110,46 @@ jobs:
           commit-message: 'chore: update generated specifications'
           title: 'Update OpenAPI specifications'
           body: 'Automated update of generated specifications.'
-          branch: 'OpenAPI'
+          branch: openapi-specs-${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          # - name: Notify on failure
-          #   if: failure()
-          #   uses: Ilshidur/action-slack@2.1.0
-          #   with:
-          #     webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-          #     msg: 'Workflow failed: ${{ github.workflow }} in ${{ github.repository }}'
 
   quality:
+    needs: generate
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.10']
+        python-version: ['3.10', '3.11', '3.12']
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           pip install poetry
           poetry install --no-interaction --no-root
-          poetry run pip install pytest-cov ruff
+          poetry run pip install pytest-cov ruff black mypy
 
-      - name: Validate Ruff Installation
-        run: poetry run ruff --version || echo "Ruff installation failed"
-
-      - name: Ruff (lint/fix check)
+      - name: Ruff
         run: poetry run ruff check .
 
-      - name: Black (format check)
+      - name: Black
         run: poetry run black --check .
+
+      - name: MyPy
+        run: poetry run mypy src
 
       - name: Pytest with coverage
         run: poetry run pytest --cov=src --cov-report=xml -q
 
       - name: Upload coverage to Codecov
-        if: ${{ env.CODECOV_TOKEN != '' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: ${{ env.CODECOV_TOKEN != '' }}
         run: |
           pip install codecov
           codecov -t "$CODECOV_TOKEN"
