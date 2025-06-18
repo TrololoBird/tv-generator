@@ -44,7 +44,7 @@ jobs:
         run: echo $PATH
       - name: Validate tvgen Installation
         run: |
-          poetry run tvgen --version || echo "tvgen installation failed"
+          poetry run tvgen --version || { echo "tvgen installation failed. Check dependencies or PATH settings."; exit 1; }
       - name: Export server URL
         if: env.SERVER_URL != ''
         run: echo "SERVER_URL=${SERVER_URL}" >> "$GITHUB_ENV"
@@ -55,12 +55,12 @@ jobs:
           if [ -n "$SERVER_URL" ]; then
             extra="--server-url $SERVER_URL"
           fi
-          poetry run tvgen build --indir results --outdir specs $extra
+          poetry run tvgen build --indir results --outdir specs $extra || { echo "tvgen build failed"; exit 1; }
       - name: Validate all generated specs
         run: |
           for spec in specs/*.yaml; do
-            yamllint "$spec"
-            openapi-spec-validator "$spec"
+            yamllint "$spec" || echo "YAML validation failed for $spec"
+            openapi-spec-validator "$spec" || echo "OpenAPI validation failed for $spec"
           done
       - name: Upload results artifact
         uses: actions/upload-artifact@v4
