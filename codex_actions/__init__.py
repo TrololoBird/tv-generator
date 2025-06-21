@@ -5,7 +5,7 @@ import datetime
 import toml
 
 
-def _run(cmd, *, env=None):
+def _run(cmd, *, env=None) -> None:
     try:
         subprocess.run(cmd, check=True, env=env)
     except subprocess.CalledProcessError as e:
@@ -15,15 +15,15 @@ def _run(cmd, *, env=None):
         raise
 
 
-def generate_openapi_spec():
+def generate_openapi_spec() -> None:
     _run(["tvgen", "generate", "--market", "crypto", "--outdir", "specs"])
 
 
-def validate_spec():
+def validate_spec() -> None:
     _run(["tvgen", "validate", "--spec", "specs/crypto.yaml"])
 
 
-def run_tests():
+def run_tests() -> None:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(Path.cwd())
     try:
@@ -36,11 +36,11 @@ def run_tests():
         raise
 
 
-def format_code():
+def format_code() -> None:
     _run(["black", "."])
 
 
-def bump_version():
+def bump_version() -> None:
     pyproject = Path("pyproject.toml")
     data = toml.loads(pyproject.read_text())
     version = data["project"]["version"]
@@ -60,5 +60,5 @@ def bump_version():
     )
 
 
-def create_pull_request(title: str, body: str):
+def create_pull_request(title: str, body: str) -> None:
     _run(["gh", "pr", "create", "--title", title, "--body", body])

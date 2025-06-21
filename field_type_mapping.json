@@ -1,0 +1,14 @@
+{
+  "number": "number",
+  "price": "number",
+  "num_slice": "number",
+  "text": "string",
+  "fundamental_price": "number",
+  "map": "string",
+  "percent": "number",
+  "time": "string",
+  "bool": "boolean",
+  "time-yyyymmdd": "string",
+  "interface": "string",
+  "set": "string"
+}

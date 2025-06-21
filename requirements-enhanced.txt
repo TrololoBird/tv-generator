@@ -1,0 +1,38 @@
+# Enhanced OpenAPI Generator Dependencies
+# Расширенные зависимости для автоматического обнаружения параметров
+
+# Основные зависимости
+requests>=2.31.0
+aiohttp>=3.9.0
+aiofiles>=23.2.0
+asyncio-throttle>=1.0.2
+
+# Обработка данных
+pandas>=2.1.0
+numpy>=1.24.0
+
+# Валидация и схемы
+jsonschema>=4.20.0
+openapi-spec-validator>=0.7.0
+
+# Логирование и мониторинг
+structlog>=23.2.0
+rich>=13.7.0
+
+# Тестирование
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Утилиты
+python-dateutil>=2.8.2
+click>=8.1.0
+tqdm>=4.66.0
+
+# Безопасность
+certifi>=2023.11.0
+urllib3>=2.0.0
+
+# Дополнительные инструменты
+pyyaml>=6.0.1
+jinja2>=3.1.0 

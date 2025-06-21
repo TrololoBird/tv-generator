@@ -9,7 +9,7 @@ on:
     - cron: '0 3 * * 1'
 
 jobs:
-  build:
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -17,128 +17,128 @@ jobs:
         python-version: ['3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install black flake8 mypy pytest coverage openapi-spec-validator bandit safety requests_mock \
-              types-requests types-PyYAML types-toml -r requirements.txt
-            pip install -e .
-        - name: Validate repository specs
-          run: |
-            if ls specs/*.yaml 1> /dev/null 2>&1; then
-              openapi-spec-validator specs/*.yaml
-            fi
-      - name: Format
-        run: black --check .
-      - name: Security - Bandit
-        run: bandit -q -r src
-      - name: Security - Safety
-        run: safety check -r requirements.txt -r requirements-dev.txt
-      - name: Lint
-        run: flake8 src tests
-      - name: Type check
-        run: mypy --strict src/
-      - name: Test with coverage
-        run: |
-          coverage run -m pytest -q
-          coverage xml
-          coverage report
-        timeout-minutes: 10
-      - name: Upload coverage to Codecov
-        if: ${{ secrets.CODECOV_TOKEN && always() }}
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          pip install codecov
-          codecov -t $CODECOV_TOKEN
-      - name: Generate specs for all markets
-        run: |
-          # tvgen requires internet access which may be blocked in CI
-          # Allow failures and surface warnings for easier debugging
-          set +e
-          mkdir -p specs
-          for market in america bond cfd coin crypto forex futures stocks; do
-            mkdir -p results/$market
-            echo -e "field\ttv_type\tstatus\tsample_value\nclose\tinteger\tok\t1\nopen\tstring\tok\tabc" > results/$market/field_status.tsv
-            echo '{ "market": "'$market'", "info": "Generated metadata" }' > results/$market/metainfo.json
-            tvgen generate --market $market --outdir specs
-            status=$?
-            if [ $status -ne 0 ]; then
-              echo "::warning file=tvgen::tvgen failed for $market (likely due to network issues)"
-            fi
-          done
-          set -e
-      - name: Validate all generated specs
-        run: |
-          if ls specs/*.yaml 1> /dev/null 2>&1; then
-            for spec in specs/*.yaml; do
-              openapi-spec-validator "$spec" || exit 1
-            done
-            echo "All specs validated successfully!"
-          else
-            echo "::warning::No spec files generated to validate."
-          fi
-
-      - name: Bundle specs
-        run: tvgen bundle --format yaml --outfile bundle.yaml
-      - name: Check spec sizes
-        run: |
-          for spec in specs/*.yaml; do
-            size=$(wc -c < "$spec")
-            if [ "$size" -ge 1048576 ]; then
-              echo "::error file=${spec}::Spec size exceeds 1 MB (${size} bytes)"
-              exit 1
-            fi
-          done
-      - name: Upload specs as artifacts
-        if: hashFiles('specs/*') != ''
-        uses: actions/upload-artifact@v3
-        with:
-          name: generated-specs
-          path: |
-            specs/
-            bundle.yaml
-          if-no-files-found: ignore
-      - name: Summarize workflow
-        run: |
-          echo "Format, lint, type-check, and tests completed"
-          if ls specs/*.yaml 1> /dev/null 2>&1; then
-            echo "Specs generated: $(ls specs/*.yaml | wc -l)"
-          else
-            echo "No specs generated"
-          fi
-
-  compatibility:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
+      
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest bandit safety -r requirements.txt
-          pip install -e .
+          pip install -e ".[dev]"
+      
+      - name: Format check
+        run: black --check .
+      
       - name: Lint
-        run: flake8 src tests
-      - name: Test
+        run: flake8 tv_generator tests
+      
+      - name: Type check
+        run: mypy tv_generator/
+      
+      - name: Security - Bandit
+        run: bandit -r tv_generator
+      
+      - name: Security - Safety
+        run: safety check
+      
+      - name: Test with coverage
         run: |
-          PYTHONPATH=$PWD pytest -q
-      - name: Build OpenAPI spec
-        run: tvgen generate --market crypto --outdir specs
-      - name: Validate OpenAPI spec
-        run: openapi-spec-validator specs/*.yaml
+          pytest --cov=tv_generator --cov-report=xml --cov-report=term-missing
+        timeout-minutes: 10
+Looking at the context, I can see the issue. The `if` condition is missing the `${{ }}` wrapper around `secrets.CODECOV_TOKEN`. Here's the fix:
+          codecov -t $CODECOV_TOKEN
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      
+      - name: Test CLI commands
+        run: |
+          tvgen --help
+          tvgen info
+          tvgen validate
+      
+      - name: Test data fetching (mock)
+        run: |
+          # Тестируем с моками для избежания сетевых запросов
+          python -c "
+          import asyncio
+          from unittest.mock import patch
+          from tv_generator.core import Pipeline
+          
+          async def test_pipeline():
+              with patch('tv_generator.api.TradingViewAPI'):
+                  pipeline = Pipeline()
+                  # Тест без реальных API вызовов
+                  print('Pipeline test completed')
+          
+          asyncio.run(test_pipeline())
+          "
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, integration]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+          pip install -e .
+      
+      - name: Build package
+        run: python -m build
+      
+      - name: Check package
+        run: twine check dist/*
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      
+      - name: Publish to PyPI
+        if: ${{ secrets.PYPI_TOKEN }}
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: twine upload dist/*

@@ -1,386 +1,274 @@
+import json
+import sys
+from io import StringIO
 from pathlib import Path
-import subprocess
-from click.testing import CliRunner
+from unittest.mock import patch
+import pytest
+
+from tv_generator.simple_cli import info, validate, health, fetch_data, generate, test_specs
+from tv_generator.config import settings
 
 
-from src.cli import cli
+@pytest.fixture(autouse=True)
+def patch_rich_progress():
+    """Мокаем Rich ProgressBar для избежания конфликтов в тестах."""
+    with patch('rich.progress.Progress') as mock_progress:
+        mock_progress.return_value.__enter__.return_value = mock_progress.return_value
+        mock_progress.return_value.__exit__.return_value = None
+        yield mock_progress
 
 
-def test_cli_scan(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/scan",
-        json={"count": 0, "data": []},
-    )
-    result = runner.invoke(
-        cli,
-        [
-            "scan",
-            "--symbols",
-            "BTCUSD",
-            "--columns",
-            "close",
-            "--market",
-            "crypto",
-            "--filter",
-            "{}",
-        ],
-    )
-    assert result.exit_code == 0
-    assert "data" in result.output
-
-
-def test_cli_scan_invalid_filter(tv_api_mock) -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "scan",
-            "--symbols",
-            "BTCUSD",
-            "--columns",
-            "close",
-            "--market",
-            "crypto",
-            "--filter",
-            "{",
-        ],
-    )
-    assert result.exit_code != 0
-    assert "Invalid JSON in --filter" in result.output
-
-
-def test_cli_scan_full_payload(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/scan",
-        json={"count": 0, "data": []},
-    )
-    payload_args = [
-        "scan",
-        "--symbols",
-        "BTCUSD",
-        "--columns",
-        "close",
-        "--market",
-        "crypto",
-        "--filter2",
-        "{}",
-        "--sort",
-        "{}",
-        "--range",
-        "{}",
-    ]
-    result = runner.invoke(cli, payload_args)
-    assert result.exit_code == 0
-    assert "data" in result.output
-    sent = tv_api_mock.request_history[0].json()
-    assert sent["filter2"] == {}
-    assert sent["sort"] == {}
-    assert sent["range"] == {}
-
-
-def test_cli_scan_invalid_sort(tv_api_mock) -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "scan",
-            "--symbols",
-            "BTCUSD",
-            "--columns",
-            "close",
-            "--market",
-            "crypto",
-            "--sort",
-            "{",
-        ],
-    )
-    assert result.exit_code != 0
-    assert "Invalid JSON in --sort" in result.output
-
-
-def test_cli_scan_invalid_filter2(tv_api_mock) -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "scan",
-            "--symbols",
-            "BTCUSD",
-            "--columns",
-            "close",
-            "--market",
-            "crypto",
-            "--filter2",
-            "{",
-        ],
-    )
-    assert result.exit_code != 0
-    assert "Invalid JSON in --filter2" in result.output
-
-
-def test_cli_scan_invalid_range(tv_api_mock) -> None:
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "scan",
-            "--symbols",
-            "BTCUSD",
-            "--columns",
-            "close",
-            "--market",
-            "crypto",
-            "--range",
-            "{",
-        ],
-    )
-    assert result.exit_code != 0
-    assert "Invalid JSON in --range" in result.output
-
-
-def test_cli_metainfo(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/metainfo",
-        json={"fields": []},
-    )
-    result = runner.invoke(
-        cli,
-        ["metainfo", "--query", "test", "--market", "crypto"],
-    )
-    assert result.exit_code == 0
-    assert "fields" in result.output
-
-
-def test_scan_cli_missing_scope():
-    runner = CliRunner()
-    result = runner.invoke(cli, ["scan", "--symbols", "AAPL", "--columns", "close"])
-    assert result.exit_code != 0
-    assert "Missing option '--market'" in result.output
-
-
-def test_cli_help() -> None:
-    runner = CliRunner()
-    result = runner.invoke(cli, ["--help"])
-    assert result.exit_code == 0
-    assert "TradingView" in result.output
-
-
-def test_cli_version() -> None:
-    runner = CliRunner()
-    result = runner.invoke(cli, ["--version"], prog_name="tvgen")
-    assert result.exit_code == 0
-    assert "tvgen, version" in result.output
-
-
-def test_generate_help() -> None:
-    runner = CliRunner()
-    result = runner.invoke(cli, ["generate", "--help"])
-    assert result.exit_code == 0
-    assert "--market" in result.output
-    assert "--indir" in result.output
-
-
-def test_cli_generate_missing_results(tmp_path: Path) -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        (Path("results") / "crypto").mkdir(parents=True)
-        result = runner.invoke(
-            cli,
-            [
-                "generate",
-                "--market",
-                "crypto",
-                "--indir",
-                str(Path("results")),
-                "--outdir",
-                str(Path(".")),
-            ],
-        )
-        assert result.exit_code == 0
-        assert "No symbols found in metainfo" in result.stderr
-
-
-def test_cli_scan_error(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/scan",
-        status_code=500,
-    )
-    result = runner.invoke(
-        cli,
-        ["scan", "--symbols", "BTCUSD", "--columns", "close", "--market", "crypto"],
-    )
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "TradingView request failed" in result.output
-
-
-def test_cli_metainfo_error(tv_api_mock) -> None:
-    runner = CliRunner()
-    tv_api_mock.post(
-        "https://scanner.tradingview.com/crypto/metainfo",
-        status_code=500,
-    )
-    result = runner.invoke(cli, ["metainfo", "--query", "t", "--market", "crypto"])
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "TradingView request failed" in result.output
-
-
-def test_cli_validate_missing_file() -> None:
-    runner = CliRunner()
-    result = runner.invoke(cli, ["validate", "--spec", "missing.yaml"])
-    assert result.exit_code != 0
-    assert result.exception is not None
-    assert "No such file" in result.output
-
-
-def test_cli_validate_missing_option() -> None:
-    runner = CliRunner()
-    result = runner.invoke(cli, ["validate"])
-    assert result.exit_code != 0
-    assert "--spec is required" in result.output
-
-
-def test_cli_validate_invalid_yaml(tmp_path: Path) -> None:
-    invalid = tmp_path / "spec.yaml"
-    invalid.write_text(": bad")
-    runner = CliRunner()
-    result = runner.invoke(cli, ["validate", "--spec", str(invalid)])
-    assert result.exit_code != 0
-    assert result.exception is not None
-
-
-def _mock_collect_api(monkeypatch) -> None:
-    meta = {
-        "fields": [
-            {"name": "close", "type": "integer"},
-            {"name": "open", "type": "string"},
-        ],
-        "index": {"names": ["AAA", "BBB"]},
-    }
-
-    def fake_meta(scope: str) -> dict:
-        return meta
-
-    def fake_scan(scope: str, tickers: list[str], columns: list[str]) -> dict:
-        return {
-            "count": 2,
-            "data": [
-                {"s": tickers[0], "d": [1, "a"]},
-                {"s": tickers[1] if len(tickers) > 1 else tickers[0], "d": [2, "b"]},
-            ],
-        }
-
-    monkeypatch.setattr("src.cli.fetch_metainfo", fake_meta)
-    monkeypatch.setattr("src.cli.full_scan", fake_scan)
-
-
-def test_collect_success(monkeypatch):
-    runner = CliRunner()
-    _mock_collect_api(monkeypatch)
-    with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--market", "crypto"])
-        assert result.exit_code == 0
-        base = Path("results/crypto")
-        assert (base / "metainfo.json").exists()
-        assert (base / "scan.json").exists()
-        status_lines = (base / "field_status.tsv").read_text().splitlines()
-        assert status_lines[0] == "field\ttv_type\tstatus\tsample_value"
-        assert "close\tinteger\tok\t1" in status_lines[1]
-        assert "open\tstring\tok\ta" in status_lines[2]
-
-
-def test_collect_error(monkeypatch):
-    runner = CliRunner()
-    monkeypatch.setattr(
-        "src.cli.fetch_metainfo",
-        lambda scope: (_ for _ in ()).throw(FileNotFoundError("boom")),
-    )
-    monkeypatch.setattr("src.cli.full_scan", lambda scope, tickers, columns: {})
-    with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--market", "crypto"])
-        assert result.exit_code != 0
-        assert "File not found" in result.output
-        log = Path("results/crypto/error.log").read_text()
-        assert "FileNotFoundError: boom" in log
-
-
-def test_cli_collect_crypto(monkeypatch) -> None:
-    runner = CliRunner()
-    _mock_collect_api(monkeypatch)
-    with runner.isolated_filesystem():
-        result = runner.invoke(cli, ["collect", "--market", "crypto"])
-        assert result.exit_code == 0
-        base = Path("results/crypto")
-        assert (base / "field_status.tsv").exists()
-        text = (base / "field_status.tsv").read_text()
-        assert "close\tinteger\tok\t1" in text
-
-
-def test_cli_validate_crypto_spec() -> None:
-    runner = CliRunner()
-    spec = Path("specs/crypto.yaml")
-    result = runner.invoke(cli, ["validate", "--spec", str(spec)])
-    assert result.exit_code == 0
-    assert "Specification is valid" in result.output
-
-
-def test_cli_version_command(monkeypatch) -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        pyproject = Path("pyproject.toml")
-        pyproject.write_text("[project]\nversion = '1.2.3'\n")
-        from src import meta
-
-        monkeypatch.setattr(meta.versioning, "DEFAULT_PYPROJECT_PATH", pyproject)
-        result = runner.invoke(cli, ["version"])
-        assert result.exit_code == 0
-        assert "1.2.3" in result.output
-
-
-def test_cli_bump_version(monkeypatch) -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        pyproject = Path("pyproject.toml")
-        pyproject.write_text("[project]\nversion = '0.1.0'\n")
-        (Path("specs")).mkdir()
-        (Path("specs") / "crypto.yaml").write_text("info:\n  version: 0.1.0\n")
-        from src import meta
-
-        monkeypatch.setattr(meta.versioning, "DEFAULT_PYPROJECT_PATH", pyproject)
-        monkeypatch.setattr(meta.versioning, "DEFAULT_SPECS_DIR", Path("specs"))
-        result = runner.invoke(cli, ["bump-version", "--type", "patch"])
-        assert result.exit_code == 0
-        assert "0.1.1" in result.output
-        text = pyproject.read_text()
-        assert "0.1.1" in text
-        spec_text = (Path("specs") / "crypto.yaml").read_text()
-        assert "0.1.1" in spec_text
-
-
-def test_cli_changelog(monkeypatch) -> None:
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        pyproject = Path("pyproject.toml")
-        pyproject.write_text("[project]\nversion = '0.2.0'\n")
-        from src import meta
-
-        monkeypatch.setattr(meta.versioning, "DEFAULT_PYPROJECT_PATH", pyproject)
-        subprocess.run(["git", "init"], check=True)
-        subprocess.run(["git", "config", "user.email", "a@b.com"], check=True)
-        subprocess.run(["git", "config", "user.name", "a"], check=True)
-        Path("file.txt").write_text("a")
-        subprocess.run(["git", "add", "file.txt", "pyproject.toml"], check=True)
-        subprocess.run(["git", "commit", "-m", "feat: start"], check=True)
-        subprocess.run(["git", "tag", "v0.1.0"], check=True)
-        Path("file.txt").write_text("b")
-        subprocess.run(["git", "add", "file.txt"], check=True)
-        subprocess.run(["git", "commit", "-m", "fix: update"], check=True)
-        result = runner.invoke(cli, ["changelog"])
-        assert result.exit_code == 0
-        text = Path("CHANGELOG.md").read_text()
-        assert "fix: update" in text
+@pytest.mark.usefixtures("patch_rich_progress")
+class TestSimpleCLI:
+    """Тесты для простого CLI интерфейса."""
+    
+    @pytest.fixture
+    def test_data_dir(self) -> Path:
+        """Создает временную директорию для тестовых данных."""
+        test_dir = Path("tests/test_data")
+        test_dir.mkdir(exist_ok=True)
+        yield test_dir
+        # Очистка после тестов
+        for file in test_dir.glob("*"):
+            if file.is_file():
+                file.unlink()
+    
+    @pytest.fixture
+    def capture_output(self):
+        """Захватывает stdout для проверки вывода."""
+        old_stdout = sys.stdout
+        new_stdout = StringIO()
+        sys.stdout = new_stdout
+        try:
+            yield new_stdout
+        finally:
+            sys.stdout = old_stdout
+    
+    def test_info(self, capsys) -> None:
+        """Тест команды info."""
+        info()
+        captured = capsys.readouterr()
+        output = captured.out
+        
+        # Проверяем основную информацию
+        assert "TradingView OpenAPI Generator" in output
+        assert "Python:" in output
+        assert "API URL:" in output
+        assert "Доступные рынки:" in output
+    
+    def test_validate(self, capsys) -> None:
+        """Тест команды validate."""
+        validate()
+        captured = capsys.readouterr()
+        output = captured.out
+        
+        # Проверяем основные секции валидации
+        assert "Валидация конфигурации" in output
+        assert "Проверка директорий:" in output
+        assert "Проверка конфигурации:" in output
+    
+    @pytest.mark.asyncio
+    async def test_health(self, capsys) -> None:
+        """Тест команды health."""
+        await health()
+        captured = capsys.readouterr()
+        output = captured.out
+        
+        # Проверяем основные секции
+        assert "Статус здоровья системы:" in output
+        assert "API:" in output
+        assert "Pipeline:" in output
+    
+    @pytest.mark.asyncio
+    async def test_fetch_data(self, test_data_dir) -> None:
+        """Тест команды fetch_data."""
+        # Временно меняем директорию для результатов
+        original_dir = settings.results_dir
+        settings.results_dir = str(test_data_dir)
+        
+        try:
+            # Тестируем с одним рынком для скорости
+            await fetch_data(verbose=True)
+            
+            # Проверяем созданные файлы
+            assert (test_data_dir / "us_stocks_metainfo.json").exists()
+            assert (test_data_dir / "us_stocks_tickers.json").exists()
+            assert (test_data_dir / "us_stocks_fields.txt").exists()
+            assert (test_data_dir / "us_stocks_working_fields.txt").exists()
+            
+        finally:
+            # Восстанавливаем оригинальную директорию
+            settings.results_dir = original_dir
+    
+    @pytest.mark.asyncio
+    async def test_generate(self, test_data_dir) -> None:
+        """Тест команды generate."""
+        # Временно меняем директории
+        original_results = settings.results_dir
+        original_specs = settings.specs_dir
+        settings.results_dir = str(test_data_dir)
+        settings.specs_dir = str(test_data_dir / "specs")
+        
+        try:
+            # Создаем тестовые данные
+            (test_data_dir / "specs").mkdir(exist_ok=True)
+            test_market = "us_stocks"
+            
+            # Добавляем отладочную информацию
+            print(f"DEBUG: test_data_dir = {test_data_dir}")
+            print(f"DEBUG: settings.results_dir = {settings.results_dir}")
+            print(f"DEBUG: settings.specs_dir = {settings.specs_dir}")
+            print(f"DEBUG: specs dir exists = {(test_data_dir / 'specs').exists()}")
+            
+            # Создаем минимальный набор файлов
+            openapi_fields_path = test_data_dir / f"{test_market}_openapi_fields.json"
+            metainfo_path = test_data_dir / f"{test_market}_metainfo.json"
+            
+            print(f"DEBUG: Creating {openapi_fields_path}")
+            with open(openapi_fields_path, "w") as f:
+                json.dump({
+                    "close": {"type": "number", "description": "Close price"},
+                    "volume": {"type": "number", "description": "Volume"}
+                }, f)
+            
+            print(f"DEBUG: Creating {metainfo_path}")
+            with open(metainfo_path, "w") as f:
+                json.dump({
+                    "fields": [
+                        {"n": "close", "t": "number"},
+                        {"n": "volume", "t": "number"}
+                    ]
+                }, f)
+            
+            print(f"DEBUG: Files created successfully")
+            print(f"DEBUG: openapi_fields_path exists = {openapi_fields_path.exists()}")
+            print(f"DEBUG: metainfo_path exists = {metainfo_path.exists()}")
+            
+            # Запускаем генерацию
+            print(f"DEBUG: Starting generate()")
+            await generate(verbose=True)
+            print(f"DEBUG: generate() completed")
+            
+            # Проверяем созданные файлы
+            expected_spec_path = test_data_dir / "specs" / f"{test_market}_openapi.json"
+            
+            print(f"DEBUG: Expected spec path = {expected_spec_path}")
+            print(f"DEBUG: spec file exists = {expected_spec_path.exists()}")
+            
+            # Проверяем содержимое директории specs
+            specs_dir = test_data_dir / "specs"
+            if specs_dir.exists():
+                print(f"DEBUG: Contents of {specs_dir}:")
+                for file in specs_dir.iterdir():
+                    print(f"DEBUG:   - {file.name}")
+            
+            assert expected_spec_path.exists(), f"Spec file not found at {expected_spec_path}"
+            
+        finally:
+            # Восстанавливаем оригинальные директории
+            settings.results_dir = original_results
+            settings.specs_dir = original_specs
+    
+    @pytest.mark.asyncio
+    async def test_test_specs(self, test_data_dir) -> None:
+        """Тест команды test_specs."""
+        # Временно меняем директории
+        original_results = settings.results_dir
+        original_specs = settings.specs_dir
+        settings.results_dir = str(test_data_dir)
+        settings.specs_dir = str(test_data_dir / "specs")
+        
+        try:
+            # Создаем тестовые данные
+            (test_data_dir / "specs").mkdir(exist_ok=True)
+            test_market = "us_stocks"
+            
+            # Создаем тестовую спецификацию
+            spec = {
+                "openapi": "3.1.0",
+                "info": {
+                    "title": "Test Market API",
+                    "version": "1.0.0"
+                },
+                "paths": {
+                    "/america/scan": {
+                        "post": {
+                            "requestBody": {
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "symbols": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "tickers": {
+                                                            "type": "array",
+                                                            "items": {"type": "string"}
+                                                        }
+                                                    }
+                                                },
+                                                "columns": {
+                                                    "type": "array",
+                                                    "items": {"type": "string"}
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "responses": {
+                                "200": {
+                                    "description": "Success",
+                                    "content": {
+                                        "application/json": {
+                                            "schema": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "data": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "s": {"type": "string"},
+                                                                "d": {"type": "array"}
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            with open(test_data_dir / "specs" / f"{test_market}_openapi.json", "w") as f:
+                json.dump(spec, f)
+            
+            # Создаем тестовые поля
+            with open(test_data_dir / f"{test_market}_openapi_fields.json", "w") as f:
+                json.dump({
+                    "close": {"type": "number", "description": "Close price"},
+                    "volume": {"type": "number", "description": "Volume"}
+                }, f)
+            
+            # Создаем тестовые тикеры
+            with open(test_data_dir / f"{test_market}_tickers.json", "w") as f:
+                json.dump([
+                    {"s": "NYSE:A", "d": ["A", 115.56, 0.03462603878116885, 0.04000000000000625, 3043869]}
+                ], f)
+            
+            # Запускаем тестирование
+            await test_specs(verbose=True)
+            
+            # Проверяем созданный отчет
+            assert (test_data_dir / "test_report.json").exists()
+            
+        finally:
+            # Восстанавливаем оригинальные директории
+            settings.results_dir = original_results
+            settings.specs_dir = original_specs
