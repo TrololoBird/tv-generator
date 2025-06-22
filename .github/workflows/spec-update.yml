@@ -46,50 +46,31 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e ".[dev]"
           pip install yamllint safety pip-audit
-          pip install -e .
+          pip install openapi-spec-validator
 
       - name: Show versions
         run: |
           python --version
           pip --version
-          tvgen --version
+          tvgen --help
 
-      - name: Refresh and generate specs
+      - name: Fetch data and generate specs
         run: |
           set -euo pipefail
-          tvgen refresh --market all
-          tvgen generate --market all
-          tvgen validate
-
-      - name: Build specs
-        run: |
-          set -euo pipefail
-          extra=""
-          if [ -n "${SERVER_URL}" ]; then
-            extra="--server-url ${SERVER_URL}"
-          fi
-          tvgen build --indir results --outdir specs ${extra}
-
-      - name: Bundle specs
-        run: tvgen bundle --format yaml --outfile bundle.yaml
+          tvgen fetch-data
+          tvgen generate
 
       - name: Validate specs
         run: |
-          for spec in specs/*.yaml; do
-            yamllint "$spec"
-            openapi-spec-validator "$spec"
-          done
+          tvgen validate
 
       - name: Security audit
         run: |
-          safety check -r requirements.txt -r requirements-dev.txt
-          pip-audit -r requirements.txt -r requirements-dev.txt
+          safety check
+          pip-audit
           pip check
-
-      - name: Update README
-        run: tvgen docs > README.md
 
       - name: Upload artifacts
         if: github.event_name == 'push'
@@ -97,8 +78,8 @@ jobs:
         with:
           name: specs-${{ matrix.python-version }}
           path: |
-            specs/*.yaml
-            bundle.yaml
+            specs/*.json
+            results/
           if-no-files-found: error
 
       - name: Create Pull Request
@@ -128,23 +109,22 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e ".[dev]"
           pip install ruff black mypy pytest-cov
-          pip install -e .
 
       - name: Ruff
-        run: ruff check .
+        run: ruff check src/ tests/
 
       - name: Black
-        run: black --check .
+        run: black --check src/ tests/
 
       - name: MyPy
         # src/config.py contains runtime checks that confuse mypy.
         # It is excluded here to avoid failing the release pipeline.
-        run: mypy src --exclude src/config.py
+        run: mypy src/tv_generator --exclude src/tv_generator/config.py
 
       - name: Pytest with coverage
-        run: pytest --cov=src --cov-report=xml -q
+        run: pytest --cov=src/tv_generator --cov-report=xml -q
 
       - name: Upload coverage to Codecov
         env:

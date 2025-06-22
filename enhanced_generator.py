@@ -24,12 +24,12 @@ logger = logging.getLogger(__name__)
 
 class EnhancedOpenAPIGenerator:
     """Улучшенный генератор OpenAPI спецификаций"""
-    
+
     def __init__(self):
         self.specs_dir = Path("specs")
         self.results_dir = Path("results")
         self.markets = ["america", "crypto", "forex", "futures", "cfd", "bond", "coin"]
-        
+
         # Undocumented параметры из gap-анализа
         self.undocumented_params = {
             "filter2": {"type": "object", "description": "Alternative filter structure"},
@@ -47,15 +47,15 @@ class EnhancedOpenAPIGenerator:
             "filter.right": {"type": "object"},
             "filter.settings": {"type": "object"}
         }
-        
+
         # Создаем директории
         self.specs_dir.mkdir(exist_ok=True)
         self.results_dir.mkdir(exist_ok=True)
-    
+
     def generate_market_specification(self, market: str) -> Dict[str, Any]:
         """Генерирует OpenAPI спецификацию для рынка"""
         logger.info(f"🔧 Генерирую спецификацию для рынка: {market}")
-        
+
         spec = {
             "openapi": "3.1.0",
             "info": {
@@ -127,13 +127,13 @@ class EnhancedOpenAPIGenerator:
                 "schemas": self._generate_schemas(market)
             }
         }
-        
+
         return spec
-    
+
     def _generate_schemas(self, market: str) -> Dict[str, Any]:
         """Генерирует схемы для рынка"""
         schemas = {}
-        
+
         # Основная схема запроса
         request_schema = {
             "type": "object",
@@ -171,7 +171,7 @@ class EnhancedOpenAPIGenerator:
             },
             "required": ["markets", "columns", "range"]
         }
-        
+
         # Добавляем undocumented параметры
         for param_name, param_schema in self.undocumented_params.items():
             request_schema["properties"][param_name] = {
@@ -179,9 +179,9 @@ class EnhancedOpenAPIGenerator:
                 "x-experimental": True,
                 "x-undocumented": True
             }
-        
+
         schemas[f"{market.capitalize()}ScanRequest"] = request_schema
-        
+
         # Схема ответа
         schemas[f"{market.capitalize()}ScanResponse"] = {
             "type": "object",
@@ -198,7 +198,7 @@ class EnhancedOpenAPIGenerator:
                 }
             }
         }
-        
+
         # Схема метаинформации
         schemas[f"{market.capitalize()}Metainfo"] = {
             "type": "object",
@@ -216,7 +216,7 @@ class EnhancedOpenAPIGenerator:
                 }
             }
         }
-        
+
         # Общие схемы
         schemas["Filter"] = {
             "type": "object",
@@ -240,7 +240,7 @@ class EnhancedOpenAPIGenerator:
                 }
             }
         }
-        
+
         schemas["Options"] = {
             "type": "object",
             "properties": {
@@ -271,7 +271,7 @@ class EnhancedOpenAPIGenerator:
                 }
             }
         }
-        
+
         schemas["Symbols"] = {
             "type": "object",
             "properties": {
@@ -297,35 +297,35 @@ class EnhancedOpenAPIGenerator:
                 }
             }
         }
-        
+
         return schemas
-    
+
     def generate_all_specifications(self):
         """Генерирует все спецификации"""
         logger.info("🚀 Начинаю генерацию всех спецификаций")
-        
+
         generated_specs = {}
-        
+
         for market in self.markets:
             try:
                 spec = self.generate_market_specification(market)
                 generated_specs[market] = spec
-                
+
                 # Сохраняем спецификацию
                 spec_file = self.specs_dir / f"{market}_openapi.json"
                 with open(spec_file, 'w', encoding='utf-8') as f:
                     json.dump(spec, f, indent=2, ensure_ascii=False)
-                
+
                 logger.info(f"✅ Спецификация сохранена: {spec_file}")
-                
+
             except Exception as e:
                 logger.error(f"❌ Ошибка при генерации {market}: {e}")
-        
+
         # Сохраняем отчет
         self._save_generation_report(generated_specs)
-        
+
         return generated_specs
-    
+
     def _save_generation_report(self, generated_specs: Dict[str, Any]):
         """Сохраняет отчет о генерации"""
         report = {
@@ -337,20 +337,20 @@ class EnhancedOpenAPIGenerator:
             "experimental_features": True,
             "openapi_version": "3.1.0"
         }
-        
+
         report_file = self.results_dir / "generation_report.json"
         with open(report_file, 'w', encoding='utf-8') as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
-        
+
         logger.info(f"📋 Отчет сохранен: {report_file}")
 
 def main():
     """Основная функция"""
     logger.info("🚀 Запуск Enhanced TradingView OpenAPI Generator")
-    
+
     generator = EnhancedOpenAPIGenerator()
     specs = generator.generate_all_specifications()
-    
+
     logger.info("✅ Генерация завершена!")
     logger.info(f"📊 Сгенерировано спецификаций: {len(specs)}")
     logger.info(f"🔍 Undocumented параметров: {len(generator.undocumented_params)}")

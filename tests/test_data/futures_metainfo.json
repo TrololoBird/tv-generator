@@ -2,120 +2,108 @@
   "financial_currency": "USD",
   "fields": [
     {
-      "n": "rates_earnings_fq",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "rates_fq",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "rates_current",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "rates_fy",
-      "t": "map",
-      "r": null
-    },
-    {
       "n": "popularity_rank",
       "t": "number",
       "r": null
     },
     {
-      "n": "minmov",
-      "t": "number",
-      "r": null
-    },
-    {
-      "n": "all_time_high",
-      "t": "price",
-      "r": null
-    },
-    {
-      "n": "all_time_open",
-      "t": "price",
-      "r": null
-    },
-    {
-      "n": "source-logoid",
+      "n": "product",
       "t": "text",
       "r": [
-        "source/ASX24",
-        "source/HNX",
-        "source/ICESG",
-        "source/TFX",
-        "source/COMEX_MINI",
-        "source/MYX",
-        "source/NZX",
-        "source/CBOT_MINI",
-        "source/MSEI",
-        "source/BET",
-        "source/TOCOM",
-        "source/CBOE",
-        "source/DFM",
-        "source/ICEAD",
-        "source/NYMEX",
-        "source/BMFBOVESPA",
-        "source/GPW",
-        "source/BIST",
-        "source/LME",
-        "source/RUS",
-        "source/TFEX",
-        "source/ICEUS",
-        "source/EUREX",
-        "source/NCDEX",
-        "source/HKEX",
-        "source/MATBAROFEX",
-        "source/MGEX",
-        "source/KRX",
-        "source/OSE",
-        "source/ADX",
-        "country/AE",
-        "source/TMX",
-        "source/ICEEUR",
-        "source/MCX",
-        "source/TAIFEX",
-        "source/NSE",
-        "source/BSE",
-        "source/NSEIX",
-        "source/EURONEXT",
-        "source/CBOT",
-        "source/ICEENDEX",
-        "source/COMEX",
-        "source/CME_MINI",
-        "source/SHFE",
-        "source/CFFEX",
-        "source/SGX",
-        "source/CME",
-        "source/NYMEX_MINI"
+        "Commodity/Energy/Oil/CrudeOil/Brent",
+        "Commodity/Energy/Emissions",
+        "Commodity/Energy/Oil/CrudeOil",
+        "Commodity/Energy/Freight",
+        "Commodity/Metals/NonFerrous/Lead",
+        "Commodity/Agriculture/Softs/Guar",
+        "Commodity/Energy",
+        "Commodity/Metals/Precious/Platinum",
+        "Commodity/Energy/Oil/Refined",
+        "Commodity/Agriculture/GrainAndSeed/Wheat/SRW",
+        "Commodity/Metals/NonFerrous/Copper",
+        "Commodity/Metals/NonFerrous/Tin",
+        "Commodity/Agriculture/Softs/FrozenOrangeJuice",
+        "Commodity/Agriculture/GrainAndSeed/Sunflower",
+        "Commodity/Energy/Oil/CrudeOil/WTI",
+        "Commodity/Metals/NonFerrous/Nickel",
+        "Commodity/Energy/Oil/CrudeOil/BAKKEN",
+        "Financial/Currency",
+        "Commodity/Metals/NonFerrous/Lithium",
+        "Commodity/Agriculture/Softs/MenthaOil",
+        "Financial/InterestRate",
+        "Commodity/Energy/Coal",
+        "Commodity/Agriculture/Softs",
+        "Commodity/Agriculture/GrainAndSeed/Rapeseed",
+        "Commodity/Agriculture/GrainAndSeed/Wheat",
+        "Commodity/Agriculture/Softs/Cotton/Raw",
+        "Commodity/Agriculture/GrainAndSeed/Soybean",
+        "Commodity/Agriculture/GrainAndSeed/Corn",
+        "Commodity/Metals/Precious/Gold",
+        "Commodity/Metals/NonFerrous",
+        "Commodity/Agriculture/Softs/Coriander",
+        "Commodity/Metals/NonFerrous/Molybdenum",
+        "Commodity/Agriculture/Softs/Sesame",
+        "Commodity/Agriculture/Softs/Sugar",
+        "Commodity/Energy/Oil/Refined/Gasoline",
+        "Commodity/Energy/Oil/Refined/Gasoil",
+        "Commodity/Agriculture/Softs/Sugar/White",
+        "Commodity/Agriculture/Fertilizer",
+        "Commodity/Metals/Precious",
+        "Commodity/Agriculture/Livestock/Cattle/Live",
+        "Financial/Index",
+        "Commodity/Energy/Oil/CrudeOil/Dubai",
+        "Commodity/Energy/Biofuel",
+        "Commodity/Metals/Precious/Silver",
+        "Commodity/Metals/Ferrous/Steel",
+        "Commodity/Metals/Precious/Palladium",
+        "Commodity/Metals/NonFerrous/Cobalt",
+        "Commodity/Agriculture/Softs/Coffee/Arabica",
+        "Commodity/Agriculture/GrainAndSeed/Soybean/Meal",
+        "Commodity/Agriculture/Softs/Coffee/Robusta",
+        "Commodity/Energy/Electricity",
+        "Commodity/Metals/NonFerrous/Aluminium",
+        "Commodity/Agriculture/GrainAndSeed/Soybean/Oil",
+        "Commodity/Agriculture/Softs/CastorSeed",
+        "Commodity/Energy/NatGas",
+        "Commodity/Agriculture/GrainAndSeed/AdzukiBean",
+        "Commodity/Metals/NonFerrous/Zinc",
+        "Commodity/Agriculture/Softs/Cotton/CottonSeed",
+        "Commodity/Agriculture/Softs/Turmeric",
+        "Commodity/Metals/Ferrous",
+        "Commodity/Agriculture/Dairy",
+        "Commodity/Energy/Oil/CrudeOil/Murban",
+        "Commodity/Agriculture/GrainAndSeed/PalmOil",
+        "Commodity/Metals/NonFerrous/Uranium",
+        "Commodity/Agriculture/GrainAndSeed/Oats",
+        "Commodity/Agriculture/GrainAndSeed/Wheat/HRW",
+        "Commodity/Agriculture/GrainAndSeed/Rice/Rough",
+        "Commodity/Energy/Oil",
+        "Commodity/Agriculture/Softs/Cocoa",
+        "Commodity/Agriculture/Softs/Cumin",
+        "Commodity/Metals",
+        "Commodity/Agriculture/Softs/Isabgol",
+        "Financial/Equity",
+        "Commodity/Agriculture/Softs/Sugar/Raw",
+        "Commodity/Agriculture/Livestock/Cattle/Feeder",
+        "Commodity/Agriculture/GrainAndSeed/Millet",
+        "Commodity/Agriculture/Softs/Rubber",
+        "Commodity/Agriculture/Livestock",
+        "Commodity/Agriculture/Softs/CastorOil",
+        "Commodity/Agriculture/Lumber",
+        "Commodity/Agriculture/Livestock/Hog",
+        "Commodity/Energy/Oil/Refined/Heating",
+        "Commodity/Agriculture/GrainAndSeed/Wheat/HRS",
+        "Commodity/Agriculture/GrainAndSeed/Barley",
+        "Commodity/Agriculture/Softs/Cotton/Kapas",
+        "Commodity/Agriculture",
+        "Commodity/Weather",
+        "Commodity/Agriculture/GrainAndSeed"
       ]
     },
     {
-      "n": "all_time_low",
-      "t": "price",
-      "r": null
-    },
-    {
-      "n": "rates_time_series",
+      "n": "rates_dividend_recent",
       "t": "map",
       "r": null
-    },
-    {
-      "n": "current_session",
-      "t": "text",
-      "r": [
-        "out_of_session"
-      ]
-    },
-    {
-      "n": "fundamental_currency_code",
-      "t": "text",
-      "r": []
     },
     {
       "n": "provider-id",
@@ -126,8 +114,13 @@
       ]
     },
     {
-      "n": "all_time_high_day",
-      "t": "time",
+      "n": "rates_ttm",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "rates_current",
+      "t": "map",
       "r": null
     },
     {
@@ -136,9 +129,181 @@
       "r": null
     },
     {
+      "n": "minmov",
+      "t": "number",
+      "r": null
+    },
+    {
       "n": "minmove2",
       "t": "number",
       "r": null
+    },
+    {
+      "n": "update-time",
+      "t": "number",
+      "r": null
+    },
+    {
+      "n": "country_code",
+      "t": "text",
+      "r": [
+        "AR",
+        "JP",
+        "KR",
+        "AU",
+        "NZ",
+        "RU",
+        "PL",
+        "EU",
+        "IN",
+        "TW",
+        "HK",
+        "AE",
+        "US",
+        "GB",
+        "SG",
+        "NO",
+        "MY",
+        "CA",
+        "TH",
+        "BR",
+        "CN",
+        "PT",
+        "HU",
+        "BE",
+        "TR",
+        "VN",
+        "NL",
+        "FR"
+      ]
+    },
+    {
+      "n": "rates_pt",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "rates_fy",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "fundamental_currency_code",
+      "t": "text",
+      "r": []
+    },
+    {
+      "n": "all_time_high",
+      "t": "price",
+      "r": null
+    },
+    {
+      "n": "rates_dividend_upcoming",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "rates_fh",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "rates_time_series",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "rates_mc",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "sector",
+      "t": "text",
+      "r": [
+        "Financials",
+        "Currencies",
+        "Agricultural",
+        "Indexes",
+        "Energy",
+        "Metals"
+      ]
+    },
+    {
+      "n": "current_session",
+      "t": "text",
+      "r": [
+        "out_of_session"
+      ]
+    },
+    {
+      "n": "all_time_high_day",
+      "t": "time",
+      "r": null
+    },
+    {
+      "n": "all_time_low_day",
+      "t": "time",
+      "r": null
+    },
+    {
+      "n": "rates_earnings_fq",
+      "t": "map",
+      "r": null
+    },
+    {
+      "n": "source-logoid",
+      "t": "text",
+      "r": [
+        "source/CBOT_MINI",
+        "source/KRX",
+        "source/TMX",
+        "source/ADX",
+        "source/CBOT",
+        "source/ICEENDEX",
+        "source/ICEEUR",
+        "source/NYMEX_MINI",
+        "source/TFX",
+        "source/MATBAROFEX",
+        "source/EUREX",
+        "source/TFEX",
+        "source/HKEX",
+        "source/NZX",
+        "source/MCX",
+        "source/ICEAD",
+        "source/DFM",
+        "source/CFFEX",
+        "source/ICEUS",
+        "source/ICESG",
+        "source/NYMEX",
+        "source/EURONEXT",
+        "source/NCDEX",
+        "source/SHFE",
+        "source/CME_MINI",
+        "source/BIST",
+        "source/CME",
+        "source/TAIFEX",
+        "source/LME",
+        "source/OSE",
+        "source/NSE",
+        "source/GPW",
+        "source/MYX",
+        "source/MGEX",
+        "source/NSEIX",
+        "source/CBOE",
+        "source/TOCOM",
+        "source/BET",
+        "source/ASX24",
+        "source/COMEX_MINI",
+        "source/HNX",
+        "country/AE",
+        "source/SGX",
+        "source/COMEX",
+        "source/BSE",
+        "source/RUS",
+        "source/MSEI",
+        "source/BMFBOVESPA"
+      ]
     },
     {
       "n": "fractional",
@@ -149,25 +314,23 @@
       ]
     },
     {
-      "n": "sector",
-      "t": "text",
-      "r": [
-        "Financials",
-        "Indexes",
-        "Energy",
-        "Metals",
-        "Currencies",
-        "Agricultural"
-      ]
-    },
-    {
-      "n": "rates_pt",
+      "n": "rates_earnings_next_fq",
       "t": "map",
       "r": null
     },
     {
-      "n": "rates_earnings_next_fq",
+      "n": "rates_fq",
       "t": "map",
+      "r": null
+    },
+    {
+      "n": "all_time_low",
+      "t": "price",
+      "r": null
+    },
+    {
+      "n": "all_time_open",
+      "t": "price",
       "r": null
     },
     {
@@ -176,297 +339,13 @@
       "r": null
     },
     {
-      "n": "rates_dividend_upcoming",
-      "t": "map",
+      "n": "indexes",
+      "t": "interface",
       "r": null
-    },
-    {
-      "n": "product",
-      "t": "text",
-      "r": [
-        "Commodity/Agriculture/GrainAndSeed/Corn",
-        "Commodity/Agriculture/Livestock/Cattle/Feeder",
-        "Commodity/Metals/NonFerrous/Zinc",
-        "Commodity/Energy/Oil/Refined/Gasoil",
-        "Commodity/Agriculture/Softs/CastorOil",
-        "Commodity/Metals/NonFerrous/Molybdenum",
-        "Commodity/Agriculture/Softs/Guar",
-        "Commodity/Energy/Oil/CrudeOil/Murban",
-        "Commodity/Agriculture/GrainAndSeed/Soybean/Oil",
-        "Commodity/Energy/Oil/CrudeOil/WTI",
-        "Commodity/Energy/Freight",
-        "Commodity/Metals/NonFerrous",
-        "Commodity/Agriculture/Softs/Coffee/Arabica",
-        "Financial/Currency",
-        "Commodity/Metals/NonFerrous/Lithium",
-        "Commodity/Agriculture/GrainAndSeed/Sunflower",
-        "Commodity/Agriculture/Livestock",
-        "Commodity/Agriculture/GrainAndSeed/Soybean/Meal",
-        "Commodity/Metals/Ferrous",
-        "Commodity/Agriculture/Softs/Cumin",
-        "Commodity/Agriculture/GrainAndSeed/Soybean",
-        "Commodity/Energy/Biofuel",
-        "Commodity/Agriculture/Livestock/Cattle/Live",
-        "Commodity/Energy/NatGas",
-        "Commodity/Metals/NonFerrous/Nickel",
-        "Commodity/Agriculture/GrainAndSeed",
-        "Commodity/Metals/NonFerrous/Tin",
-        "Commodity/Agriculture/GrainAndSeed/Rapeseed",
-        "Financial/Index",
-        "Commodity/Metals/NonFerrous/Copper",
-        "Commodity/Energy/Oil/Refined/Heating",
-        "Commodity/Agriculture/Softs/Coriander",
-        "Commodity/Agriculture/Softs/Coffee/Robusta",
-        "Commodity/Agriculture/GrainAndSeed/Wheat/HRS",
-        "Commodity/Agriculture/Softs/Sugar/White",
-        "Commodity/Agriculture/Livestock/Hog",
-        "Commodity/Agriculture/Softs/Cocoa",
-        "Commodity/Metals/NonFerrous/Uranium",
-        "Commodity/Metals",
-        "Commodity/Agriculture/Softs/Turmeric",
-        "Financial/Equity",
-        "Commodity/Energy/Oil/CrudeOil/Brent",
-        "Commodity/Agriculture/Softs/FrozenOrangeJuice",
-        "Commodity/Agriculture/Softs/Cotton/Kapas",
-        "Commodity/Agriculture/Softs/Cotton/CottonSeed",
-        "Commodity/Agriculture/Softs/Cotton/Raw",
-        "Commodity/Agriculture/Softs/Sugar",
-        "Commodity/Energy/Oil",
-        "Commodity/Agriculture/GrainAndSeed/Millet",
-        "Commodity/Energy/Oil/Refined/Gasoline",
-        "Commodity/Agriculture/GrainAndSeed/Rice/Rough",
-        "Commodity/Agriculture/GrainAndSeed/Wheat/SRW",
-        "Commodity/Agriculture/Softs/CastorSeed",
-        "Commodity/Energy/Oil/CrudeOil/Dubai",
-        "Commodity/Agriculture/Softs",
-        "Commodity/Energy",
-        "Commodity/Agriculture/GrainAndSeed/AdzukiBean",
-        "Commodity/Metals/NonFerrous/Cobalt",
-        "Commodity/Energy/Oil/Refined",
-        "Commodity/Energy/Emissions",
-        "Commodity/Energy/Coal",
-        "Financial/InterestRate",
-        "Commodity/Agriculture/GrainAndSeed/Oats",
-        "Commodity/Agriculture/Softs/Isabgol",
-        "Commodity/Metals/Ferrous/Steel",
-        "Commodity/Metals/Precious/Gold",
-        "Commodity/Agriculture",
-        "Commodity/Metals/Precious/Silver",
-        "Commodity/Agriculture/Fertilizer",
-        "Commodity/Agriculture/Dairy",
-        "Commodity/Agriculture/GrainAndSeed/PalmOil",
-        "Commodity/Agriculture/GrainAndSeed/Wheat",
-        "Commodity/Metals/Precious",
-        "Commodity/Metals/NonFerrous/Lead",
-        "Commodity/Energy/Oil/CrudeOil/BAKKEN",
-        "Commodity/Agriculture/Softs/MenthaOil",
-        "Commodity/Agriculture/Softs/Sesame",
-        "Commodity/Energy/Electricity",
-        "Commodity/Metals/NonFerrous/Aluminium",
-        "Commodity/Metals/Precious/Palladium",
-        "Commodity/Agriculture/GrainAndSeed/Barley",
-        "Commodity/Metals/Precious/Platinum",
-        "Commodity/Agriculture/Lumber",
-        "Commodity/Agriculture/GrainAndSeed/Wheat/HRW",
-        "Commodity/Agriculture/Softs/Rubber",
-        "Commodity/Weather",
-        "Commodity/Energy/Oil/CrudeOil",
-        "Commodity/Agriculture/Softs/Sugar/Raw"
-      ]
-    },
-    {
-      "n": "all_time_low_day",
-      "t": "time",
-      "r": null
-    },
-    {
-      "n": "rates_dividend_recent",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "rates_mc",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "rates_fh",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "rates_ttm",
-      "t": "map",
-      "r": null
-    },
-    {
-      "n": "country_code",
-      "t": "text",
-      "r": [
-        "CA",
-        "BE",
-        "CN",
-        "PT",
-        "SG",
-        "IN",
-        "HK",
-        "RU",
-        "NL",
-        "TR",
-        "HU",
-        "TH",
-        "PL",
-        "TW",
-        "NO",
-        "FR",
-        "NZ",
-        "AE",
-        "VN",
-        "BR",
-        "JP",
-        "MY",
-        "EU",
-        "US",
-        "AU",
-        "GB",
-        "AR",
-        "KR"
-      ]
-    },
-    {
-      "n": "update-time",
-      "t": "number",
-      "r": null
-    },
-    {
-      "n": "is_primary",
-      "t": "bool",
-      "r": null
-    },
-    {
-      "n": "currency_id",
-      "t": "text",
-      "r": [
-        "EUR",
-        "AUD",
-        "ARS",
-        "ZAR",
-        "BRL",
-        "KRW",
-        "XTVGBX",
-        "CAD",
-        "TRY",
-        "PLN",
-        "MYR",
-        "MXN",
-        "UAH",
-        "RSD",
-        "CHF",
-        "HUF",
-        "XTVUSX",
-        "RUB",
-        "DKK",
-        "NZD",
-        "CNY",
-        "USD",
-        "INR",
-        "NOK",
-        "THB",
-        "GBP",
-        "SEK",
-        "JPY",
-        "XTVCNH",
-        "CZK",
-        "VND",
-        "RON",
-        "CLP",
-        "TWD",
-        "HKD",
-        "SGD",
-        "AED"
-      ]
-    },
-    {
-      "n": "base_currency_kind",
-      "t": "text",
-      "r": [
-        "fiat",
-        "crypto"
-      ]
     },
     {
       "n": "days_to_maturity",
       "t": "number",
-      "r": null
-    },
-    {
-      "n": "submarket",
-      "t": "text",
-      "r": [
-        ""
-      ]
-    },
-    {
-      "n": "low_after_high_all_change",
-      "t": "percent",
-      "r": null
-    },
-    {
-      "n": "cryptoasset-info.id",
-      "t": "text",
-      "r": []
-    },
-    {
-      "n": "currency",
-      "t": "text",
-      "r": [
-        "RUB",
-        "CNY",
-        "CNH",
-        "NZD",
-        "USD",
-        "HUF",
-        "CAD",
-        "BRL",
-        "CHF",
-        "SGD",
-        "MXN",
-        "CZK",
-        "AUD",
-        "THB",
-        "VND",
-        "UAH",
-        "KRW",
-        "INR",
-        "JPY",
-        "GBP",
-        "HKD",
-        "EUR",
-        "NOK",
-        "AED",
-        "CLP",
-        "TRY",
-        "USX",
-        "SEK",
-        "MYR",
-        "DKK",
-        "ZAR",
-        "RON",
-        "RSD",
-        "GBX",
-        "TWD",
-        "PLN",
-        "ARS"
-      ]
-    },
-    {
-      "n": "active_symbol",
-      "t": "bool",
-      "r": null
-    },
-    {
-      "n": "expiration",
-      "t": "time",
       "r": null
     },
     {
@@ -475,115 +354,67 @@
       "r": null
     },
     {
-      "n": "currency_kind",
-      "t": "text",
-      "r": [
-        "fiat"
-      ]
-    },
-    {
-      "n": "update_time",
-      "t": "time",
-      "r": null
-    },
-    {
-      "n": "type",
-      "t": "text",
-      "r": [
-        "futures"
-      ]
-    },
-    {
-      "n": "is_shariah_compliant",
-      "t": "bool",
-      "r": null
-    },
-    {
-      "n": "market",
-      "t": "text",
-      "r": [
-        "futures"
-      ]
-    },
-    {
-      "n": "typespecs",
-      "t": "set",
-      "r": [
-        "",
-        "continuous",
-        "synthetic",
-        "mini",
-        "micro",
-        "expired"
-      ]
-    },
-    {
-      "n": "is_blacklisted",
-      "t": "bool",
-      "r": null
-    },
-    {
       "n": "exchange",
       "t": "text",
       "r": [
-        "EUREX",
-        "BET",
-        "BMFBOVESPA",
-        "BSE",
-        "COMEX_MINI",
-        "CBOE",
-        "MCX",
-        "SGX",
-        "DFM",
-        "NSEIX",
-        "ICEAD",
-        "CBOT_MINI",
-        "TMX",
-        "NSE",
-        "RUS",
-        "NZX",
-        "OSE",
-        "CFFEX",
-        "MSEI",
-        "ICEENDEX",
-        "BIST",
-        "ICEUS",
-        "KRX",
-        "NYMEX",
-        "NYMEX_MINI",
-        "TAIFEX",
-        "ICESG",
-        "TFEX",
-        "MGEX",
-        "CBOT",
-        "MYX",
-        "HNX",
-        "HKEX",
-        "ICEEUR",
-        "LME",
-        "GPW",
-        "TFX",
-        "ASX24",
-        "MATBAROFEX",
-        "TOCOM",
         "CME",
-        "NCDEX",
+        "TFEX",
         "COMEX",
-        "CME_MINI",
-        "SHFE",
-        "ADX",
+        "BSE",
+        "NCDEX",
+        "NYMEX_MINI",
+        "DFM",
+        "CBOT_MINI",
+        "HNX",
         "NASDAQDUBAI",
-        "EURONEXT"
+        "BMFBOVESPA",
+        "RUS",
+        "NSE",
+        "KRX",
+        "MGEX",
+        "MATBAROFEX",
+        "ADX",
+        "EUREX",
+        "NYMEX",
+        "ICEENDEX",
+        "SGX",
+        "CBOT",
+        "ASX24",
+        "MCX",
+        "ICESG",
+        "NSEIX",
+        "EURONEXT",
+        "ICEEUR",
+        "CME_MINI",
+        "TFX",
+        "GPW",
+        "CBOE",
+        "TAIFEX",
+        "CFFEX",
+        "LME",
+        "OSE",
+        "NZX",
+        "SHFE",
+        "MYX",
+        "ICEUS",
+        "ICEAD",
+        "BIST",
+        "COMEX_MINI",
+        "TMX",
+        "TOCOM",
+        "BET",
+        "HKEX",
+        "MSEI"
       ]
     },
     {
-      "n": "indexes",
-      "t": "interface",
-      "r": null
+      "n": "cryptoasset-info.id",
+      "t": "text",
+      "r": []
     },
     {
-      "n": "low_after_high_all_change_abs",
-      "t": "price",
+      "n": "maturity_date",
+      "t": "time-yyyymmdd",
       "r": null
     },
     {
@@ -597,8 +428,8 @@
       ]
     },
     {
-      "n": "maturity_date",
-      "t": "time-yyyymmdd",
+      "n": "is_blacklisted",
+      "t": "bool",
       "r": null
     },
     {
@@ -607,20 +438,189 @@
       "r": []
     },
     {
+      "n": "is_shariah_compliant",
+      "t": "bool",
+      "r": null
+    },
+    {
+      "n": "currency",
+      "t": "text",
+      "r": [
+        "SEK",
+        "HKD",
+        "AUD",
+        "RSD",
+        "CZK",
+        "RON",
+        "CHF",
+        "TWD",
+        "INR",
+        "SGD",
+        "PLN",
+        "RUB",
+        "MYR",
+        "KRW",
+        "CNH",
+        "ZAR",
+        "DKK",
+        "CLP",
+        "BRL",
+        "NZD",
+        "TRY",
+        "AED",
+        "MXN",
+        "NOK",
+        "CNY",
+        "ARS",
+        "USD",
+        "GBX",
+        "EUR",
+        "USX",
+        "HUF",
+        "VND",
+        "JPY",
+        "THB",
+        "GBP",
+        "CAD",
+        "UAH"
+      ]
+    },
+    {
+      "n": "active_symbol",
+      "t": "bool",
+      "r": null
+    },
+    {
+      "n": "base_currency_kind",
+      "t": "text",
+      "r": [
+        "fiat",
+        "crypto"
+      ]
+    },
+    {
+      "n": "market",
+      "t": "text",
+      "r": [
+        "futures"
+      ]
+    },
+    {
+      "n": "low_after_high_all_change",
+      "t": "percent",
+      "r": null
+    },
+    {
+      "n": "type",
+      "t": "text",
+      "r": [
+        "futures"
+      ]
+    },
+    {
+      "n": "is_primary",
+      "t": "bool",
+      "r": null
+    },
+    {
+      "n": "update_time",
+      "t": "time",
+      "r": null
+    },
+    {
+      "n": "low_after_high_all_change_abs",
+      "t": "price",
+      "r": null
+    },
+    {
+      "n": "expiration",
+      "t": "time",
+      "r": null
+    },
+    {
+      "n": "currency_kind",
+      "t": "text",
+      "r": [
+        "fiat"
+      ]
+    },
+    {
+      "n": "submarket",
+      "t": "text",
+      "r": [
+        ""
+      ]
+    },
+    {
+      "n": "currency_id",
+      "t": "text",
+      "r": [
+        "CNY",
+        "NZD",
+        "CLP",
+        "VND",
+        "EUR",
+        "INR",
+        "GBP",
+        "MXN",
+        "NOK",
+        "ZAR",
+        "RON",
+        "TWD",
+        "XTVCNH",
+        "DKK",
+        "BRL",
+        "HKD",
+        "TRY",
+        "RSD",
+        "SGD",
+        "CZK",
+        "CAD",
+        "XTVGBX",
+        "JPY",
+        "XTVUSX",
+        "THB",
+        "MYR",
+        "ARS",
+        "CHF",
+        "SEK",
+        "AUD",
+        "RUB",
+        "KRW",
+        "UAH",
+        "USD",
+        "HUF",
+        "AED",
+        "PLN"
+      ]
+    },
+    {
+      "n": "typespecs",
+      "t": "set",
+      "r": [
+        "expired",
+        "",
+        "continuous",
+        "synthetic",
+        "mini",
+        "micro"
+      ]
+    },
+    {
       "n": "Perf.All",
       "t": "number",
       "r": null
     },
     {
-      "n": "time",
-      "t": "time",
+      "n": "bars_count",
+      "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "change_abs",
-      "t": "price",
+      "n": "premarket_change",
+      "t": "percent",
       "r": null,
       "hh": true,
       "rd": true
@@ -633,7 +633,14 @@
       "rd": true
     },
     {
-      "n": "post_change",
+      "n": "change",
+      "t": "percent",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "gap_up",
       "t": "percent",
       "r": null,
       "hh": true,
@@ -647,11 +654,13 @@
       "rd": true
     },
     {
-      "n": "volume_change_abs",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
+      "n": "update_mode",
+      "t": "text",
+      "r": [
+        "endofday",
+        "streaming",
+        "delayed_streaming_1200"
+      ]
     },
     {
       "n": "pre_change",
@@ -661,42 +670,14 @@
       "rd": true
     },
     {
-      "n": "gap_up_abs",
-      "t": "price",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "pre_change_abs",
-      "t": "price",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "bars_count",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "premarket_change_abs",
-      "t": "price",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "premarket_change",
+      "n": "postmarket_change",
       "t": "percent",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "postmarket_change_abs",
+      "n": "change_from_open_abs",
       "t": "price",
       "r": null,
       "hh": true,
@@ -710,87 +691,15 @@
       "rd": true
     },
     {
-      "n": "update_mode",
-      "t": "text",
-      "r": [
-        "streaming",
-        "delayed_streaming_1200",
-        "endofday"
-      ]
-    },
-    {
-      "n": "last_bar_update_time",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "volume_change",
-      "t": "percent",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "high",
-      "t": "price",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "change_from_open_abs",
-      "t": "price",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "change",
-      "t": "percent",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "change_from_open",
-      "t": "percent",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "volume",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "indicators_bars_count",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "open",
-      "t": "price",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "premarket_change_from_open_abs",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
       "n": "gap_down",
       "t": "percent",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "gap_up_abs",
+      "t": "price",
       "r": null,
       "hh": true,
       "rd": true
@@ -810,8 +719,8 @@
       "rd": true
     },
     {
-      "n": "postmarket_change",
-      "t": "percent",
+      "n": "premarket_change_abs",
+      "t": "price",
       "r": null,
       "hh": true,
       "rd": true
@@ -824,945 +733,112 @@
       "rd": true
     },
     {
-      "n": "gap_up",
-      "t": "percent",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA100",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "open_interest",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.R1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA6",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.All.Calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "KltChnl.basis",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.1M.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.All.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.S3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.S2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA21",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.EveningStar",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Camarilla.R3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA10",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.After.High.All",
+      "n": "change_abs",
       "t": "price",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "ADX+DI_50[1]",
+      "n": "premarket_change_from_open_abs",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Low.5D",
+      "n": "volume_change_abs",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Candle.Marubozu.White",
-      "t": "number",
+      "n": "change_from_open",
+      "t": "percent",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Recommend.Other",
-      "t": "number",
+      "n": "pre_change_abs",
+      "t": "price",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Stoch.D_14_1_3",
-      "t": "number",
+      "n": "post_change",
+      "t": "percent",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "DonchCh20.Lower",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.3M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.All",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Demark.Middle",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.All.Calc.Date",
+      "n": "time",
       "t": "time",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Candle.Engulfing.Bullish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Mom[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.S3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Value.Traded",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.All.Calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI21",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX_20",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA120",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.R3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_9[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_8_3_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "first_bar_time",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX_50",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.3M.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_5_3_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "P.SAR",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.Middle",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.Middle",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.LongShadow.Lower",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_50",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA13",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "W.R",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_14_1_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Doji",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_20[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ATRP",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Hammer",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.VWMA",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA40",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Recommend.MA",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "relative_volume_10d_calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Open.All.Calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.3Y",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.HullMA9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.5Y",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.YTD",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI2[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA60",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.Lead1_20_60_120_30",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "BB.lower_50",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.AbandonedBaby.Bullish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Harami.Bullish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Marubozu.Black",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.Stoch.RSI",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "AO",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Camarilla.R1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.S2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.R1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "average_volume_10d_calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX_100",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.3M.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.1M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA55",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA15",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI10[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA7",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.5D",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "VWAP",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.6M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.R2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "AO[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.Lead1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI7",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_14_1_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.RSI.D",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ROC",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Volatility.W",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.R3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.3BlackCrows",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.S1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI30[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.3M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA13",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "price_52_week_low",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Doji.Gravestone",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "price_52_week_high_date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.UO",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.S3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "MACD.hist",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA300",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Volatility.M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADRP",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Camarilla.Middle",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA5",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Harami.Bearish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA7",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_6_3_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Volatility.D",
-      "t": "number",
+      "n": "open",
+      "t": "price",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "RSI4[1]",
+      "n": "indicators_bars_count",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "EMA150",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.ShootingStar",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.S1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA250",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA50",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D",
-      "t": "number",
+      "n": "high",
+      "t": "price",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "High.All",
+      "n": "last_bar_update_time",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "RSI2",
+      "n": "volume",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "SMA144",
-      "t": "number",
+      "n": "volume_change",
+      "t": "percent",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Candle.3WhiteSoldiers",
-      "t": "number",
+      "n": "postmarket_change_abs",
+      "t": "price",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "ADX-DI[1]",
+      "n": "SMA150",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "SMA50",
+      "n": "Mom",
       "t": "number",
       "r": null,
       "hh": true,
@@ -1783,1001 +859,7 @@
       "rd": true
     },
     {
-      "n": "Candle.LongShadow.Upper",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA26",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "MoneyFlow",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.SpinningTop.Black",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA5",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.6M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Camarilla.S2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.CLine",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.AbandonedBaby.Bearish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.Middle",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Mom_14",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Aroon.Up",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI10",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA200",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_5_3_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI21[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI20[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.BLine_20_60_120_30",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "average_volume_60d_calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA15",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "BB.upper_50",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA34",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_8_3_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "BB.basis_50",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "CCI20[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA20",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Mom_14[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI5[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA34",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.SpinningTop.White",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.6M.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.6M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_6_3_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA300",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.S2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_20[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI7[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.BBPower",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.TriStar.Bullish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI4",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.WR",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.All.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Kicking.Bullish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_6_3_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Camarilla.S3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA89",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_100",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA12",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Engulfing.Bearish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA21",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "time_business_day",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.BLine",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "MACD.signal",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA30",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.10Y",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "VWMA",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.3M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_9[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.Lead2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Camarilla.R2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Demark.S1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_100",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.MorningStar",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_14_1_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Rec.Ichimoku",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "MACD.macd",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.Lead2_20_60_120_30",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Kicking.Bearish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Demark.R1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA8",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.R2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
       "n": "Candle.TriStar.Bearish",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA144",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "BB.lower",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.1M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_20",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.RSI.K",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "BB.basis",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA10",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_8_3_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI5",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "price_52_week_low_date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "HullMA9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA250",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA25",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.R1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA8",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI30",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX_9",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.W",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K_8_3_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Mom",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA12",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.Y",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.InvertedHammer",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA75",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "price_52_week_high",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "BB.upper",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA6",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.1M.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Low.All.Calc.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA26",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "UO",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA40",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.Doji.Dragonfly",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "average_volume_30d_calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_100[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA200",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA89",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "KltChnl.upper",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_5_3_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "average_volume_90d_calc",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Classic.R2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA150",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Fibonacci.S1",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ChaikinMoneyFlow",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA60",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Candle.HangingMan",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI20",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA100",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA14",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "High.6M.Date",
-      "t": "time",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_50[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_6_3_3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "KltChnl.lower",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA75",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.1M",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.D_5_3_3[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADR",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Pivot.M.Woodie.R3",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_100[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "HullMA20",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA2",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX-DI_50",
       "t": "number",
       "r": null,
       "hh": true,
@@ -2791,112 +873,35 @@
       "rd": true
     },
     {
-      "n": "CCI20",
+      "n": "Candle.EveningStar",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "SMA30",
+      "n": "RSI10",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Recommend.All",
+      "n": "High.3M.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.10Y",
       "t": "number",
       "r": null,
       "hh": true,
       "rd": true
     },
     {
-      "n": "Aroon.Down",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA55",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA14",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Perf.5D",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ADX+DI_20",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "RSI9[1]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "HullMA200",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "EMA25",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "AO[2]",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Stoch.K",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "ATR",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "Ichimoku.CLine_20_60_120_30",
-      "t": "number",
-      "r": null,
-      "hh": true,
-      "rd": true
-    },
-    {
-      "n": "SMA2",
+      "n": "SMA75",
       "t": "number",
       "r": null,
       "hh": true,
@@ -2910,7 +915,126 @@
       "rd": true
     },
     {
-      "n": "SMA20",
+      "n": "KltChnl.basis",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI4[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA25",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI21",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Camarilla.R1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.TriStar.Bullish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "BB.upper",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.All.Calc.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "VWMA",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Doji",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Kicking.Bearish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA200",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA100",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.WR",
       "t": "number",
       "r": null,
       "hh": true,
@@ -2918,6 +1042,1882 @@
     },
     {
       "n": "DonchCh20.Upper",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Mom[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.BLine",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Harami.Bullish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "MACD.macd",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "AO[2]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Volatility.D",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA7",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "relative_volume_10d_calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.All.Calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Volatility.M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA300",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Marubozu.Black",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.Stoch.RSI",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Aroon.Down",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.3M.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "price_52_week_high",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_50[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.R2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "average_volume_60d_calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.AbandonedBaby.Bullish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.CLine_20_60_120_30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI30[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "MACD.hist",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Recommend.MA",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.1M.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.5D",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX_100",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI2[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.BLine_20_60_120_30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.Middle",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI5[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "BB.lower_50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Demark.Middle",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA12",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Recommend.Other",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_6_3_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA21",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "W.R",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA7",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA6",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "BB.basis",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_6_3_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_50[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA25",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_100",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA14",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "MACD.signal",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "KltChnl.lower",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.R1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_5_3_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA60",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.All.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.6M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA26",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.W",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.All.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI10[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "VWAP",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_20[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA60",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Mom_14",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_20[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.1M.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.Middle",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.All",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADR",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.5D",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Demark.S1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.LongShadow.Lower",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.Middle",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Mom_14[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "average_volume_10d_calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI4",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA40",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX_9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_14_1_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA150",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA144",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Recommend.All",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "time_business_day",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "P.SAR",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_5_3_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "MoneyFlow",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA34",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA6",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Hammer",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.RSI.K",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI9[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ATRP",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.All",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA5",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.S1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA12",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX_20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.R3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Kicking.Bullish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_14_1_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.R3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA34",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA75",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA55",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Marubozu.White",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.5D",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADRP",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_6_3_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.Ichimoku",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_100",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Harami.Bearish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.R2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_5_3_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA10",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "AO[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_100[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.1M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Doji.Gravestone",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.SpinningTop.Black",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.3WhiteSoldiers",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.S2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "UO",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "KltChnl.upper",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA26",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.3M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA15",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.Lead2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "price_52_week_high_date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "open_interest",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.S2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.3M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA144",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_5_3_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA120",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "first_bar_time",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.R2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_14_1_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_9[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.R1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA5",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.VWMA",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA200",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "price_52_week_low_date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.S3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Aroon.Up",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.YTD",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX_50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.UO",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Demark.R1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA89",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.ShootingStar",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.3M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.6M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA8",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA89",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "average_volume_90d_calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA13",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.1M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.BBPower",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.S3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.6M.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_8_3_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.R1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.R3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.All.Calc.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_100[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Camarilla.S2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA15",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.AbandonedBaby.Bearish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA8",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "HullMA20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.CLine",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.After.High.All",
+      "t": "price",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA250",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Camarilla.S3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Camarilla.R2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "DonchCh20.Lower",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Engulfing.Bearish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.InvertedHammer",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI5",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.Lead1_20_60_120_30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ROC",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.Lead1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA40",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ATR",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_8_3_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "AO",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.SpinningTop.White",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Camarilla.Middle",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.HangingMan",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_6_3_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.6M.Date",
+      "t": "time",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Low.All.Calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA21",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA55",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA10",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Fibonacci.S1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Volatility.W",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.Y",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI7[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.5Y",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.RSI.D",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI_9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ChaikinMoneyFlow",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.S2",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Classic.S1",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "High.6M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA13",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "HullMA200",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.3Y",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Camarilla.R3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Rec.HullMA9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX+DI",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_8_3_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA300",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA100",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K_8_3_3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "price_52_week_low",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "HullMA9",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI21[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Ichimoku.Lead2_20_60_120_30",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Engulfing.Bullish",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.Doji.Dragonfly",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "EMA14",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA250",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.LongShadow.Upper",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "CCI20[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Value.Traded",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Pivot.M.Woodie.S3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Open.All.Calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "SMA3",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Perf.1M",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "BB.lower",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "BB.basis_50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.D_14_1_3[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "ADX-DI_9[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI20[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "CCI20",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "BB.upper_50",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI7",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "average_volume_30d_calc",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.MorningStar",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Candle.3BlackCrows",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "RSI[1]",
+      "t": "number",
+      "r": null,
+      "hh": true,
+      "rd": true
+    },
+    {
+      "n": "Stoch.K",
       "t": "number",
       "r": null,
       "hh": true,

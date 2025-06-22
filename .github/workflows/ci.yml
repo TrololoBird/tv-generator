@@ -17,11 +17,11 @@ jobs:
         python-version: ['3.10', '3.11']
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -29,32 +29,37 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      
+
       - name: Format check
-        run: black --check .
-      
+        run: black --check src/ tests/
+
       - name: Lint
-        run: flake8 tv_generator tests
-      
+        run: flake8 src/tv_generator tests
+
       - name: Type check
-        run: mypy tv_generator/
-      
+        run: mypy src/tv_generator/
+
       - name: Security - Bandit
-        run: bandit -r tv_generator
-      
+        run: bandit -r src/tv_generator
+
       - name: Security - Safety
         run: safety check
-      
+
       - name: Test with coverage
         run: |
-          pytest --cov=tv_generator --cov-report=xml --cov-report=term-missing
+          pytest --cov=src/tv_generator --cov-report=xml --cov-report=term-missing
         timeout-minutes: 10
-Looking at the context, I can see the issue. The `if` condition is missing the `${{ }}` wrapper around `secrets.CODECOV_TOKEN`. Here's the fix:
+
+      - name: Upload coverage to Codecov
+        if: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
           codecov -t $CODECOV_TOKEN
 
   integration:
@@ -62,22 +67,22 @@ Looking at the context, I can see the issue. The `if` condition is missing the `
     needs: test
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-      
+
       - name: Test CLI commands
         run: |
           tvgen --help
           tvgen info
           tvgen validate
-      
+
       - name: Test data fetching (mock)
         run: |
           # Тестируем с моками для избежания сетевых запросов
@@ -85,13 +90,13 @@ Looking at the context, I can see the issue. The `if` condition is missing the `
           import asyncio
           from unittest.mock import patch
           from tv_generator.core import Pipeline
-          
+
           async def test_pipeline():
               with patch('tv_generator.api.TradingViewAPI'):
                   pipeline = Pipeline()
                   # Тест без реальных API вызовов
                   print('Pipeline test completed')
-          
+
           asyncio.run(test_pipeline())
           "
 
@@ -100,23 +105,23 @@ Looking at the context, I can see the issue. The `if` condition is missing the `
     needs: [test, integration]
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install build twine
           pip install -e .
-      
+
       - name: Build package
         run: python -m build
-      
+
       - name: Check package
         run: twine check dist/*
-      
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -130,12 +135,12 @@ Looking at the context, I can see the issue. The `if` condition is missing the `
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
-      
+
       - name: Publish to PyPI
         if: ${{ secrets.PYPI_TOKEN }}
         env:

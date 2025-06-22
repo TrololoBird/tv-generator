@@ -24,9 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
-          pip install -e .
+          pip install -e ".[dev]"
           pip install black
           pip install codex_actions
           pip install pytest
@@ -56,7 +54,7 @@ jobs:
           bump_version()
 
           res = subprocess.run(
-              ["git", "diff", "--quiet", "HEAD", "--", "specs/*.yaml"]
+              ["git", "diff", "--quiet", "HEAD", "--", "specs/*.json"]
           )
           if res.returncode == 0:
               print("No spec changes detected")
@@ -75,7 +73,7 @@ jobs:
               ], check=True)
               branch = "spec-update-${{ github.run_number }}"
               subprocess.run(["git", "checkout", "-b", branch], check=True)
-              subprocess.run(["git", "add", "specs/*.yaml"], check=True)
+              subprocess.run(["git", "add", "specs/*.json"], check=True)
               subprocess.run([
                   "git",
                   "commit",
@@ -88,4 +86,3 @@ jobs:
                   body="Спецификация обновлена автоматически на основе новых данных с TradingView /metainfo",
               )
           PY
-

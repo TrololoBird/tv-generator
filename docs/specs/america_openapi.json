@@ -1,0 +1,668 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TradingView Scanner API - AMERICA",
+    "description": "OpenAPI specification for TradingView Scanner API America market with comprehensive documentation",
+    "version": "2.0.0",
+    "contact": {
+      "name": "TradingView Scanner API",
+      "url": "https://scanner.tradingview.com",
+      "email": "support@tradingview.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://scanner.tradingview.com",
+      "description": "TradingView Scanner API Production Server"
+    },
+    {
+      "url": "https://scanner-staging.tradingview.com",
+      "description": "TradingView Scanner API Staging Server"
+    }
+  ],
+  "paths": {
+    "/america/scan": {
+      "post": {
+        "summary": "Scan america market with comprehensive documentation",
+        "description": "Scan america market with filters and options This endpoint provides comprehensive market scanning capabilities with detailed filtering and sorting options.",
+        "operationId": "scanAmerica",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AmericaScanRequest"
+              },
+              "example": {
+                "symbols": {
+                  "tickers": [
+                    "NASDAQ:AAPL",
+                    "NYSE:MSFT"
+                  ],
+                  "query": {
+                    "types": []
+                  }
+                },
+                "columns": [
+                  "close",
+                  "volume",
+                  "change"
+                ],
+                "filter": [
+                  {
+                    "left": "close",
+                    "operation": ">",
+                    "right": 0
+                  }
+                ],
+                "sort": {
+                  "sortBy": "volume",
+                  "sortOrder": "desc"
+                },
+                "range": [
+                  0,
+                  10
+                ]
+              }
+            }
+          },
+          "description": "Scan request parameters for america market"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful scan result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AmericaScanResponse"
+                },
+                "example": {
+                  "totalCount": 150,
+                  "data": [
+                    {
+                      "s": "NASDAQ:AAPL",
+                      "close": 150.25,
+                      "volume": 50000000,
+                      "change": 2.5
+                    },
+                    {
+                      "s": "NYSE:MSFT",
+                      "close": 300.75,
+                      "volume": 30000000,
+                      "change": 1.8
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests - rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "america",
+          "scanner"
+        ]
+      }
+    },
+    "/america/metainfo": {
+      "get": {
+        "summary": "Get america market metadata with comprehensive documentation",
+        "description": "Get metadata for america market This endpoint provides comprehensive market scanning capabilities with detailed filtering and sorting options.",
+        "operationId": "getAmericaMetainfo",
+        "responses": {
+          "200": {
+            "description": "Market metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AmericaMetainfo"
+                },
+                "example": {
+                  "totalCount": 150,
+                  "data": [
+                    {
+                      "s": "NASDAQ:AAPL",
+                      "close": 150.25,
+                      "volume": 50000000,
+                      "change": 2.5
+                    },
+                    {
+                      "s": "NYSE:MSFT",
+                      "close": 300.75,
+                      "volume": 30000000,
+                      "change": 1.8
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests - rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "america",
+          "scanner"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AmericaScanRequest": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            },
+            "description": "Array of filters to apply"
+          },
+          "options": {
+            "$ref": "#/components/schemas/Options",
+            "description": "options field"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Markets to scan"
+          },
+          "symbols": {
+            "$ref": "#/components/schemas/Symbols",
+            "description": "symbols field"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Columns to return"
+          },
+          "range": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "Range of results [start, end]"
+          },
+          "filter2": {
+            "type": "object",
+            "description": "Alternative filter structure",
+            "x-experimental": true,
+            "x-undocumented": true
+          },
+          "sort.sortBy": {
+            "type": "string",
+            "enum": [
+              "name",
+              "close",
+              "volume",
+              "change"
+            ],
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "sort.sortBy field"
+          },
+          "sort.sortOrder": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "sort.sortOrder field"
+          },
+          "options.decimal_places": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8,
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "options.decimal_places field"
+          },
+          "options.currency": {
+            "type": "string",
+            "enum": [
+              "USD",
+              "EUR",
+              "GBP"
+            ],
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "options.currency field"
+          },
+          "options.timezone": {
+            "type": "string",
+            "enum": [
+              "UTC",
+              "EST",
+              "PST"
+            ],
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "options.timezone field"
+          },
+          "options.session": {
+            "type": "string",
+            "enum": [
+              "regular",
+              "extended",
+              "premarket"
+            ],
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "options.session field"
+          },
+          "symbols.query.exchanges": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "symbols.query.exchanges field"
+          },
+          "symbols.query.types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "symbols.query.types field"
+          },
+          "symbols.tickers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "symbols.tickers field"
+          },
+          "filter.operation": {
+            "type": "string",
+            "enum": [
+              "and",
+              "or",
+              "not",
+              "gt",
+              "lt",
+              "eq",
+              "nz"
+            ],
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "filter.operation field"
+          },
+          "filter.left": {
+            "type": "object",
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "filter.left field"
+          },
+          "filter.right": {
+            "type": "object",
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "filter.right field"
+          },
+          "filter.settings": {
+            "type": "object",
+            "x-experimental": true,
+            "x-undocumented": true,
+            "description": "filter.settings field"
+          }
+        },
+        "required": [
+          "markets",
+          "columns",
+          "range"
+        ],
+        "example": {
+          "symbols": {
+            "tickers": [
+              "NASDAQ:AAPL",
+              "NYSE:MSFT"
+            ],
+            "query": {
+              "types": []
+            }
+          },
+          "columns": [
+            "close",
+            "volume",
+            "change"
+          ],
+          "filter": [
+            {
+              "left": "close",
+              "operation": ">",
+              "right": 0
+            }
+          ],
+          "sort": {
+            "sortBy": "volume",
+            "sortOrder": "desc"
+          },
+          "range": [
+            0,
+            10
+          ]
+        }
+      },
+      "AmericaScanResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "data field"
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "totalCount field"
+          }
+        }
+      },
+      "AmericaMetainfo": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "fields field"
+          }
+        }
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "enum": [
+              "and",
+              "or",
+              "not",
+              "gt",
+              "lt",
+              "eq",
+              "nz"
+            ],
+            "x-experimental": true,
+            "description": "operation field"
+          },
+          "left": {
+            "type": "object",
+            "x-experimental": true,
+            "description": "left field"
+          },
+          "right": {
+            "type": "object",
+            "x-experimental": true,
+            "description": "right field"
+          },
+          "settings": {
+            "type": "object",
+            "x-experimental": true,
+            "description": "settings field"
+          }
+        }
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "zh"
+            ],
+            "description": "lang field"
+          },
+          "decimal_places": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8,
+            "x-experimental": true,
+            "description": "decimal_places field"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "USD",
+              "EUR",
+              "GBP"
+            ],
+            "x-experimental": true,
+            "description": "currency field"
+          },
+          "timezone": {
+            "type": "string",
+            "enum": [
+              "UTC",
+              "EST",
+              "PST"
+            ],
+            "x-experimental": true,
+            "description": "timezone field"
+          },
+          "session": {
+            "type": "string",
+            "enum": [
+              "regular",
+              "extended",
+              "premarket"
+            ],
+            "x-experimental": true,
+            "description": "session field"
+          }
+        }
+      },
+      "Symbols": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "x-experimental": true
+              },
+              "exchanges": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "x-experimental": true
+              }
+            },
+            "description": "query field"
+          },
+          "tickers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "x-experimental": true,
+            "description": "tickers field"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "code": {
+            "type": "integer",
+            "description": "Error code"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details"
+          }
+        },
+        "required": [
+          "error",
+          "code"
+        ]
+      }
+    },
+    "examples": {
+      "america_scan_request": {
+        "summary": "Example america scan request",
+        "value": {
+          "symbols": {
+            "tickers": [
+              "NASDAQ:AAPL",
+              "NYSE:MSFT"
+            ],
+            "query": {
+              "types": []
+            }
+          },
+          "columns": [
+            "close",
+            "volume",
+            "change"
+          ],
+          "filter": [
+            {
+              "left": "close",
+              "operation": ">",
+              "right": 0
+            }
+          ],
+          "sort": {
+            "sortBy": "volume",
+            "sortOrder": "desc"
+          },
+          "range": [
+            0,
+            10
+          ]
+        }
+      },
+      "america_scan_response": {
+        "summary": "Example america scan response",
+        "value": {
+          "totalCount": 150,
+          "data": [
+            {
+              "s": "NASDAQ:AAPL",
+              "close": 150.25,
+              "volume": 50000000,
+              "change": 2.5
+            },
+            {
+              "s": "NYSE:MSFT",
+              "close": 300.75,
+              "volume": 30000000,
+              "change": 1.8
+            }
+          ]
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "america",
+      "description": "Operations for america market"
+    },
+    {
+      "name": "scanner",
+      "description": "Market scanning operations"
+    }
+  ]
+}

@@ -2,14 +2,18 @@
 Общие фикстуры для тестов.
 """
 
-import pytest
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
-from tv_generator.config import Settings
-from tv_generator.api import TradingViewAPI, APIResponse
-from tv_generator.core import Pipeline, MarketData
+
+import pytest
+
+from src.tv_generator.api import APIResponse, TradingViewAPI
+
+# Обновленные импорты для новой структуры
+from src.tv_generator.config import Settings
+from src.tv_generator.core import MarketData, Pipeline
 
 
 @pytest.fixture
@@ -41,22 +45,14 @@ def mock_settings():
         specs_dir="test_specs",
         log_level="DEBUG",
         test_tickers_per_market=1,
-        batch_size=10
+        batch_size=10,
     )
 
 
 @pytest.fixture
 def mock_api_response():
     """Мока ответа API."""
-    return {
-        "data": [
-            {
-                "s": "AAPL",
-                "d": [150.0, 1000000, "Apple Inc."]
-            }
-        ],
-        "totalCount": 1
-    }
+    return {"data": [{"s": "AAPL", "d": [150.0, 1000000, "Apple Inc."]}], "totalCount": 1}
 
 
 @pytest.fixture
@@ -64,24 +60,9 @@ def mock_metainfo():
     """Мока metainfo."""
     return {
         "fields": [
-            {
-                "name": "close",
-                "type": "number",
-                "description": "Close price",
-                "example": 150.0
-            },
-            {
-                "name": "volume",
-                "type": "number", 
-                "description": "Volume",
-                "example": 1000000
-            },
-            {
-                "name": "name",
-                "type": "string",
-                "description": "Company name",
-                "example": "Apple Inc."
-            }
+            {"name": "close", "type": "number", "description": "Close price", "example": 150.0},
+            {"name": "volume", "type": "number", "description": "Volume", "example": 1000000},
+            {"name": "name", "type": "string", "description": "Company name", "example": "Apple Inc."},
         ]
     }
 
@@ -93,9 +74,9 @@ def mock_tickers():
         "data": [
             {"s": "AAPL", "d": [150.0, 1000000]},
             {"s": "GOOGL", "d": [2500.0, 500000]},
-            {"s": "MSFT", "d": [300.0, 750000]}
+            {"s": "MSFT", "d": [300.0, 750000]},
         ],
-        "totalCount": 3
+        "totalCount": 3,
     }
 
 
@@ -111,19 +92,16 @@ def sample_market_data():
             "fields": [
                 {"name": "close", "type": "number"},
                 {"name": "volume", "type": "number"},
-                {"name": "name", "type": "string"}
+                {"name": "name", "type": "string"},
             ]
         },
-        tickers=[
-            {"name": "AAPL", "close": 150.0},
-            {"name": "GOOGL", "close": 2500.0}
-        ],
+        tickers=[{"name": "AAPL", "close": 150.0}, {"name": "GOOGL", "close": 2500.0}],
         fields=["close", "volume", "name"],
         working_fields=["close", "name"],
         openapi_fields={
             "close": {"type": "number", "description": "Close price"},
-            "name": {"type": "string", "description": "Company name"}
-        }
+            "name": {"type": "string", "description": "Company name"},
+        },
     )
 
 
@@ -131,26 +109,20 @@ def sample_market_data():
 def mock_tradingview_api():
     """Мока TradingView API."""
     api = AsyncMock(spec=TradingViewAPI)
-    
+
     # Мокаем методы API
     api.get_metainfo.return_value = {
-        "fields": [
-            {"name": "close", "type": "number"},
-            {"name": "volume", "type": "number"}
-        ]
+        "fields": [{"name": "close", "type": "number"}, {"name": "volume", "type": "number"}]
     }
-    
-    api.scan_tickers.return_value = [
-        {"name": "AAPL", "close": 150.0},
-        {"name": "GOOGL", "close": 2500.0}
-    ]
-    
+
+    api.scan_tickers.return_value = [{"name": "AAPL", "close": 150.0}, {"name": "GOOGL", "close": 2500.0}]
+
     api.test_field.side_effect = [True, False]  # close работает, volume нет
-    
+
     # Мокаем контекстный менеджер
     api.__aenter__ = AsyncMock(return_value=api)
     api.__aexit__ = AsyncMock(return_value=None)
-    
+
     return api
 
 
@@ -161,7 +133,7 @@ def mock_api_response_obj():
         data={"test": "data"},
         status_code=200,
         headers={"content-type": "application/json"},
-        url="https://test.example.com/api"
+        url="https://test.example.com/api",
     )
 
 
@@ -194,16 +166,8 @@ def mock_logger():
 def sample_markets_config():
     """Образец конфигурации рынков."""
     return {
-        "us_stocks": {
-            "endpoint": "america",
-            "label_product": "screener-stock",
-            "description": "US Stocks"
-        },
-        "crypto_coins": {
-            "endpoint": "coin",
-            "label_product": "screener-coin",
-            "description": "Cryptocurrency Coins"
-        }
+        "us_stocks": {"endpoint": "america", "label_product": "screener-stock", "description": "US Stocks"},
+        "crypto_coins": {"endpoint": "coin", "label_product": "screener-coin", "description": "Cryptocurrency Coins"},
     }
 
 
@@ -213,11 +177,8 @@ def mock_health_status():
     return {
         "status": "healthy",
         "timestamp": 1234567890.0,
-        "endpoints": {
-            "america": "healthy",
-            "crypto": "healthy"
-        },
-        "pipeline": "healthy"
+        "endpoints": {"america": "healthy", "crypto": "healthy"},
+        "pipeline": "healthy",
     }
 
 
@@ -268,4 +229,4 @@ def pytest_sessionfinish(session, exitstatus) -> None:
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:
-    pass 
+    pass

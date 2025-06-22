@@ -786,12 +786,12 @@ class OpenAPIGenerator:
         try:
             output_path = self.specs_dir / f"{market_name}_openapi.json"
             logger.info(f"Saving OpenAPI spec for {market_name} to {output_path}")
-            
+
             with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(spec, f, indent=2, ensure_ascii=False)
-            
+
             logger.info(f"✅ Successfully saved OpenAPI spec for {market_name} at {output_path}")
-            
+
         except OSError as e:
             logger.error(f"❌ Failed to save spec for {market_name}: {e}")
             raise FileSystemError(f"Failed to save spec for {market_name}: {e}")
@@ -802,9 +802,9 @@ class OpenAPIGenerator:
         для которых существуют файлы данных.
         """
         logger.info(f"🔍 Scanning for market data in '{self.results_dir}'...")
-        
+
         market_files = list(self.results_dir.glob("*_openapi_fields.json"))
-        
+
         # Этот маппинг нужен, чтобы по имени файла получить логическое имя рынка
         # например, по 'us_stocks_openapi_fields.json' получить 'us_stocks'
         # а по 'crypto_coins_openapi_fields.json' получить 'coin'
@@ -825,10 +825,10 @@ class OpenAPIGenerator:
         for f in market_files:
             # извлекаем 'us_stocks' из 'us_stocks_openapi_fields.json'
             file_market_name = f.name.replace("_openapi_fields.json", "")
-            
+
             # Находим логическое имя рынка
             logical_name = reverse_market_name_map.get(file_market_name)
-            
+
             if logical_name:
                 markets_to_generate.append(logical_name)
             else:
@@ -843,7 +843,7 @@ class OpenAPIGenerator:
 
         successful_generations = 0
         failed_generations = 0
-        
+
         for market in markets_to_generate:
             logger.info(f"🔄 Generating OpenAPI spec for {market}...")
             try:
@@ -858,7 +858,7 @@ class OpenAPIGenerator:
             except Exception as e:
                 logger.error(f"❌ Failed to generate spec for {market}: {e}")
                 failed_generations += 1
-        
+
         logger.info(f"📈 Generation summary: {successful_generations} successful, {failed_generations} failed")
 
 
