@@ -8,7 +8,8 @@ from .factories import CacheFactory, FileManagerFactory, SchemaGeneratorFactory,
 from .file_manager import AsyncFileManager
 from .metrics import GenerationMetrics, MetricsCollector
 from .parallel_pipeline import ParallelOpenAPIPipeline
-from .pipeline import OpenAPIPipeline
+from ..main import OpenAPIPipeline, generate_all_specifications
+from ..types import MarketData, OpenAPIGeneratorResult
 from .schema_generator import SchemaGenerator
 from .validator import Validator
 
@@ -29,4 +30,7 @@ __all__ = [
     "ValidatorFactory",
     "CacheFactory",
     "FileManagerFactory",
+    "MarketData",
+    "OpenAPIGeneratorResult",
+    "generate_all_specifications",
 ]

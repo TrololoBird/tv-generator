@@ -21,9 +21,7 @@ class SchemaGenerator(BaseSchemaGenerator):
     Все ошибки обрабатываются централизованно через декоратор log_and_catch.
     """
 
-    def __init__(
-        self, config: dict[str, Any] | None = None, compact: bool = False, max_fields: int | None = None
-    ):
+    def __init__(self, config: dict[str, Any] | None = None, compact: bool = False, max_fields: int | None = None):
         self.config = config or {}
         self.skip_enum_validation = self.config.get("skip_enum_validation", False)
         self.no_examples = self.config.get("no_examples", False)

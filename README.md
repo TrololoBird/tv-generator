@@ -2,6 +2,21 @@
 
 Генератор OpenAPI спецификаций для TradingView API на основе справочников tv-screener.
 
+## 📦 Генерация OpenAPI спецификаций
+
+```bash
+python -m src.tv_generator generate --market=russia --output-dir=docs/specs --validate
+```
+
+* Требует файл: `data/metainfo/russia.json`
+* Результат: `docs/specs/russia_openapi.json`
+* Совместимость: OpenAPI 3.1.0 + GPT Builder Custom Actions
+
+### Поддерживаемые параметры:
+- `--market`: рынок для генерации (russia, crypto, forex, etc.)
+- `--output-dir`: директория для сохранения спецификаций
+- `--validate`: валидация сгенерированной спецификации
+
 ## Источники данных
 
 Все данные о рынках, полях, типах и метаинформации берутся из справочников библиотеки [tv-screener](https://github.com/mariostoev/tv-screener):
@@ -44,26 +59,14 @@ bond, bonds, cfd, coin, crypto, economics2, forex, futures, options
 Проект использует единую точку входа через CLI:
 
 ```bash
-# Генерация OpenAPI спецификации для всех рынков
-python scripts/tv_generator_cli.py generate --validate --auto-update
+# Генерация OpenAPI спецификации для конкретного рынка
+python -m src.tv_generator generate --market=russia --output-dir=docs/specs --validate
 
-# Генерация для конкретного рынка
-python scripts/tv_generator_cli.py generate --market stocks
+# Генерация для всех доступных рынков
+python -m src.tv_generator
 
-# Обновление данных TradingView
-python scripts/tv_generator_cli.py update
-
-# Валидация данных
-python scripts/tv_generator_cli.py validate-data
-
-# Валидация сгенерированных спецификаций
-python scripts/tv_generator_cli.py validate
-
-# Синхронизация с tv-screener
-python scripts/tv_generator_cli.py sync --force
-
-# Информация о рынках
-python scripts/tv_generator_cli.py info --market forex
+# Помощь по командам
+python -m src.tv_generator --help
 ```
 
 ### Make команды
