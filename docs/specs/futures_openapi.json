@@ -84,40 +84,33 @@
           "type": {
             "type": "string",
             "description": "Symbol Type",
-            "example": "futures",
             "enum": [
               "futures"
             ]
           },
           "is_primary": {
             "type": "boolean",
-            "description": "Primary Listing",
-            "example": true
+            "description": "Primary Listing"
           },
           "active_symbol": {
             "type": "boolean",
-            "description": "Current trading day",
-            "example": true
+            "description": "Current trading day"
           },
           "change": {
             "type": "number",
-            "description": "Change %",
-            "example": 123.45
+            "description": "Change %"
           },
           "change_abs": {
             "type": "number",
-            "description": "Change",
-            "example": 123.45
+            "description": "Change"
           },
           "close": {
             "type": "number",
-            "description": "Price",
-            "example": 123.45
+            "description": "Price"
           },
           "sector": {
             "type": "string",
             "description": "Group",
-            "example": "Agricultural",
             "enum": [
               "Agricultural",
               "Currencies",
@@ -129,188 +122,151 @@
           },
           "Recommend.All": {
             "type": "number",
-            "description": "Technical Rating",
-            "example": 123.45
+            "description": "Technical Rating"
           },
           "volume": {
             "type": "number",
-            "description": "Volume",
-            "example": 123.45
+            "description": "Volume"
           },
           "Value.Traded": {
             "type": "number",
-            "description": "Volume*Price",
-            "example": 123.45
+            "description": "Volume*Price"
           },
           "High.1M": {
             "type": "number",
-            "description": "1-Month High",
-            "example": 123.45
+            "description": "1-Month High"
           },
           "Low.1M": {
             "type": "number",
-            "description": "1-Month Low",
-            "example": 123.45
+            "description": "1-Month Low"
           },
           "High.3M": {
             "type": "number",
-            "description": "3-Month High",
-            "example": 123.45
+            "description": "3-Month High"
           },
           "Low.3M": {
             "type": "number",
-            "description": "3-Month Low",
-            "example": 123.45
+            "description": "3-Month Low"
           },
           "Perf.3M": {
             "type": "number",
-            "description": "3-Month Performance",
-            "example": 123.45
+            "description": "3-Month Performance"
           },
           "Perf.5Y": {
             "type": "number",
-            "description": "5Y Performance",
-            "example": 123.45
+            "description": "5Y Performance"
           },
           "High.6M": {
             "type": "number",
-            "description": "6-Month High",
-            "example": 123.45
+            "description": "6-Month High"
           },
           "Low.6M": {
             "type": "number",
-            "description": "6-Month Low",
-            "example": 123.45
+            "description": "6-Month Low"
           },
           "Perf.6M": {
             "type": "number",
-            "description": "6-Month Performance",
-            "example": 123.45
+            "description": "6-Month Performance"
           },
           "price_52_week_high": {
             "type": "number",
-            "description": "52 Week High",
-            "example": 123.45
+            "description": "52 Week High"
           },
           "price_52_week_low": {
             "type": "number",
-            "description": "52 Week Low",
-            "example": 123.45
+            "description": "52 Week Low"
           },
           "High.All": {
             "type": "number",
-            "description": "All Time High",
-            "example": 123.45
+            "description": "All Time High"
           },
           "Low.All": {
             "type": "number",
-            "description": "All Time Low",
-            "example": 123.45
+            "description": "All Time Low"
           },
           "Perf.All": {
             "type": "number",
-            "description": "All Time Performance",
-            "example": 123.45
+            "description": "All Time Performance"
           },
           "Aroon.Down": {
             "type": "number",
-            "description": "Aroon Down (14)",
-            "example": 123.45
+            "description": "Aroon Down (14)"
           },
           "Aroon.Up": {
             "type": "number",
-            "description": "Aroon Up (14)",
-            "example": 123.45
+            "description": "Aroon Up (14)"
           },
           "ADR": {
             "type": "number",
-            "description": "Average Day Range (14)",
-            "example": 123.45
+            "description": "Average Day Range (14)"
           },
           "ADX": {
             "type": "number",
-            "description": "Average Directional Index (14)",
-            "example": 123.45
+            "description": "Average Directional Index (14)"
           },
           "ATR": {
             "type": "number",
-            "description": "Average True Range (14)",
-            "example": 123.45
+            "description": "Average True Range (14)"
           },
           "average_volume_10d_calc": {
             "type": "number",
-            "description": "Average Volume (10 day)",
-            "example": 123.45
+            "description": "Average Volume (10 day)"
           },
           "average_volume_30d_calc": {
             "type": "number",
-            "description": "Average Volume (30 day)",
-            "example": 123.45
+            "description": "Average Volume (30 day)"
           },
           "average_volume_60d_calc": {
             "type": "number",
-            "description": "Average Volume (60 day)",
-            "example": 123.45
+            "description": "Average Volume (60 day)"
           },
           "average_volume_90d_calc": {
             "type": "number",
-            "description": "Average Volume (90 day)",
-            "example": 123.45
+            "description": "Average Volume (90 day)"
           },
           "AO": {
             "type": "number",
-            "description": "Awesome Oscillator",
-            "example": 123.45
+            "description": "Awesome Oscillator"
           },
           "BB.lower": {
             "type": "number",
-            "description": "Bollinger Lower Band (20)",
-            "example": 123.45
+            "description": "Bollinger Lower Band (20)"
           },
           "BB.upper": {
             "type": "number",
-            "description": "Bollinger Upper Band (20)",
-            "example": 123.45
+            "description": "Bollinger Upper Band (20)"
           },
           "BBPower": {
             "type": "number",
-            "description": "Bull Bear Power",
-            "example": 123.45
+            "description": "Bull Bear Power"
           },
           "ChaikinMoneyFlow": {
             "type": "number",
-            "description": "Chaikin Money Flow (20)",
-            "example": 123.45
+            "description": "Chaikin Money Flow (20)"
           },
           "change_from_open": {
             "type": "number",
-            "description": "Change from Open %",
-            "example": 123.45
+            "description": "Change from Open %"
           },
           "change_from_open_abs": {
             "type": "number",
-            "description": "Change from Open",
-            "example": 123.45
+            "description": "Change from Open"
           },
           "CCI20": {
             "type": "number",
-            "description": "Commodity Channel Index (20)",
-            "example": 123.45
+            "description": "Commodity Channel Index (20)"
           },
           "DonchCh20.Lower": {
             "type": "number",
-            "description": "Donchian Channels Lower Band (20)",
-            "example": 123.45
+            "description": "Donchian Channels Lower Band (20)"
           },
           "DonchCh20.Upper": {
             "type": "number",
-            "description": "Donchian Channels Upper Band (20)",
-            "example": 123.45
+            "description": "Donchian Channels Upper Band (20)"
           },
           "exchange": {
             "type": "string",
             "description": "Exchange",
-            "example": "ADX",
             "enum": [
               "ADX",
               "ASX24",
@@ -364,471 +320,378 @@
           },
           "EMA5": {
             "type": "number",
-            "description": "Exponential Moving Average (5)",
-            "example": 123.45
+            "description": "Exponential Moving Average (5)"
           },
           "EMA10": {
             "type": "number",
-            "description": "Exponential Moving Average (10)",
-            "example": 123.45
+            "description": "Exponential Moving Average (10)"
           },
           "EMA20": {
             "type": "number",
-            "description": "Exponential Moving Average (20)",
-            "example": 123.45
+            "description": "Exponential Moving Average (20)"
           },
           "EMA30": {
             "type": "number",
-            "description": "Exponential Moving Average (30)",
-            "example": 123.45
+            "description": "Exponential Moving Average (30)"
           },
           "EMA50": {
             "type": "number",
-            "description": "Exponential Moving Average (50)",
-            "example": 123.45
+            "description": "Exponential Moving Average (50)"
           },
           "EMA100": {
             "type": "number",
-            "description": "Exponential Moving Average (100)",
-            "example": 123.45
+            "description": "Exponential Moving Average (100)"
           },
           "EMA200": {
             "type": "number",
-            "description": "Exponential Moving Average (200)",
-            "example": 123.45
+            "description": "Exponential Moving Average (200)"
           },
           "gap": {
             "type": "number",
-            "description": "Gap %",
-            "example": 123.45
+            "description": "Gap %"
           },
           "high": {
             "type": "number",
-            "description": "High",
-            "example": 123.45
+            "description": "High"
           },
           "HullMA9": {
             "type": "number",
-            "description": "Hull Moving Average (9)",
-            "example": 123.45
+            "description": "Hull Moving Average (9)"
           },
           "Ichimoku.BLine": {
             "type": "number",
-            "description": "Ichimoku Base Line (9, 26, 52, 26)",
-            "example": 123.45
+            "description": "Ichimoku Base Line (9, 26, 52, 26)"
           },
           "Ichimoku.CLine": {
             "type": "number",
-            "description": "Ichimoku Conversion Line (9, 26, 52, 26)",
-            "example": 123.45
+            "description": "Ichimoku Conversion Line (9, 26, 52, 26)"
           },
           "Ichimoku.Lead1": {
             "type": "number",
-            "description": "Ichimoku Leading Span A (9, 26, 52, 26)",
-            "example": 123.45
+            "description": "Ichimoku Leading Span A (9, 26, 52, 26)"
           },
           "Ichimoku.Lead2": {
             "type": "number",
-            "description": "Ichimoku Leading Span B (9, 26, 52, 26)",
-            "example": 123.45
+            "description": "Ichimoku Leading Span B (9, 26, 52, 26)"
           },
           "KltChnl.lower": {
             "type": "number",
-            "description": "Keltner Channels Lower Band (20)",
-            "example": 123.45
+            "description": "Keltner Channels Lower Band (20)"
           },
           "KltChnl.upper": {
             "type": "number",
-            "description": "Keltner Channels Upper Band (20)",
-            "example": 123.45
+            "description": "Keltner Channels Upper Band (20)"
           },
           "low": {
             "type": "number",
-            "description": "Low",
-            "example": 123.45
+            "description": "Low"
           },
           "MACD.macd": {
             "type": "number",
-            "description": "MACD Level (12, 26)",
-            "example": 123.45
+            "description": "MACD Level (12, 26)"
           },
           "MACD.signal": {
             "type": "number",
-            "description": "MACD Signal (12, 26)",
-            "example": 123.45
+            "description": "MACD Signal (12, 26)"
           },
           "Mom": {
             "type": "number",
-            "description": "Momentum (10)",
-            "example": 123.45
+            "description": "Momentum (10)"
           },
           "MoneyFlow": {
             "type": "number",
-            "description": "Money Flow (14)",
-            "example": 123.45
+            "description": "Money Flow (14)"
           },
           "Perf.1M": {
             "type": "number",
-            "description": "Monthly Performance",
-            "example": 123.45
+            "description": "Monthly Performance"
           },
           "Recommend.MA": {
             "type": "number",
-            "description": "Moving Averages Rating",
-            "example": 123.45
+            "description": "Moving Averages Rating"
           },
           "ADX-DI": {
             "type": "number",
-            "description": "Negative Directional Indicator (14)",
-            "example": 123.45
+            "description": "Negative Directional Indicator (14)"
           },
           "open": {
             "type": "number",
-            "description": "Open",
-            "example": 123.45
+            "description": "Open"
           },
           "Recommend.Other": {
             "type": "number",
-            "description": "Oscillators Rating",
-            "example": 123.45
+            "description": "Oscillators Rating"
           },
           "P.SAR": {
             "type": "number",
-            "description": "Parabolic SAR",
-            "example": 123.45
+            "description": "Parabolic SAR"
           },
           "Pivot.M.Camarilla.Middle": {
             "type": "number",
-            "description": "Pivot Camarilla P",
-            "example": 123.45
+            "description": "Pivot Camarilla P"
           },
           "Pivot.M.Camarilla.R1": {
             "type": "number",
-            "description": "Pivot Camarilla R1",
-            "example": 123.45
+            "description": "Pivot Camarilla R1"
           },
           "Pivot.M.Camarilla.R2": {
             "type": "number",
-            "description": "Pivot Camarilla R2",
-            "example": 123.45
+            "description": "Pivot Camarilla R2"
           },
           "Pivot.M.Camarilla.R3": {
             "type": "number",
-            "description": "Pivot Camarilla R3",
-            "example": 123.45
+            "description": "Pivot Camarilla R3"
           },
           "Pivot.M.Camarilla.S1": {
             "type": "number",
-            "description": "Pivot Camarilla S1",
-            "example": 123.45
+            "description": "Pivot Camarilla S1"
           },
           "Pivot.M.Camarilla.S2": {
             "type": "number",
-            "description": "Pivot Camarilla S2",
-            "example": 123.45
+            "description": "Pivot Camarilla S2"
           },
           "Pivot.M.Camarilla.S3": {
             "type": "number",
-            "description": "Pivot Camarilla S3",
-            "example": 123.45
+            "description": "Pivot Camarilla S3"
           },
           "Pivot.M.Classic.Middle": {
             "type": "number",
-            "description": "Pivot Classic P",
-            "example": 123.45
+            "description": "Pivot Classic P"
           },
           "Pivot.M.Classic.R1": {
             "type": "number",
-            "description": "Pivot Classic R1",
-            "example": 123.45
+            "description": "Pivot Classic R1"
           },
           "Pivot.M.Classic.R2": {
             "type": "number",
-            "description": "Pivot Classic R2",
-            "example": 123.45
+            "description": "Pivot Classic R2"
           },
           "Pivot.M.Classic.R3": {
             "type": "number",
-            "description": "Pivot Classic R3",
-            "example": 123.45
+            "description": "Pivot Classic R3"
           },
           "Pivot.M.Classic.S1": {
             "type": "number",
-            "description": "Pivot Classic S1",
-            "example": 123.45
+            "description": "Pivot Classic S1"
           },
           "Pivot.M.Classic.S2": {
             "type": "number",
-            "description": "Pivot Classic S2",
-            "example": 123.45
+            "description": "Pivot Classic S2"
           },
           "Pivot.M.Classic.S3": {
             "type": "number",
-            "description": "Pivot Classic S3",
-            "example": 123.45
+            "description": "Pivot Classic S3"
           },
           "Pivot.M.Demark.Middle": {
             "type": "number",
-            "description": "Pivot DM P",
-            "example": 123.45
+            "description": "Pivot DM P"
           },
           "Pivot.M.Demark.R1": {
             "type": "number",
-            "description": "Pivot DM R1",
-            "example": 123.45
+            "description": "Pivot DM R1"
           },
           "Pivot.M.Demark.S1": {
             "type": "number",
-            "description": "Pivot DM S1",
-            "example": 123.45
+            "description": "Pivot DM S1"
           },
           "Pivot.M.Fibonacci.Middle": {
             "type": "number",
-            "description": "Pivot Fibonacci P",
-            "example": 123.45
+            "description": "Pivot Fibonacci P"
           },
           "Pivot.M.Fibonacci.R1": {
             "type": "number",
-            "description": "Pivot Fibonacci R1",
-            "example": 123.45
+            "description": "Pivot Fibonacci R1"
           },
           "Pivot.M.Fibonacci.R2": {
             "type": "number",
-            "description": "Pivot Fibonacci R2",
-            "example": 123.45
+            "description": "Pivot Fibonacci R2"
           },
           "Pivot.M.Fibonacci.R3": {
             "type": "number",
-            "description": "Pivot Fibonacci R3",
-            "example": 123.45
+            "description": "Pivot Fibonacci R3"
           },
           "Pivot.M.Fibonacci.S1": {
             "type": "number",
-            "description": "Pivot Fibonacci S1",
-            "example": 123.45
+            "description": "Pivot Fibonacci S1"
           },
           "Pivot.M.Fibonacci.S2": {
             "type": "number",
-            "description": "Pivot Fibonacci S2",
-            "example": 123.45
+            "description": "Pivot Fibonacci S2"
           },
           "Pivot.M.Fibonacci.S3": {
             "type": "number",
-            "description": "Pivot Fibonacci S3",
-            "example": 123.45
+            "description": "Pivot Fibonacci S3"
           },
           "Pivot.M.Woodie.Middle": {
             "type": "number",
-            "description": "Pivot Woodie P",
-            "example": 123.45
+            "description": "Pivot Woodie P"
           },
           "Pivot.M.Woodie.R1": {
             "type": "number",
-            "description": "Pivot Woodie R1",
-            "example": 123.45
+            "description": "Pivot Woodie R1"
           },
           "Pivot.M.Woodie.R2": {
             "type": "number",
-            "description": "Pivot Woodie R2",
-            "example": 123.45
+            "description": "Pivot Woodie R2"
           },
           "Pivot.M.Woodie.R3": {
             "type": "number",
-            "description": "Pivot Woodie R3",
-            "example": 123.45
+            "description": "Pivot Woodie R3"
           },
           "Pivot.M.Woodie.S1": {
             "type": "number",
-            "description": "Pivot Woodie S1",
-            "example": 123.45
+            "description": "Pivot Woodie S1"
           },
           "Pivot.M.Woodie.S2": {
             "type": "number",
-            "description": "Pivot Woodie S2",
-            "example": 123.45
+            "description": "Pivot Woodie S2"
           },
           "Pivot.M.Woodie.S3": {
             "type": "number",
-            "description": "Pivot Woodie S3",
-            "example": 123.45
+            "description": "Pivot Woodie S3"
           },
           "ADX+DI": {
             "type": "number",
-            "description": "Positive Directional Indicator (14)",
-            "example": 123.45
+            "description": "Positive Directional Indicator (14)"
           },
           "postmarket_change": {
             "type": "number",
-            "description": "Post-market Change %",
-            "example": 123.45
+            "description": "Post-market Change %"
           },
           "postmarket_change_abs": {
             "type": "number",
-            "description": "Post-market Change",
-            "example": 123.45
+            "description": "Post-market Change"
           },
           "premarket_change": {
             "type": "number",
-            "description": "Pre-market Change %",
-            "example": 123.45
+            "description": "Pre-market Change %"
           },
           "premarket_change_abs": {
             "type": "number",
-            "description": "Pre-market Change",
-            "example": 123.45
+            "description": "Pre-market Change"
           },
           "premarket_change_from_open": {
             "type": "number",
-            "description": "Pre-market Change from Open %",
-            "example": 123.45
+            "description": "Pre-market Change from Open %"
           },
           "premarket_change_from_open_abs": {
             "type": "number",
-            "description": "Pre-market Change from Open",
-            "example": 123.45
+            "description": "Pre-market Change from Open"
           },
           "premarket_gap": {
             "type": "number",
-            "description": "Pre-market Gap %",
-            "example": 123.45
+            "description": "Pre-market Gap %"
           },
           "ROC": {
             "type": "number",
-            "description": "Rate Of Change (9)",
-            "example": 123.45
+            "description": "Rate Of Change (9)"
           },
           "RSI7": {
             "type": "number",
-            "description": "Relative Strength Index (7)",
-            "example": 123.45
+            "description": "Relative Strength Index (7)"
           },
           "RSI": {
             "type": "number",
-            "description": "Relative Strength Index (14)",
-            "example": 123.45
+            "description": "Relative Strength Index (14)"
           },
           "relative_volume_10d_calc": {
             "type": "number",
-            "description": "Relative Volume",
-            "example": 123.45
+            "description": "Relative Volume"
           },
           "SMA5": {
             "type": "number",
-            "description": "Simple Moving Average (5)",
-            "example": 123.45
+            "description": "Simple Moving Average (5)"
           },
           "SMA10": {
             "type": "number",
-            "description": "Simple Moving Average (10)",
-            "example": 123.45
+            "description": "Simple Moving Average (10)"
           },
           "SMA20": {
             "type": "number",
-            "description": "Simple Moving Average (20)",
-            "example": 123.45
+            "description": "Simple Moving Average (20)"
           },
           "SMA30": {
             "type": "number",
-            "description": "Simple Moving Average (30)",
-            "example": 123.45
+            "description": "Simple Moving Average (30)"
           },
           "SMA50": {
             "type": "number",
-            "description": "Simple Moving Average (50)",
-            "example": 123.45
+            "description": "Simple Moving Average (50)"
           },
           "SMA100": {
             "type": "number",
-            "description": "Simple Moving Average (100)",
-            "example": 123.45
+            "description": "Simple Moving Average (100)"
           },
           "SMA200": {
             "type": "number",
-            "description": "Simple Moving Average (200)",
-            "example": 123.45
+            "description": "Simple Moving Average (200)"
           },
           "Stoch.D": {
             "type": "number",
-            "description": "Stochastic %D (14, 3, 3)",
-            "example": 123.45
+            "description": "Stochastic %D (14, 3, 3)"
           },
           "Stoch.K": {
             "type": "number",
-            "description": "Stochastic %K (14, 3, 3)",
-            "example": 123.45
+            "description": "Stochastic %K (14, 3, 3)"
           },
           "Stoch.RSI.K": {
             "type": "number",
-            "description": "Stochastic RSI Fast (3, 3, 14, 14)",
-            "example": 123.45
+            "description": "Stochastic RSI Fast (3, 3, 14, 14)"
           },
           "Stoch.RSI.D": {
             "type": "number",
-            "description": "Stochastic RSI Slow (3, 3, 14, 14)",
-            "example": 123.45
+            "description": "Stochastic RSI Slow (3, 3, 14, 14)"
           },
           "submarket": {
             "type": "string",
             "description": "Submarket",
-            "example": "",
             "enum": [
               ""
             ]
           },
           "UO": {
             "type": "number",
-            "description": "Ultimate Oscillator (7, 14, 28)",
-            "example": 123.45
+            "description": "Ultimate Oscillator (7, 14, 28)"
           },
           "Volatility.D": {
             "type": "number",
-            "description": "Volatility",
-            "example": 123.45
+            "description": "Volatility"
           },
           "Volatility.M": {
             "type": "number",
-            "description": "Volatility Month",
-            "example": 123.45
+            "description": "Volatility Month"
           },
           "Volatility.W": {
             "type": "number",
-            "description": "Volatility Week",
-            "example": 123.45
+            "description": "Volatility Week"
           },
           "VWAP": {
             "type": "number",
-            "description": "Volume Weighted Average Price",
-            "example": 123.45
+            "description": "Volume Weighted Average Price"
           },
           "VWMA": {
             "type": "number",
-            "description": "Volume Weighted Moving Average (20)",
-            "example": 123.45
+            "description": "Volume Weighted Moving Average (20)"
           },
           "Perf.W": {
             "type": "number",
-            "description": "Weekly Performance",
-            "example": 123.45
+            "description": "Weekly Performance"
           },
           "W.R": {
             "type": "number",
-            "description": "Williams Percent Range (14)",
-            "example": 123.45
+            "description": "Williams Percent Range (14)"
           },
           "Perf.Y": {
             "type": "number",
-            "description": "Yearly Performance",
-            "example": 123.45
+            "description": "Yearly Performance"
           },
           "Perf.YTD": {
             "type": "number",
-            "description": "YTD Performance",
-            "example": 123.45
+            "description": "YTD Performance"
           },
           "currency": {
             "type": "string",
             "description": "Quote currency",
-            "example": "AED",
             "enum": [
               "AED",
               "ARS",
@@ -871,948 +734,759 @@
           },
           "ADRP": {
             "type": "number",
-            "description": "Field: ADRP",
-            "example": 123.45
+            "description": "Field: ADRP"
           },
           "ADX+DI[1]": {
             "type": "number",
-            "description": "Field: ADX+DI[1]",
-            "example": 123.45
+            "description": "Field: ADX+DI[1]"
           },
           "ADX+DI_9": {
             "type": "number",
-            "description": "Field: ADX+DI_9",
-            "example": 123.45
+            "description": "Field: ADX+DI_9"
           },
           "ADX+DI_20": {
             "type": "number",
-            "description": "Field: ADX+DI_20",
-            "example": 123.45
+            "description": "Field: ADX+DI_20"
           },
           "ADX+DI_100[1]": {
             "type": "number",
-            "description": "Field: ADX+DI_100[1]",
-            "example": 123.45
+            "description": "Field: ADX+DI_100[1]"
           },
           "ADX+DI_50": {
             "type": "number",
-            "description": "Field: ADX+DI_50",
-            "example": 123.45
+            "description": "Field: ADX+DI_50"
           },
           "ADX+DI_20[1]": {
             "type": "number",
-            "description": "Field: ADX+DI_20[1]",
-            "example": 123.45
+            "description": "Field: ADX+DI_20[1]"
           },
           "ADX+DI_50[1]": {
             "type": "number",
-            "description": "Field: ADX+DI_50[1]",
-            "example": 123.45
+            "description": "Field: ADX+DI_50[1]"
           },
           "ADX+DI_9[1]": {
             "type": "number",
-            "description": "Field: ADX+DI_9[1]",
-            "example": 123.45
+            "description": "Field: ADX+DI_9[1]"
           },
           "ADX+DI_100": {
             "type": "number",
-            "description": "Field: ADX+DI_100",
-            "example": 123.45
+            "description": "Field: ADX+DI_100"
           },
           "ADX-DI[1]": {
             "type": "number",
-            "description": "Field: ADX-DI[1]",
-            "example": 123.45
+            "description": "Field: ADX-DI[1]"
           },
           "ADX-DI_9": {
             "type": "number",
-            "description": "Field: ADX-DI_9",
-            "example": 123.45
+            "description": "Field: ADX-DI_9"
           },
           "ADX-DI_20": {
             "type": "number",
-            "description": "Field: ADX-DI_20",
-            "example": 123.45
+            "description": "Field: ADX-DI_20"
           },
           "ADX-DI_100[1]": {
             "type": "number",
-            "description": "Field: ADX-DI_100[1]",
-            "example": 123.45
+            "description": "Field: ADX-DI_100[1]"
           },
           "ADX-DI_50": {
             "type": "number",
-            "description": "Field: ADX-DI_50",
-            "example": 123.45
+            "description": "Field: ADX-DI_50"
           },
           "ADX-DI_20[1]": {
             "type": "number",
-            "description": "Field: ADX-DI_20[1]",
-            "example": 123.45
+            "description": "Field: ADX-DI_20[1]"
           },
           "ADX-DI_50[1]": {
             "type": "number",
-            "description": "Field: ADX-DI_50[1]",
-            "example": 123.45
+            "description": "Field: ADX-DI_50[1]"
           },
           "ADX-DI_9[1]": {
             "type": "number",
-            "description": "Field: ADX-DI_9[1]",
-            "example": 123.45
+            "description": "Field: ADX-DI_9[1]"
           },
           "ADX-DI_100": {
             "type": "number",
-            "description": "Field: ADX-DI_100",
-            "example": 123.45
+            "description": "Field: ADX-DI_100"
           },
           "ADX_9": {
             "type": "number",
-            "description": "Field: ADX_9",
-            "example": 123.45
+            "description": "Field: ADX_9"
           },
           "ADX_20": {
             "type": "number",
-            "description": "Field: ADX_20",
-            "example": 123.45
+            "description": "Field: ADX_20"
           },
           "ADX_50": {
             "type": "number",
-            "description": "Field: ADX_50",
-            "example": 123.45
+            "description": "Field: ADX_50"
           },
           "ADX_100": {
             "type": "number",
-            "description": "Field: ADX_100",
-            "example": 123.45
+            "description": "Field: ADX_100"
           },
           "AO[1]": {
             "type": "number",
-            "description": "Field: AO[1]",
-            "example": 123.45
+            "description": "Field: AO[1]"
           },
           "AO[2]": {
             "type": "number",
-            "description": "Field: AO[2]",
-            "example": 123.45
+            "description": "Field: AO[2]"
           },
           "ATRP": {
             "type": "number",
-            "description": "Field: ATRP",
-            "example": 123.45
+            "description": "Field: ATRP"
           },
           "BB.basis": {
             "type": "number",
-            "description": "Field: BB.basis",
-            "example": 123.45
+            "description": "Field: BB.basis"
           },
           "BB.basis_50": {
             "type": "number",
-            "description": "Field: BB.basis_50",
-            "example": 123.45
+            "description": "Field: BB.basis_50"
           },
           "BB.lower_50": {
             "type": "number",
-            "description": "Field: BB.lower_50",
-            "example": 123.45
+            "description": "Field: BB.lower_50"
           },
           "BB.upper_50": {
             "type": "number",
-            "description": "Field: BB.upper_50",
-            "example": 123.45
+            "description": "Field: BB.upper_50"
           },
           "CCI20[1]": {
             "type": "number",
-            "description": "Field: CCI20[1]",
-            "example": 123.45
+            "description": "Field: CCI20[1]"
           },
           "Candle.3BlackCrows": {
             "type": "number",
-            "description": "Field: Candle.3BlackCrows",
-            "example": 123.45
+            "description": "Field: Candle.3BlackCrows"
           },
           "Candle.3WhiteSoldiers": {
             "type": "number",
-            "description": "Field: Candle.3WhiteSoldiers",
-            "example": 123.45
+            "description": "Field: Candle.3WhiteSoldiers"
           },
           "Candle.AbandonedBaby.Bearish": {
             "type": "number",
-            "description": "Field: Candle.AbandonedBaby.Bearish",
-            "example": 123.45
+            "description": "Field: Candle.AbandonedBaby.Bearish"
           },
           "Candle.AbandonedBaby.Bullish": {
             "type": "number",
-            "description": "Field: Candle.AbandonedBaby.Bullish",
-            "example": 123.45
+            "description": "Field: Candle.AbandonedBaby.Bullish"
           },
           "Candle.Doji": {
             "type": "number",
-            "description": "Field: Candle.Doji",
-            "example": 123.45
+            "description": "Field: Candle.Doji"
           },
           "Candle.Doji.Dragonfly": {
             "type": "number",
-            "description": "Field: Candle.Doji.Dragonfly",
-            "example": 123.45
+            "description": "Field: Candle.Doji.Dragonfly"
           },
           "Candle.Doji.Gravestone": {
             "type": "number",
-            "description": "Field: Candle.Doji.Gravestone",
-            "example": 123.45
+            "description": "Field: Candle.Doji.Gravestone"
           },
           "Candle.Engulfing.Bearish": {
             "type": "number",
-            "description": "Field: Candle.Engulfing.Bearish",
-            "example": 123.45
+            "description": "Field: Candle.Engulfing.Bearish"
           },
           "Candle.Engulfing.Bullish": {
             "type": "number",
-            "description": "Field: Candle.Engulfing.Bullish",
-            "example": 123.45
+            "description": "Field: Candle.Engulfing.Bullish"
           },
           "Candle.EveningStar": {
             "type": "number",
-            "description": "Field: Candle.EveningStar",
-            "example": 123.45
+            "description": "Field: Candle.EveningStar"
           },
           "Candle.Hammer": {
             "type": "number",
-            "description": "Field: Candle.Hammer",
-            "example": 123.45
+            "description": "Field: Candle.Hammer"
           },
           "Candle.HangingMan": {
             "type": "number",
-            "description": "Field: Candle.HangingMan",
-            "example": 123.45
+            "description": "Field: Candle.HangingMan"
           },
           "Candle.Harami.Bearish": {
             "type": "number",
-            "description": "Field: Candle.Harami.Bearish",
-            "example": 123.45
+            "description": "Field: Candle.Harami.Bearish"
           },
           "Candle.Harami.Bullish": {
             "type": "number",
-            "description": "Field: Candle.Harami.Bullish",
-            "example": 123.45
+            "description": "Field: Candle.Harami.Bullish"
           },
           "Candle.InvertedHammer": {
             "type": "number",
-            "description": "Field: Candle.InvertedHammer",
-            "example": 123.45
+            "description": "Field: Candle.InvertedHammer"
           },
           "Candle.Kicking.Bearish": {
             "type": "number",
-            "description": "Field: Candle.Kicking.Bearish",
-            "example": 123.45
+            "description": "Field: Candle.Kicking.Bearish"
           },
           "Candle.Kicking.Bullish": {
             "type": "number",
-            "description": "Field: Candle.Kicking.Bullish",
-            "example": 123.45
+            "description": "Field: Candle.Kicking.Bullish"
           },
           "Candle.LongShadow.Lower": {
             "type": "number",
-            "description": "Field: Candle.LongShadow.Lower",
-            "example": 123.45
+            "description": "Field: Candle.LongShadow.Lower"
           },
           "Candle.LongShadow.Upper": {
             "type": "number",
-            "description": "Field: Candle.LongShadow.Upper",
-            "example": 123.45
+            "description": "Field: Candle.LongShadow.Upper"
           },
           "Candle.Marubozu.Black": {
             "type": "number",
-            "description": "Field: Candle.Marubozu.Black",
-            "example": 123.45
+            "description": "Field: Candle.Marubozu.Black"
           },
           "Candle.Marubozu.White": {
             "type": "number",
-            "description": "Field: Candle.Marubozu.White",
-            "example": 123.45
+            "description": "Field: Candle.Marubozu.White"
           },
           "Candle.MorningStar": {
             "type": "number",
-            "description": "Field: Candle.MorningStar",
-            "example": 123.45
+            "description": "Field: Candle.MorningStar"
           },
           "Candle.ShootingStar": {
             "type": "number",
-            "description": "Field: Candle.ShootingStar",
-            "example": 123.45
+            "description": "Field: Candle.ShootingStar"
           },
           "Candle.SpinningTop.Black": {
             "type": "number",
-            "description": "Field: Candle.SpinningTop.Black",
-            "example": 123.45
+            "description": "Field: Candle.SpinningTop.Black"
           },
           "Candle.SpinningTop.White": {
             "type": "number",
-            "description": "Field: Candle.SpinningTop.White",
-            "example": 123.45
+            "description": "Field: Candle.SpinningTop.White"
           },
           "Candle.TriStar.Bearish": {
             "type": "number",
-            "description": "Field: Candle.TriStar.Bearish",
-            "example": 123.45
+            "description": "Field: Candle.TriStar.Bearish"
           },
           "Candle.TriStar.Bullish": {
             "type": "number",
-            "description": "Field: Candle.TriStar.Bullish",
-            "example": 123.45
+            "description": "Field: Candle.TriStar.Bullish"
           },
           "DonchCh20.Middle": {
             "type": "number",
-            "description": "Field: DonchCh20.Middle",
-            "example": 123.45
+            "description": "Field: DonchCh20.Middle"
           },
           "EMA2": {
             "type": "number",
-            "description": "Field: EMA2",
-            "example": 123.45
+            "description": "Field: EMA2"
           },
           "EMA3": {
             "type": "number",
-            "description": "Field: EMA3",
-            "example": 123.45
+            "description": "Field: EMA3"
           },
           "EMA6": {
             "type": "number",
-            "description": "Field: EMA6",
-            "example": 123.45
+            "description": "Field: EMA6"
           },
           "EMA7": {
             "type": "number",
-            "description": "Field: EMA7",
-            "example": 123.45
+            "description": "Field: EMA7"
           },
           "EMA8": {
             "type": "number",
-            "description": "Field: EMA8",
-            "example": 123.45
+            "description": "Field: EMA8"
           },
           "EMA9": {
             "type": "number",
-            "description": "Field: EMA9",
-            "example": 123.45
+            "description": "Field: EMA9"
           },
           "EMA12": {
             "type": "number",
-            "description": "Field: EMA12",
-            "example": 123.45
+            "description": "Field: EMA12"
           },
           "EMA13": {
             "type": "number",
-            "description": "Field: EMA13",
-            "example": 123.45
+            "description": "Field: EMA13"
           },
           "EMA14": {
             "type": "number",
-            "description": "Field: EMA14",
-            "example": 123.45
+            "description": "Field: EMA14"
           },
           "EMA15": {
             "type": "number",
-            "description": "Field: EMA15",
-            "example": 123.45
+            "description": "Field: EMA15"
           },
           "EMA21": {
             "type": "number",
-            "description": "Field: EMA21",
-            "example": 123.45
+            "description": "Field: EMA21"
           },
           "EMA25": {
             "type": "number",
-            "description": "Field: EMA25",
-            "example": 123.45
+            "description": "Field: EMA25"
           },
           "EMA26": {
             "type": "number",
-            "description": "Field: EMA26",
-            "example": 123.45
+            "description": "Field: EMA26"
           },
           "EMA34": {
             "type": "number",
-            "description": "Field: EMA34",
-            "example": 123.45
+            "description": "Field: EMA34"
           },
           "EMA40": {
             "type": "number",
-            "description": "Field: EMA40",
-            "example": 123.45
+            "description": "Field: EMA40"
           },
           "EMA55": {
             "type": "number",
-            "description": "Field: EMA55",
-            "example": 123.45
+            "description": "Field: EMA55"
           },
           "EMA60": {
             "type": "number",
-            "description": "Field: EMA60",
-            "example": 123.45
+            "description": "Field: EMA60"
           },
           "EMA75": {
             "type": "number",
-            "description": "Field: EMA75",
-            "example": 123.45
+            "description": "Field: EMA75"
           },
           "EMA89": {
             "type": "number",
-            "description": "Field: EMA89",
-            "example": 123.45
+            "description": "Field: EMA89"
           },
           "EMA120": {
             "type": "number",
-            "description": "Field: EMA120",
-            "example": 123.45
+            "description": "Field: EMA120"
           },
           "EMA144": {
             "type": "number",
-            "description": "Field: EMA144",
-            "example": 123.45
+            "description": "Field: EMA144"
           },
           "EMA150": {
             "type": "number",
-            "description": "Field: EMA150",
-            "example": 123.45
+            "description": "Field: EMA150"
           },
           "EMA250": {
             "type": "number",
-            "description": "Field: EMA250",
-            "example": 123.45
+            "description": "Field: EMA250"
           },
           "EMA300": {
             "type": "number",
-            "description": "Field: EMA300",
-            "example": 123.45
+            "description": "Field: EMA300"
           },
           "High.1M.Date": {
             "type": "string",
-            "description": "Field: High.1M.Date",
-            "example": "example"
+            "description": "Field: High.1M.Date"
           },
           "High.3M.Date": {
             "type": "string",
-            "description": "Field: High.3M.Date",
-            "example": "example"
+            "description": "Field: High.3M.Date"
           },
           "High.5D": {
             "type": "number",
-            "description": "Field: High.5D",
-            "example": 123.45
+            "description": "Field: High.5D"
           },
           "High.6M.Date": {
             "type": "string",
-            "description": "Field: High.6M.Date",
-            "example": "example"
+            "description": "Field: High.6M.Date"
           },
           "High.All.Calc": {
             "type": "number",
-            "description": "Field: High.All.Calc",
-            "example": 123.45
+            "description": "Field: High.All.Calc"
           },
           "High.All.Calc.Date": {
             "type": "string",
-            "description": "Field: High.All.Calc.Date",
-            "example": "example"
+            "description": "Field: High.All.Calc.Date"
           },
           "High.All.Date": {
             "type": "string",
-            "description": "Field: High.All.Date",
-            "example": "example"
+            "description": "Field: High.All.Date"
           },
           "HullMA20": {
             "type": "number",
-            "description": "Field: HullMA20",
-            "example": 123.45
+            "description": "Field: HullMA20"
           },
           "HullMA200": {
             "type": "number",
-            "description": "Field: HullMA200",
-            "example": 123.45
+            "description": "Field: HullMA200"
           },
           "Ichimoku.BLine_20_60_120_30": {
             "type": "number",
-            "description": "Field: Ichimoku.BLine_20_60_120_30",
-            "example": 123.45
+            "description": "Field: Ichimoku.BLine_20_60_120_30"
           },
           "Ichimoku.CLine_20_60_120_30": {
             "type": "number",
-            "description": "Field: Ichimoku.CLine_20_60_120_30",
-            "example": 123.45
+            "description": "Field: Ichimoku.CLine_20_60_120_30"
           },
           "Ichimoku.Lead1_20_60_120_30": {
             "type": "number",
-            "description": "Field: Ichimoku.Lead1_20_60_120_30",
-            "example": 123.45
+            "description": "Field: Ichimoku.Lead1_20_60_120_30"
           },
           "Ichimoku.Lead2_20_60_120_30": {
             "type": "number",
-            "description": "Field: Ichimoku.Lead2_20_60_120_30",
-            "example": 123.45
+            "description": "Field: Ichimoku.Lead2_20_60_120_30"
           },
           "KltChnl.basis": {
             "type": "number",
-            "description": "Field: KltChnl.basis",
-            "example": 123.45
+            "description": "Field: KltChnl.basis"
           },
           "Low.1M.Date": {
             "type": "string",
-            "description": "Field: Low.1M.Date",
-            "example": "example"
+            "description": "Field: Low.1M.Date"
           },
           "Low.3M.Date": {
             "type": "string",
-            "description": "Field: Low.3M.Date",
-            "example": "example"
+            "description": "Field: Low.3M.Date"
           },
           "Low.5D": {
             "type": "number",
-            "description": "Field: Low.5D",
-            "example": 123.45
+            "description": "Field: Low.5D"
           },
           "Low.6M.Date": {
             "type": "string",
-            "description": "Field: Low.6M.Date",
-            "example": "example"
+            "description": "Field: Low.6M.Date"
           },
           "Low.After.High.All": {
             "type": "number",
-            "description": "Field: Low.After.High.All",
-            "example": 123.45
+            "description": "Field: Low.After.High.All"
           },
           "Low.All.Calc": {
             "type": "number",
-            "description": "Field: Low.All.Calc",
-            "example": 123.45
+            "description": "Field: Low.All.Calc"
           },
           "Low.All.Calc.Date": {
             "type": "string",
-            "description": "Field: Low.All.Calc.Date",
-            "example": "example"
+            "description": "Field: Low.All.Calc.Date"
           },
           "Low.All.Date": {
             "type": "string",
-            "description": "Field: Low.All.Date",
-            "example": "example"
+            "description": "Field: Low.All.Date"
           },
           "MACD.hist": {
             "type": "number",
-            "description": "Field: MACD.hist",
-            "example": 123.45
+            "description": "Field: MACD.hist"
           },
           "Mom[1]": {
             "type": "number",
-            "description": "Field: Mom[1]",
-            "example": 123.45
+            "description": "Field: Mom[1]"
           },
           "Mom_14": {
             "type": "number",
-            "description": "Field: Mom_14",
-            "example": 123.45
+            "description": "Field: Mom_14"
           },
           "Mom_14[1]": {
             "type": "number",
-            "description": "Field: Mom_14[1]",
-            "example": 123.45
+            "description": "Field: Mom_14[1]"
           },
           "Open.All.Calc": {
             "type": "number",
-            "description": "Field: Open.All.Calc",
-            "example": 123.45
+            "description": "Field: Open.All.Calc"
           },
           "Perf.10Y": {
             "type": "number",
-            "description": "Field: Perf.10Y",
-            "example": 123.45
+            "description": "Field: Perf.10Y"
           },
           "Perf.3Y": {
             "type": "number",
-            "description": "Field: Perf.3Y",
-            "example": 123.45
+            "description": "Field: Perf.3Y"
           },
           "Perf.5D": {
             "type": "number",
-            "description": "Field: Perf.5D",
-            "example": 123.45
+            "description": "Field: Perf.5D"
           },
           "RSI2": {
             "type": "number",
-            "description": "Field: RSI2",
-            "example": 123.45
+            "description": "Field: RSI2"
           },
           "RSI3": {
             "type": "number",
-            "description": "Field: RSI3",
-            "example": 123.45
+            "description": "Field: RSI3"
           },
           "RSI4": {
             "type": "number",
-            "description": "Field: RSI4",
-            "example": 123.45
+            "description": "Field: RSI4"
           },
           "RSI5": {
             "type": "number",
-            "description": "Field: RSI5",
-            "example": 123.45
+            "description": "Field: RSI5"
           },
           "RSI9": {
             "type": "number",
-            "description": "Field: RSI9",
-            "example": 123.45
+            "description": "Field: RSI9"
           },
           "RSI10": {
             "type": "number",
-            "description": "Field: RSI10",
-            "example": 123.45
+            "description": "Field: RSI10"
           },
           "RSI20": {
             "type": "number",
-            "description": "Field: RSI20",
-            "example": 123.45
+            "description": "Field: RSI20"
           },
           "RSI21": {
             "type": "number",
-            "description": "Field: RSI21",
-            "example": 123.45
+            "description": "Field: RSI21"
           },
           "RSI30": {
             "type": "number",
-            "description": "Field: RSI30",
-            "example": 123.45
+            "description": "Field: RSI30"
           },
           "RSI10[1]": {
             "type": "number",
-            "description": "Field: RSI10[1]",
-            "example": 123.45
+            "description": "Field: RSI10[1]"
           },
           "RSI20[1]": {
             "type": "number",
-            "description": "Field: RSI20[1]",
-            "example": 123.45
+            "description": "Field: RSI20[1]"
           },
           "RSI21[1]": {
             "type": "number",
-            "description": "Field: RSI21[1]",
-            "example": 123.45
+            "description": "Field: RSI21[1]"
           },
           "RSI2[1]": {
             "type": "number",
-            "description": "Field: RSI2[1]",
-            "example": 123.45
+            "description": "Field: RSI2[1]"
           },
           "RSI30[1]": {
             "type": "number",
-            "description": "Field: RSI30[1]",
-            "example": 123.45
+            "description": "Field: RSI30[1]"
           },
           "RSI3[1]": {
             "type": "number",
-            "description": "Field: RSI3[1]",
-            "example": 123.45
+            "description": "Field: RSI3[1]"
           },
           "RSI4[1]": {
             "type": "number",
-            "description": "Field: RSI4[1]",
-            "example": 123.45
+            "description": "Field: RSI4[1]"
           },
           "RSI5[1]": {
             "type": "number",
-            "description": "Field: RSI5[1]",
-            "example": 123.45
+            "description": "Field: RSI5[1]"
           },
           "RSI7[1]": {
             "type": "number",
-            "description": "Field: RSI7[1]",
-            "example": 123.45
+            "description": "Field: RSI7[1]"
           },
           "RSI9[1]": {
             "type": "number",
-            "description": "Field: RSI9[1]",
-            "example": 123.45
+            "description": "Field: RSI9[1]"
           },
           "RSI[1]": {
             "type": "number",
-            "description": "Field: RSI[1]",
-            "example": 123.45
+            "description": "Field: RSI[1]"
           },
           "Rec.BBPower": {
             "type": "number",
-            "description": "Field: Rec.BBPower",
-            "example": 123.45
+            "description": "Field: Rec.BBPower"
           },
           "Rec.HullMA9": {
             "type": "number",
-            "description": "Field: Rec.HullMA9",
-            "example": 123.45
+            "description": "Field: Rec.HullMA9"
           },
           "Rec.Ichimoku": {
             "type": "number",
-            "description": "Field: Rec.Ichimoku",
-            "example": 123.45
+            "description": "Field: Rec.Ichimoku"
           },
           "Rec.Stoch.RSI": {
             "type": "number",
-            "description": "Field: Rec.Stoch.RSI",
-            "example": 123.45
+            "description": "Field: Rec.Stoch.RSI"
           },
           "Rec.UO": {
             "type": "number",
-            "description": "Field: Rec.UO",
-            "example": 123.45
+            "description": "Field: Rec.UO"
           },
           "Rec.VWMA": {
             "type": "number",
-            "description": "Field: Rec.VWMA",
-            "example": 123.45
+            "description": "Field: Rec.VWMA"
           },
           "Rec.WR": {
             "type": "number",
-            "description": "Field: Rec.WR",
-            "example": 123.45
+            "description": "Field: Rec.WR"
           },
           "SMA2": {
             "type": "number",
-            "description": "Field: SMA2",
-            "example": 123.45
+            "description": "Field: SMA2"
           },
           "SMA3": {
             "type": "number",
-            "description": "Field: SMA3",
-            "example": 123.45
+            "description": "Field: SMA3"
           },
           "SMA6": {
             "type": "number",
-            "description": "Field: SMA6",
-            "example": 123.45
+            "description": "Field: SMA6"
           },
           "SMA7": {
             "type": "number",
-            "description": "Field: SMA7",
-            "example": 123.45
+            "description": "Field: SMA7"
           },
           "SMA8": {
             "type": "number",
-            "description": "Field: SMA8",
-            "example": 123.45
+            "description": "Field: SMA8"
           },
           "SMA9": {
             "type": "number",
-            "description": "Field: SMA9",
-            "example": 123.45
+            "description": "Field: SMA9"
           },
           "SMA12": {
             "type": "number",
-            "description": "Field: SMA12",
-            "example": 123.45
+            "description": "Field: SMA12"
           },
           "SMA13": {
             "type": "number",
-            "description": "Field: SMA13",
-            "example": 123.45
+            "description": "Field: SMA13"
           },
           "SMA14": {
             "type": "number",
-            "description": "Field: SMA14",
-            "example": 123.45
+            "description": "Field: SMA14"
           },
           "SMA15": {
             "type": "number",
-            "description": "Field: SMA15",
-            "example": 123.45
+            "description": "Field: SMA15"
           },
           "SMA21": {
             "type": "number",
-            "description": "Field: SMA21",
-            "example": 123.45
+            "description": "Field: SMA21"
           },
           "SMA25": {
             "type": "number",
-            "description": "Field: SMA25",
-            "example": 123.45
+            "description": "Field: SMA25"
           },
           "SMA26": {
             "type": "number",
-            "description": "Field: SMA26",
-            "example": 123.45
+            "description": "Field: SMA26"
           },
           "SMA34": {
             "type": "number",
-            "description": "Field: SMA34",
-            "example": 123.45
+            "description": "Field: SMA34"
           },
           "SMA40": {
             "type": "number",
-            "description": "Field: SMA40",
-            "example": 123.45
+            "description": "Field: SMA40"
           },
           "SMA55": {
             "type": "number",
-            "description": "Field: SMA55",
-            "example": 123.45
+            "description": "Field: SMA55"
           },
           "SMA60": {
             "type": "number",
-            "description": "Field: SMA60",
-            "example": 123.45
+            "description": "Field: SMA60"
           },
           "SMA75": {
             "type": "number",
-            "description": "Field: SMA75",
-            "example": 123.45
+            "description": "Field: SMA75"
           },
           "SMA89": {
             "type": "number",
-            "description": "Field: SMA89",
-            "example": 123.45
+            "description": "Field: SMA89"
           },
           "SMA120": {
             "type": "number",
-            "description": "Field: SMA120",
-            "example": 123.45
+            "description": "Field: SMA120"
           },
           "SMA144": {
             "type": "number",
-            "description": "Field: SMA144",
-            "example": 123.45
+            "description": "Field: SMA144"
           },
           "SMA150": {
             "type": "number",
-            "description": "Field: SMA150",
-            "example": 123.45
+            "description": "Field: SMA150"
           },
           "SMA250": {
             "type": "number",
-            "description": "Field: SMA250",
-            "example": 123.45
+            "description": "Field: SMA250"
           },
           "SMA300": {
             "type": "number",
-            "description": "Field: SMA300",
-            "example": 123.45
+            "description": "Field: SMA300"
           },
           "Stoch.D[1]": {
             "type": "number",
-            "description": "Field: Stoch.D[1]",
-            "example": 123.45
+            "description": "Field: Stoch.D[1]"
           },
           "Stoch.D_14_1_3": {
             "type": "number",
-            "description": "Field: Stoch.D_14_1_3",
-            "example": 123.45
+            "description": "Field: Stoch.D_14_1_3"
           },
           "Stoch.D_14_1_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.D_14_1_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.D_14_1_3[1]"
           },
           "Stoch.D_5_3_3": {
             "type": "number",
-            "description": "Field: Stoch.D_5_3_3",
-            "example": 123.45
+            "description": "Field: Stoch.D_5_3_3"
           },
           "Stoch.D_5_3_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.D_5_3_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.D_5_3_3[1]"
           },
           "Stoch.D_6_3_3": {
             "type": "number",
-            "description": "Field: Stoch.D_6_3_3",
-            "example": 123.45
+            "description": "Field: Stoch.D_6_3_3"
           },
           "Stoch.D_6_3_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.D_6_3_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.D_6_3_3[1]"
           },
           "Stoch.D_8_3_3": {
             "type": "number",
-            "description": "Field: Stoch.D_8_3_3",
-            "example": 123.45
+            "description": "Field: Stoch.D_8_3_3"
           },
           "Stoch.D_8_3_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.D_8_3_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.D_8_3_3[1]"
           },
           "Stoch.K[1]": {
             "type": "number",
-            "description": "Field: Stoch.K[1]",
-            "example": 123.45
+            "description": "Field: Stoch.K[1]"
           },
           "Stoch.K_14_1_3": {
             "type": "number",
-            "description": "Field: Stoch.K_14_1_3",
-            "example": 123.45
+            "description": "Field: Stoch.K_14_1_3"
           },
           "Stoch.K_14_1_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.K_14_1_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.K_14_1_3[1]"
           },
           "Stoch.K_5_3_3": {
             "type": "number",
-            "description": "Field: Stoch.K_5_3_3",
-            "example": 123.45
+            "description": "Field: Stoch.K_5_3_3"
           },
           "Stoch.K_5_3_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.K_5_3_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.K_5_3_3[1]"
           },
           "Stoch.K_6_3_3": {
             "type": "number",
-            "description": "Field: Stoch.K_6_3_3",
-            "example": 123.45
+            "description": "Field: Stoch.K_6_3_3"
           },
           "Stoch.K_6_3_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.K_6_3_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.K_6_3_3[1]"
           },
           "Stoch.K_8_3_3": {
             "type": "number",
-            "description": "Field: Stoch.K_8_3_3",
-            "example": 123.45
+            "description": "Field: Stoch.K_8_3_3"
           },
           "Stoch.K_8_3_3[1]": {
             "type": "number",
-            "description": "Field: Stoch.K_8_3_3[1]",
-            "example": 123.45
+            "description": "Field: Stoch.K_8_3_3[1]"
           },
           "all_time_high": {
             "type": "number",
-            "description": "Field: all_time_high",
-            "example": 123.45
+            "description": "Field: all_time_high"
           },
           "all_time_high_day": {
             "type": "string",
-            "description": "Field: all_time_high_day",
-            "example": "example"
+            "description": "Field: all_time_high_day"
           },
           "all_time_low": {
             "type": "number",
-            "description": "Field: all_time_low",
-            "example": 123.45
+            "description": "Field: all_time_low"
           },
           "all_time_low_day": {
             "type": "string",
-            "description": "Field: all_time_low_day",
-            "example": "example"
+            "description": "Field: all_time_low_day"
           },
           "all_time_open": {
             "type": "number",
-            "description": "Field: all_time_open",
-            "example": 123.45
+            "description": "Field: all_time_open"
           },
           "bars_count": {
             "type": "number",
-            "description": "Field: bars_count",
-            "example": 123.45
+            "description": "Field: bars_count"
           },
           "base_currency_kind": {
             "type": "string",
             "description": "Field: base_currency_kind",
-            "example": "crypto",
             "enum": [
               "crypto",
               "fiat"
@@ -1821,7 +1495,6 @@
           "country_code": {
             "type": "string",
             "description": "Field: country_code",
-            "example": "AE",
             "enum": [
               "AE",
               "AR",
@@ -1855,23 +1528,19 @@
           },
           "coupon": {
             "type": "number",
-            "description": "Field: coupon",
-            "example": 123.45
+            "description": "Field: coupon"
           },
           "cryptoasset-info.description": {
             "type": "string",
-            "description": "Field: cryptoasset-info.description",
-            "example": "example"
+            "description": "Field: cryptoasset-info.description"
           },
           "cryptoasset-info.id": {
             "type": "string",
-            "description": "Field: cryptoasset-info.id",
-            "example": "example"
+            "description": "Field: cryptoasset-info.id"
           },
           "currency_id": {
             "type": "string",
             "description": "Field: currency_id",
-            "example": "AED",
             "enum": [
               "AED",
               "ARS",
@@ -1915,7 +1584,6 @@
           "currency_kind": {
             "type": "string",
             "description": "Field: currency_kind",
-            "example": "fiat",
             "enum": [
               "fiat"
             ]
@@ -1923,7 +1591,6 @@
           "current_session": {
             "type": "string",
             "description": "Field: current_session",
-            "example": "market",
             "enum": [
               "market",
               "out_of_session",
@@ -1932,28 +1599,23 @@
           },
           "days_to_maturity": {
             "type": "number",
-            "description": "Field: days_to_maturity",
-            "example": 123.45
+            "description": "Field: days_to_maturity"
           },
           "description": {
             "type": "string",
-            "description": "Field: description",
-            "example": "example"
+            "description": "Field: description"
           },
           "expiration": {
             "type": "string",
-            "description": "Field: expiration",
-            "example": "example"
+            "description": "Field: expiration"
           },
           "first_bar_time": {
             "type": "string",
-            "description": "Field: first_bar_time",
-            "example": "example"
+            "description": "Field: first_bar_time"
           },
           "fractional": {
             "type": "string",
             "description": "Field: fractional",
-            "example": "false",
             "enum": [
               "false",
               "true"
@@ -1961,141 +1623,114 @@
           },
           "fundamental_currency_code": {
             "type": "string",
-            "description": "Field: fundamental_currency_code",
-            "example": "example"
+            "description": "Field: fundamental_currency_code"
           },
           "gap_down": {
             "type": "number",
-            "description": "Field: gap_down",
-            "example": 123.45
+            "description": "Field: gap_down"
           },
           "gap_down_abs": {
             "type": "number",
-            "description": "Field: gap_down_abs",
-            "example": 123.45
+            "description": "Field: gap_down_abs"
           },
           "gap_up": {
             "type": "number",
-            "description": "Field: gap_up",
-            "example": 123.45
+            "description": "Field: gap_up"
           },
           "gap_up_abs": {
             "type": "number",
-            "description": "Field: gap_up_abs",
-            "example": 123.45
+            "description": "Field: gap_up_abs"
           },
           "indexes": {
             "type": "string",
-            "description": "Field: indexes",
-            "example": "example"
+            "description": "Field: indexes"
           },
           "indicators_bars_count": {
             "type": "number",
-            "description": "Field: indicators_bars_count",
-            "example": 123.45
+            "description": "Field: indicators_bars_count"
           },
           "is_blacklisted": {
             "type": "boolean",
-            "description": "Field: is_blacklisted",
-            "example": true
+            "description": "Field: is_blacklisted"
           },
           "is_shariah_compliant": {
             "type": "boolean",
-            "description": "Field: is_shariah_compliant",
-            "example": true
+            "description": "Field: is_shariah_compliant"
           },
           "last_bar_update_time": {
             "type": "number",
-            "description": "Field: last_bar_update_time",
-            "example": 123.45
+            "description": "Field: last_bar_update_time"
           },
           "logoid": {
             "type": "string",
-            "description": "Field: logoid",
-            "example": "example"
+            "description": "Field: logoid"
           },
           "low_after_high_all_change": {
             "type": "number",
-            "description": "Field: low_after_high_all_change",
-            "example": 123.45
+            "description": "Field: low_after_high_all_change"
           },
           "low_after_high_all_change_abs": {
             "type": "number",
-            "description": "Field: low_after_high_all_change_abs",
-            "example": 123.45
+            "description": "Field: low_after_high_all_change_abs"
           },
           "market": {
             "type": "string",
             "description": "Field: market",
-            "example": "futures",
             "enum": [
               "futures"
             ]
           },
           "maturity_date": {
             "type": "string",
-            "description": "Field: maturity_date",
-            "example": "example"
+            "description": "Field: maturity_date"
           },
           "minmov": {
             "type": "number",
-            "description": "Field: minmov",
-            "example": 123.45
+            "description": "Field: minmov"
           },
           "minmove2": {
             "type": "number",
-            "description": "Field: minmove2",
-            "example": 123.45
+            "description": "Field: minmove2"
           },
           "name": {
             "type": "string",
-            "description": "Field: name",
-            "example": "example"
+            "description": "Field: name"
           },
           "open_interest": {
             "type": "number",
-            "description": "Field: open_interest",
-            "example": 123.45
+            "description": "Field: open_interest"
           },
           "popularity_rank": {
             "type": "number",
-            "description": "Field: popularity_rank",
-            "example": 123.45
+            "description": "Field: popularity_rank"
           },
           "post_change": {
             "type": "number",
-            "description": "Field: post_change",
-            "example": 123.45
+            "description": "Field: post_change"
           },
           "pre_change": {
             "type": "number",
-            "description": "Field: pre_change",
-            "example": 123.45
+            "description": "Field: pre_change"
           },
           "pre_change_abs": {
             "type": "number",
-            "description": "Field: pre_change_abs",
-            "example": 123.45
+            "description": "Field: pre_change_abs"
           },
           "price_52_week_high_date": {
             "type": "string",
-            "description": "Field: price_52_week_high_date",
-            "example": "example"
+            "description": "Field: price_52_week_high_date"
           },
           "price_52_week_low_date": {
             "type": "string",
-            "description": "Field: price_52_week_low_date",
-            "example": "example"
+            "description": "Field: price_52_week_low_date"
           },
           "pricescale": {
             "type": "number",
-            "description": "Field: pricescale",
-            "example": 123.45
+            "description": "Field: pricescale"
           },
           "product": {
             "type": "string",
             "description": "Field: product",
-            "example": "Commodity/Agriculture",
             "enum": [
               "Commodity/Agriculture",
               "Commodity/Agriculture/Dairy",
@@ -2190,7 +1825,6 @@
           "provider-id": {
             "type": "string",
             "description": "Field: provider-id",
-            "example": "alor",
             "enum": [
               "alor",
               "ice"
@@ -2198,99 +1832,59 @@
           },
           "rates_cf": {
             "type": "object",
-            "description": "Field: rates_cf",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_cf"
           },
           "rates_current": {
             "type": "object",
-            "description": "Field: rates_current",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_current"
           },
           "rates_dividend_recent": {
             "type": "object",
-            "description": "Field: rates_dividend_recent",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_dividend_recent"
           },
           "rates_dividend_upcoming": {
             "type": "object",
-            "description": "Field: rates_dividend_upcoming",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_dividend_upcoming"
           },
           "rates_earnings_fq": {
             "type": "object",
-            "description": "Field: rates_earnings_fq",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_earnings_fq"
           },
           "rates_earnings_next_fq": {
             "type": "object",
-            "description": "Field: rates_earnings_next_fq",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_earnings_next_fq"
           },
           "rates_fh": {
             "type": "object",
-            "description": "Field: rates_fh",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_fh"
           },
           "rates_fq": {
             "type": "object",
-            "description": "Field: rates_fq",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_fq"
           },
           "rates_fy": {
             "type": "object",
-            "description": "Field: rates_fy",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_fy"
           },
           "rates_mc": {
             "type": "object",
-            "description": "Field: rates_mc",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_mc"
           },
           "rates_pt": {
             "type": "object",
-            "description": "Field: rates_pt",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_pt"
           },
           "rates_time_series": {
             "type": "object",
-            "description": "Field: rates_time_series",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_time_series"
           },
           "rates_ttm": {
             "type": "object",
-            "description": "Field: rates_ttm",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_ttm"
           },
           "source-logoid": {
             "type": "string",
             "description": "Field: source-logoid",
-            "example": "country/AE",
             "enum": [
               "country/AE",
               "source/ADX",
@@ -2345,7 +1939,6 @@
           "subtype": {
             "type": "string",
             "description": "Field: subtype",
-            "example": "",
             "enum": [
               "",
               "continuous",
@@ -2355,21 +1948,15 @@
           },
           "time": {
             "type": "string",
-            "description": "Field: time",
-            "example": "example"
+            "description": "Field: time"
           },
           "time_business_day": {
             "type": "number",
-            "description": "Field: time_business_day",
-            "example": 123.45
+            "description": "Field: time_business_day"
           },
           "typespecs": {
             "type": "array",
             "description": "Field: typespecs",
-            "example": [
-              "item1",
-              "item2"
-            ],
             "enum": [
               "",
               "continuous",
@@ -2381,13 +1968,11 @@
           },
           "update-time": {
             "type": "number",
-            "description": "Field: update-time",
-            "example": 123.45
+            "description": "Field: update-time"
           },
           "update_mode": {
             "type": "string",
             "description": "Field: update_mode",
-            "example": "delayed_streaming_1200",
             "enum": [
               "delayed_streaming_1200",
               "endofday",
@@ -2396,436 +1981,16 @@
           },
           "update_time": {
             "type": "string",
-            "description": "Field: update_time",
-            "example": "example"
+            "description": "Field: update_time"
           },
           "volume_change": {
             "type": "number",
-            "description": "Field: volume_change",
-            "example": 123.45
+            "description": "Field: volume_change"
           },
           "volume_change_abs": {
             "type": "number",
-            "description": "Field: volume_change_abs",
-            "example": 123.45
+            "description": "Field: volume_change_abs"
           }
-        },
-        "example": {
-          "type": "futures",
-          "is_primary": true,
-          "active_symbol": true,
-          "change": 123.45,
-          "change_abs": 123.45,
-          "close": 123.45,
-          "sector": "Agricultural",
-          "Recommend.All": 123.45,
-          "volume": 123.45,
-          "Value.Traded": 123.45,
-          "High.1M": 123.45,
-          "Low.1M": 123.45,
-          "High.3M": 123.45,
-          "Low.3M": 123.45,
-          "Perf.3M": 123.45,
-          "Perf.5Y": 123.45,
-          "High.6M": 123.45,
-          "Low.6M": 123.45,
-          "Perf.6M": 123.45,
-          "price_52_week_high": 123.45,
-          "price_52_week_low": 123.45,
-          "High.All": 123.45,
-          "Low.All": 123.45,
-          "Perf.All": 123.45,
-          "Aroon.Down": 123.45,
-          "Aroon.Up": 123.45,
-          "ADR": 123.45,
-          "ADX": 123.45,
-          "ATR": 123.45,
-          "average_volume_10d_calc": 123.45,
-          "average_volume_30d_calc": 123.45,
-          "average_volume_60d_calc": 123.45,
-          "average_volume_90d_calc": 123.45,
-          "AO": 123.45,
-          "BB.lower": 123.45,
-          "BB.upper": 123.45,
-          "BBPower": 123.45,
-          "ChaikinMoneyFlow": 123.45,
-          "change_from_open": 123.45,
-          "change_from_open_abs": 123.45,
-          "CCI20": 123.45,
-          "DonchCh20.Lower": 123.45,
-          "DonchCh20.Upper": 123.45,
-          "exchange": "ADX",
-          "EMA5": 123.45,
-          "EMA10": 123.45,
-          "EMA20": 123.45,
-          "EMA30": 123.45,
-          "EMA50": 123.45,
-          "EMA100": 123.45,
-          "EMA200": 123.45,
-          "gap": 123.45,
-          "high": 123.45,
-          "HullMA9": 123.45,
-          "Ichimoku.BLine": 123.45,
-          "Ichimoku.CLine": 123.45,
-          "Ichimoku.Lead1": 123.45,
-          "Ichimoku.Lead2": 123.45,
-          "KltChnl.lower": 123.45,
-          "KltChnl.upper": 123.45,
-          "low": 123.45,
-          "MACD.macd": 123.45,
-          "MACD.signal": 123.45,
-          "Mom": 123.45,
-          "MoneyFlow": 123.45,
-          "Perf.1M": 123.45,
-          "Recommend.MA": 123.45,
-          "ADX-DI": 123.45,
-          "open": 123.45,
-          "Recommend.Other": 123.45,
-          "P.SAR": 123.45,
-          "Pivot.M.Camarilla.Middle": 123.45,
-          "Pivot.M.Camarilla.R1": 123.45,
-          "Pivot.M.Camarilla.R2": 123.45,
-          "Pivot.M.Camarilla.R3": 123.45,
-          "Pivot.M.Camarilla.S1": 123.45,
-          "Pivot.M.Camarilla.S2": 123.45,
-          "Pivot.M.Camarilla.S3": 123.45,
-          "Pivot.M.Classic.Middle": 123.45,
-          "Pivot.M.Classic.R1": 123.45,
-          "Pivot.M.Classic.R2": 123.45,
-          "Pivot.M.Classic.R3": 123.45,
-          "Pivot.M.Classic.S1": 123.45,
-          "Pivot.M.Classic.S2": 123.45,
-          "Pivot.M.Classic.S3": 123.45,
-          "Pivot.M.Demark.Middle": 123.45,
-          "Pivot.M.Demark.R1": 123.45,
-          "Pivot.M.Demark.S1": 123.45,
-          "Pivot.M.Fibonacci.Middle": 123.45,
-          "Pivot.M.Fibonacci.R1": 123.45,
-          "Pivot.M.Fibonacci.R2": 123.45,
-          "Pivot.M.Fibonacci.R3": 123.45,
-          "Pivot.M.Fibonacci.S1": 123.45,
-          "Pivot.M.Fibonacci.S2": 123.45,
-          "Pivot.M.Fibonacci.S3": 123.45,
-          "Pivot.M.Woodie.Middle": 123.45,
-          "Pivot.M.Woodie.R1": 123.45,
-          "Pivot.M.Woodie.R2": 123.45,
-          "Pivot.M.Woodie.R3": 123.45,
-          "Pivot.M.Woodie.S1": 123.45,
-          "Pivot.M.Woodie.S2": 123.45,
-          "Pivot.M.Woodie.S3": 123.45,
-          "ADX+DI": 123.45,
-          "postmarket_change": 123.45,
-          "postmarket_change_abs": 123.45,
-          "premarket_change": 123.45,
-          "premarket_change_abs": 123.45,
-          "premarket_change_from_open": 123.45,
-          "premarket_change_from_open_abs": 123.45,
-          "premarket_gap": 123.45,
-          "ROC": 123.45,
-          "RSI7": 123.45,
-          "RSI": 123.45,
-          "relative_volume_10d_calc": 123.45,
-          "SMA5": 123.45,
-          "SMA10": 123.45,
-          "SMA20": 123.45,
-          "SMA30": 123.45,
-          "SMA50": 123.45,
-          "SMA100": 123.45,
-          "SMA200": 123.45,
-          "Stoch.D": 123.45,
-          "Stoch.K": 123.45,
-          "Stoch.RSI.K": 123.45,
-          "Stoch.RSI.D": 123.45,
-          "submarket": "",
-          "UO": 123.45,
-          "Volatility.D": 123.45,
-          "Volatility.M": 123.45,
-          "Volatility.W": 123.45,
-          "VWAP": 123.45,
-          "VWMA": 123.45,
-          "Perf.W": 123.45,
-          "W.R": 123.45,
-          "Perf.Y": 123.45,
-          "Perf.YTD": 123.45,
-          "currency": "AED",
-          "ADRP": 123.45,
-          "ADX+DI[1]": 123.45,
-          "ADX+DI_9": 123.45,
-          "ADX+DI_20": 123.45,
-          "ADX+DI_100[1]": 123.45,
-          "ADX+DI_50": 123.45,
-          "ADX+DI_20[1]": 123.45,
-          "ADX+DI_50[1]": 123.45,
-          "ADX+DI_9[1]": 123.45,
-          "ADX+DI_100": 123.45,
-          "ADX-DI[1]": 123.45,
-          "ADX-DI_9": 123.45,
-          "ADX-DI_20": 123.45,
-          "ADX-DI_100[1]": 123.45,
-          "ADX-DI_50": 123.45,
-          "ADX-DI_20[1]": 123.45,
-          "ADX-DI_50[1]": 123.45,
-          "ADX-DI_9[1]": 123.45,
-          "ADX-DI_100": 123.45,
-          "ADX_9": 123.45,
-          "ADX_20": 123.45,
-          "ADX_50": 123.45,
-          "ADX_100": 123.45,
-          "AO[1]": 123.45,
-          "AO[2]": 123.45,
-          "ATRP": 123.45,
-          "BB.basis": 123.45,
-          "BB.basis_50": 123.45,
-          "BB.lower_50": 123.45,
-          "BB.upper_50": 123.45,
-          "CCI20[1]": 123.45,
-          "Candle.3BlackCrows": 123.45,
-          "Candle.3WhiteSoldiers": 123.45,
-          "Candle.AbandonedBaby.Bearish": 123.45,
-          "Candle.AbandonedBaby.Bullish": 123.45,
-          "Candle.Doji": 123.45,
-          "Candle.Doji.Dragonfly": 123.45,
-          "Candle.Doji.Gravestone": 123.45,
-          "Candle.Engulfing.Bearish": 123.45,
-          "Candle.Engulfing.Bullish": 123.45,
-          "Candle.EveningStar": 123.45,
-          "Candle.Hammer": 123.45,
-          "Candle.HangingMan": 123.45,
-          "Candle.Harami.Bearish": 123.45,
-          "Candle.Harami.Bullish": 123.45,
-          "Candle.InvertedHammer": 123.45,
-          "Candle.Kicking.Bearish": 123.45,
-          "Candle.Kicking.Bullish": 123.45,
-          "Candle.LongShadow.Lower": 123.45,
-          "Candle.LongShadow.Upper": 123.45,
-          "Candle.Marubozu.Black": 123.45,
-          "Candle.Marubozu.White": 123.45,
-          "Candle.MorningStar": 123.45,
-          "Candle.ShootingStar": 123.45,
-          "Candle.SpinningTop.Black": 123.45,
-          "Candle.SpinningTop.White": 123.45,
-          "Candle.TriStar.Bearish": 123.45,
-          "Candle.TriStar.Bullish": 123.45,
-          "DonchCh20.Middle": 123.45,
-          "EMA2": 123.45,
-          "EMA3": 123.45,
-          "EMA6": 123.45,
-          "EMA7": 123.45,
-          "EMA8": 123.45,
-          "EMA9": 123.45,
-          "EMA12": 123.45,
-          "EMA13": 123.45,
-          "EMA14": 123.45,
-          "EMA15": 123.45,
-          "EMA21": 123.45,
-          "EMA25": 123.45,
-          "EMA26": 123.45,
-          "EMA34": 123.45,
-          "EMA40": 123.45,
-          "EMA55": 123.45,
-          "EMA60": 123.45,
-          "EMA75": 123.45,
-          "EMA89": 123.45,
-          "EMA120": 123.45,
-          "EMA144": 123.45,
-          "EMA150": 123.45,
-          "EMA250": 123.45,
-          "EMA300": 123.45,
-          "High.1M.Date": "example",
-          "High.3M.Date": "example",
-          "High.5D": 123.45,
-          "High.6M.Date": "example",
-          "High.All.Calc": 123.45,
-          "High.All.Calc.Date": "example",
-          "High.All.Date": "example",
-          "HullMA20": 123.45,
-          "HullMA200": 123.45,
-          "Ichimoku.BLine_20_60_120_30": 123.45,
-          "Ichimoku.CLine_20_60_120_30": 123.45,
-          "Ichimoku.Lead1_20_60_120_30": 123.45,
-          "Ichimoku.Lead2_20_60_120_30": 123.45,
-          "KltChnl.basis": 123.45,
-          "Low.1M.Date": "example",
-          "Low.3M.Date": "example",
-          "Low.5D": 123.45,
-          "Low.6M.Date": "example",
-          "Low.After.High.All": 123.45,
-          "Low.All.Calc": 123.45,
-          "Low.All.Calc.Date": "example",
-          "Low.All.Date": "example",
-          "MACD.hist": 123.45,
-          "Mom[1]": 123.45,
-          "Mom_14": 123.45,
-          "Mom_14[1]": 123.45,
-          "Open.All.Calc": 123.45,
-          "Perf.10Y": 123.45,
-          "Perf.3Y": 123.45,
-          "Perf.5D": 123.45,
-          "RSI2": 123.45,
-          "RSI3": 123.45,
-          "RSI4": 123.45,
-          "RSI5": 123.45,
-          "RSI9": 123.45,
-          "RSI10": 123.45,
-          "RSI20": 123.45,
-          "RSI21": 123.45,
-          "RSI30": 123.45,
-          "RSI10[1]": 123.45,
-          "RSI20[1]": 123.45,
-          "RSI21[1]": 123.45,
-          "RSI2[1]": 123.45,
-          "RSI30[1]": 123.45,
-          "RSI3[1]": 123.45,
-          "RSI4[1]": 123.45,
-          "RSI5[1]": 123.45,
-          "RSI7[1]": 123.45,
-          "RSI9[1]": 123.45,
-          "RSI[1]": 123.45,
-          "Rec.BBPower": 123.45,
-          "Rec.HullMA9": 123.45,
-          "Rec.Ichimoku": 123.45,
-          "Rec.Stoch.RSI": 123.45,
-          "Rec.UO": 123.45,
-          "Rec.VWMA": 123.45,
-          "Rec.WR": 123.45,
-          "SMA2": 123.45,
-          "SMA3": 123.45,
-          "SMA6": 123.45,
-          "SMA7": 123.45,
-          "SMA8": 123.45,
-          "SMA9": 123.45,
-          "SMA12": 123.45,
-          "SMA13": 123.45,
-          "SMA14": 123.45,
-          "SMA15": 123.45,
-          "SMA21": 123.45,
-          "SMA25": 123.45,
-          "SMA26": 123.45,
-          "SMA34": 123.45,
-          "SMA40": 123.45,
-          "SMA55": 123.45,
-          "SMA60": 123.45,
-          "SMA75": 123.45,
-          "SMA89": 123.45,
-          "SMA120": 123.45,
-          "SMA144": 123.45,
-          "SMA150": 123.45,
-          "SMA250": 123.45,
-          "SMA300": 123.45,
-          "Stoch.D[1]": 123.45,
-          "Stoch.D_14_1_3": 123.45,
-          "Stoch.D_14_1_3[1]": 123.45,
-          "Stoch.D_5_3_3": 123.45,
-          "Stoch.D_5_3_3[1]": 123.45,
-          "Stoch.D_6_3_3": 123.45,
-          "Stoch.D_6_3_3[1]": 123.45,
-          "Stoch.D_8_3_3": 123.45,
-          "Stoch.D_8_3_3[1]": 123.45,
-          "Stoch.K[1]": 123.45,
-          "Stoch.K_14_1_3": 123.45,
-          "Stoch.K_14_1_3[1]": 123.45,
-          "Stoch.K_5_3_3": 123.45,
-          "Stoch.K_5_3_3[1]": 123.45,
-          "Stoch.K_6_3_3": 123.45,
-          "Stoch.K_6_3_3[1]": 123.45,
-          "Stoch.K_8_3_3": 123.45,
-          "Stoch.K_8_3_3[1]": 123.45,
-          "all_time_high": 123.45,
-          "all_time_high_day": "example",
-          "all_time_low": 123.45,
-          "all_time_low_day": "example",
-          "all_time_open": 123.45,
-          "bars_count": 123.45,
-          "base_currency_kind": "crypto",
-          "country_code": "AE",
-          "coupon": 123.45,
-          "cryptoasset-info.description": "example",
-          "cryptoasset-info.id": "example",
-          "currency_id": "AED",
-          "currency_kind": "fiat",
-          "current_session": "market",
-          "days_to_maturity": 123.45,
-          "description": "example",
-          "expiration": "example",
-          "first_bar_time": "example",
-          "fractional": "false",
-          "fundamental_currency_code": "example",
-          "gap_down": 123.45,
-          "gap_down_abs": 123.45,
-          "gap_up": 123.45,
-          "gap_up_abs": 123.45,
-          "indexes": "example",
-          "indicators_bars_count": 123.45,
-          "is_blacklisted": true,
-          "is_shariah_compliant": true,
-          "last_bar_update_time": 123.45,
-          "logoid": "example",
-          "low_after_high_all_change": 123.45,
-          "low_after_high_all_change_abs": 123.45,
-          "market": "futures",
-          "maturity_date": "example",
-          "minmov": 123.45,
-          "minmove2": 123.45,
-          "name": "example",
-          "open_interest": 123.45,
-          "popularity_rank": 123.45,
-          "post_change": 123.45,
-          "pre_change": 123.45,
-          "pre_change_abs": 123.45,
-          "price_52_week_high_date": "example",
-          "price_52_week_low_date": "example",
-          "pricescale": 123.45,
-          "product": "Commodity/Agriculture",
-          "provider-id": "alor",
-          "rates_cf": {
-            "key": "value"
-          },
-          "rates_current": {
-            "key": "value"
-          },
-          "rates_dividend_recent": {
-            "key": "value"
-          },
-          "rates_dividend_upcoming": {
-            "key": "value"
-          },
-          "rates_earnings_fq": {
-            "key": "value"
-          },
-          "rates_earnings_next_fq": {
-            "key": "value"
-          },
-          "rates_fh": {
-            "key": "value"
-          },
-          "rates_fq": {
-            "key": "value"
-          },
-          "rates_fy": {
-            "key": "value"
-          },
-          "rates_mc": {
-            "key": "value"
-          },
-          "rates_pt": {
-            "key": "value"
-          },
-          "rates_time_series": {
-            "key": "value"
-          },
-          "rates_ttm": {
-            "key": "value"
-          },
-          "source-logoid": "country/AE",
-          "subtype": "",
-          "time": "example",
-          "time_business_day": 123.45,
-          "typespecs": "",
-          "update-time": 123.45,
-          "update_mode": "delayed_streaming_1200",
-          "update_time": "example",
-          "volume_change": 123.45,
-          "volume_change_abs": 123.45
         }
       },
       "ScanRequest": {
@@ -2836,26 +2001,17 @@
             "items": {
               "$ref": "#/components/schemas/Filter"
             },
-            "description": "Array of filters to apply",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Array of filters to apply"
           },
           "options": {
-            "$ref": "#/components/schemas/Options",
-            "example": "example_value"
+            "$ref": "#/components/schemas/Options"
           },
           "columns": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Columns to return",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Columns to return"
           },
           "range": {
             "type": "array",
@@ -2864,11 +2020,7 @@
             },
             "minItems": 2,
             "maxItems": 2,
-            "description": "Range of results [start, end]",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Range of results [start, end]"
           }
         },
         "required": [
@@ -2883,15 +2035,10 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MarketData"
-            },
-            "example": [
-              "item1",
-              "item2"
-            ]
+            }
           },
           "totalCount": {
-            "type": "integer",
-            "example": 123
+            "type": "integer"
           }
         }
       },
@@ -2900,8 +2047,7 @@
         "properties": {
           "left": {
             "type": "string",
-            "description": "Field name",
-            "example": "example_value"
+            "description": "Field name"
           },
           "operation": {
             "type": "string",
@@ -2914,13 +2060,11 @@
               "eq",
               "nz"
             ],
-            "description": "Filter operation",
-            "example": "example_value"
+            "description": "Filter operation"
           },
           "right": {
             "type": "string",
-            "description": "Filter value",
-            "example": "example_value"
+            "description": "Filter value"
           }
         },
         "required": [
@@ -2939,14 +2083,12 @@
               "ru",
               "zh"
             ],
-            "default": "en",
-            "example": "example_value"
+            "default": "en"
           },
           "decimal_places": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 8,
-            "example": 123
+            "maximum": 8
           }
         }
       }

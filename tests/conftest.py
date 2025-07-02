@@ -8,9 +8,12 @@ import shutil
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
+import sys
 
 import pytest
 from loguru import logger
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from tv_generator.api import TradingViewAPI
 from tv_generator.config import Settings

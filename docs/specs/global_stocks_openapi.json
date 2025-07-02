@@ -83,33 +83,27 @@
         "properties": {
           "close": {
             "type": "number",
-            "description": "Close Price",
-            "example": 150.25
+            "description": "Close Price"
           },
           "volume": {
             "type": "number",
-            "description": "Volume",
-            "example": 1000000
+            "description": "Volume"
           },
           "name": {
             "type": "string",
-            "description": "Company Name",
-            "example": "Samsung Electronics"
+            "description": "Company Name"
           },
           "change": {
             "type": "number",
-            "description": "Change %",
-            "example": 2.5
+            "description": "Change %"
           },
           "market_cap": {
             "type": "number",
-            "description": "Market Cap",
-            "example": 2500000000000
+            "description": "Market Cap"
           },
           "country": {
             "type": "string",
-            "description": "Country",
-            "example": "South Korea"
+            "description": "Country"
           }
         }
       },
@@ -121,26 +115,17 @@
             "items": {
               "$ref": "#/components/schemas/Filter"
             },
-            "description": "Array of filters to apply",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Array of filters to apply"
           },
           "options": {
-            "$ref": "#/components/schemas/Options",
-            "example": "example_value"
+            "$ref": "#/components/schemas/Options"
           },
           "columns": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Columns to return",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Columns to return"
           },
           "range": {
             "type": "array",
@@ -149,11 +134,7 @@
             },
             "minItems": 2,
             "maxItems": 2,
-            "description": "Range of results [start, end]",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Range of results [start, end]"
           }
         },
         "required": [
@@ -168,15 +149,10 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MarketData"
-            },
-            "example": [
-              "item1",
-              "item2"
-            ]
+            }
           },
           "totalCount": {
-            "type": "integer",
-            "example": 123
+            "type": "integer"
           }
         }
       },
@@ -185,8 +161,7 @@
         "properties": {
           "left": {
             "type": "string",
-            "description": "Field name",
-            "example": "example_value"
+            "description": "Field name"
           },
           "operation": {
             "type": "string",
@@ -199,13 +174,11 @@
               "eq",
               "nz"
             ],
-            "description": "Filter operation",
-            "example": "example_value"
+            "description": "Filter operation"
           },
           "right": {
             "type": "string",
-            "description": "Filter value",
-            "example": "example_value"
+            "description": "Filter value"
           }
         },
         "required": [
@@ -224,14 +197,12 @@
               "ru",
               "zh"
             ],
-            "default": "en",
-            "example": "example_value"
+            "default": "en"
           },
           "decimal_places": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 8,
-            "example": 123
+            "maximum": 8
           }
         }
       }

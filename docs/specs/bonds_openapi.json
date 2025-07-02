@@ -84,236 +84,191 @@
           "type": {
             "type": "string",
             "description": "Symbol Type",
-            "example": "bond",
             "enum": [
               "bond"
             ]
           },
           "is_primary": {
             "type": "boolean",
-            "description": "Primary Listing",
-            "example": true
+            "description": "Primary Listing"
           },
           "active_symbol": {
             "type": "boolean",
-            "description": "Current trading day",
-            "example": true
+            "description": "Current trading day"
           },
           "change": {
             "type": "number",
-            "description": "Change %",
-            "example": 123.45
+            "description": "Change %"
           },
           "change_abs": {
             "type": "number",
-            "description": "Change",
-            "example": 123.45
+            "description": "Change"
           },
           "close": {
             "type": "number",
-            "description": "Price",
-            "example": 123.45
+            "description": "Price"
           },
           "sector": {
             "type": "string",
-            "description": "Group",
-            "example": "example"
+            "description": "Group"
           },
           "volume": {
             "type": "number",
-            "description": "Volume",
-            "example": 123.45
+            "description": "Volume"
           },
           "High.1M": {
             "type": "number",
-            "description": "1-Month High",
-            "example": 123.45
+            "description": "1-Month High"
           },
           "Low.1M": {
             "type": "number",
-            "description": "1-Month Low",
-            "example": 123.45
+            "description": "1-Month Low"
           },
           "High.3M": {
             "type": "number",
-            "description": "3-Month High",
-            "example": 123.45
+            "description": "3-Month High"
           },
           "Low.3M": {
             "type": "number",
-            "description": "3-Month Low",
-            "example": 123.45
+            "description": "3-Month Low"
           },
           "Perf.3M": {
             "type": "number",
-            "description": "3-Month Performance",
-            "example": 123.45
+            "description": "3-Month Performance"
           },
           "Perf.5Y": {
             "type": "number",
-            "description": "5Y Performance",
-            "example": 123.45
+            "description": "5Y Performance"
           },
           "High.6M": {
             "type": "number",
-            "description": "6-Month High",
-            "example": 123.45
+            "description": "6-Month High"
           },
           "Low.6M": {
             "type": "number",
-            "description": "6-Month Low",
-            "example": 123.45
+            "description": "6-Month Low"
           },
           "Perf.6M": {
             "type": "number",
-            "description": "6-Month Performance",
-            "example": 123.45
+            "description": "6-Month Performance"
           },
           "price_52_week_high": {
             "type": "number",
-            "description": "52 Week High",
-            "example": 123.45
+            "description": "52 Week High"
           },
           "price_52_week_low": {
             "type": "number",
-            "description": "52 Week Low",
-            "example": 123.45
+            "description": "52 Week Low"
           },
           "High.All": {
             "type": "number",
-            "description": "All Time High",
-            "example": 123.45
+            "description": "All Time High"
           },
           "Low.All": {
             "type": "number",
-            "description": "All Time Low",
-            "example": 123.45
+            "description": "All Time Low"
           },
           "Perf.All": {
             "type": "number",
-            "description": "All Time Performance",
-            "example": 123.45
+            "description": "All Time Performance"
           },
           "change_from_open": {
             "type": "number",
-            "description": "Change from Open %",
-            "example": 123.45
+            "description": "Change from Open %"
           },
           "change_from_open_abs": {
             "type": "number",
-            "description": "Change from Open",
-            "example": 123.45
+            "description": "Change from Open"
           },
           "exchange": {
             "type": "string",
             "description": "Exchange",
-            "example": "TVC",
             "enum": [
               "TVC"
             ]
           },
           "gap": {
             "type": "number",
-            "description": "Gap %",
-            "example": 123.45
+            "description": "Gap %"
           },
           "high": {
             "type": "number",
-            "description": "High",
-            "example": 123.45
+            "description": "High"
           },
           "low": {
             "type": "number",
-            "description": "Low",
-            "example": 123.45
+            "description": "Low"
           },
           "Perf.1M": {
             "type": "number",
-            "description": "Monthly Performance",
-            "example": 123.45
+            "description": "Monthly Performance"
           },
           "open": {
             "type": "number",
-            "description": "Open",
-            "example": 123.45
+            "description": "Open"
           },
           "postmarket_change": {
             "type": "number",
-            "description": "Post-market Change %",
-            "example": 123.45
+            "description": "Post-market Change %"
           },
           "postmarket_change_abs": {
             "type": "number",
-            "description": "Post-market Change",
-            "example": 123.45
+            "description": "Post-market Change"
           },
           "premarket_change": {
             "type": "number",
-            "description": "Pre-market Change %",
-            "example": 123.45
+            "description": "Pre-market Change %"
           },
           "premarket_change_abs": {
             "type": "number",
-            "description": "Pre-market Change",
-            "example": 123.45
+            "description": "Pre-market Change"
           },
           "premarket_change_from_open": {
             "type": "number",
-            "description": "Pre-market Change from Open %",
-            "example": 123.45
+            "description": "Pre-market Change from Open %"
           },
           "premarket_change_from_open_abs": {
             "type": "number",
-            "description": "Pre-market Change from Open",
-            "example": 123.45
+            "description": "Pre-market Change from Open"
           },
           "premarket_gap": {
             "type": "number",
-            "description": "Pre-market Gap %",
-            "example": 123.45
+            "description": "Pre-market Gap %"
           },
           "submarket": {
             "type": "string",
             "description": "Submarket",
-            "example": "",
             "enum": [
               ""
             ]
           },
           "Volatility.D": {
             "type": "number",
-            "description": "Volatility",
-            "example": 123.45
+            "description": "Volatility"
           },
           "Volatility.M": {
             "type": "number",
-            "description": "Volatility Month",
-            "example": 123.45
+            "description": "Volatility Month"
           },
           "Volatility.W": {
             "type": "number",
-            "description": "Volatility Week",
-            "example": 123.45
+            "description": "Volatility Week"
           },
           "Perf.W": {
             "type": "number",
-            "description": "Weekly Performance",
-            "example": 123.45
+            "description": "Weekly Performance"
           },
           "Perf.Y": {
             "type": "number",
-            "description": "Yearly Performance",
-            "example": 123.45
+            "description": "Yearly Performance"
           },
           "Perf.YTD": {
             "type": "number",
-            "description": "YTD Performance",
-            "example": 123.45
+            "description": "YTD Performance"
           },
           "currency": {
             "type": "string",
             "description": "Quote currency",
-            "example": "BRL",
             "enum": [
               "BRL",
               "EUR",
@@ -322,38 +277,31 @@
           },
           "ask": {
             "type": "number",
-            "description": "Ask",
-            "example": 123.45
+            "description": "Ask"
           },
           "bid": {
             "type": "number",
-            "description": "Bid",
-            "example": 123.45
+            "description": "Bid"
           },
           "Bond.Change": {
             "type": "number",
-            "description": "Field: Bond.Change",
-            "example": 123.45
+            "description": "Field: Bond.Change"
           },
           "Bond.Change|1": {
             "type": "number",
-            "description": "Field: Bond.Change|1",
-            "example": 123.45
+            "description": "Field: Bond.Change|1"
           },
           "Bond.Change.%": {
             "type": "number",
-            "description": "Field: Bond.Change.%",
-            "example": 123.45
+            "description": "Field: Bond.Change.%"
           },
           "Bond.Change.%|1": {
             "type": "number",
-            "description": "Field: Bond.Change.%|1",
-            "example": 123.45
+            "description": "Field: Bond.Change.%|1"
           },
           "Bond.Currency": {
             "type": "string",
             "description": "Field: Bond.Currency",
-            "example": "BRL",
             "enum": [
               "BRL",
               "KRW",
@@ -364,198 +312,159 @@
           },
           "Bond.Price": {
             "type": "number",
-            "description": "Field: Bond.Price",
-            "example": 123.45
+            "description": "Field: Bond.Price"
           },
           "Bond.Price|1": {
             "type": "number",
-            "description": "Field: Bond.Price|1",
-            "example": 123.45
+            "description": "Field: Bond.Price|1"
           },
           "High.1M.Date": {
             "type": "string",
-            "description": "Field: High.1M.Date",
-            "example": "example"
+            "description": "Field: High.1M.Date"
           },
           "High.3M.Date": {
             "type": "string",
-            "description": "Field: High.3M.Date",
-            "example": "example"
+            "description": "Field: High.3M.Date"
           },
           "High.5D": {
             "type": "number",
-            "description": "Field: High.5D",
-            "example": 123.45
+            "description": "Field: High.5D"
           },
           "High.6M.Date": {
             "type": "string",
-            "description": "Field: High.6M.Date",
-            "example": "example"
+            "description": "Field: High.6M.Date"
           },
           "High.All.Calc": {
             "type": "number",
-            "description": "Field: High.All.Calc",
-            "example": 123.45
+            "description": "Field: High.All.Calc"
           },
           "High.All.Calc.Date": {
             "type": "string",
-            "description": "Field: High.All.Calc.Date",
-            "example": "example"
+            "description": "Field: High.All.Calc.Date"
           },
           "High.All.Date": {
             "type": "string",
-            "description": "Field: High.All.Date",
-            "example": "example"
+            "description": "Field: High.All.Date"
           },
           "Low.1M.Date": {
             "type": "string",
-            "description": "Field: Low.1M.Date",
-            "example": "example"
+            "description": "Field: Low.1M.Date"
           },
           "Low.3M.Date": {
             "type": "string",
-            "description": "Field: Low.3M.Date",
-            "example": "example"
+            "description": "Field: Low.3M.Date"
           },
           "Low.5D": {
             "type": "number",
-            "description": "Field: Low.5D",
-            "example": 123.45
+            "description": "Field: Low.5D"
           },
           "Low.6M.Date": {
             "type": "string",
-            "description": "Field: Low.6M.Date",
-            "example": "example"
+            "description": "Field: Low.6M.Date"
           },
           "Low.After.High.All": {
             "type": "number",
-            "description": "Field: Low.After.High.All",
-            "example": 123.45
+            "description": "Field: Low.After.High.All"
           },
           "Low.All.Calc": {
             "type": "number",
-            "description": "Field: Low.All.Calc",
-            "example": 123.45
+            "description": "Field: Low.All.Calc"
           },
           "Low.All.Calc.Date": {
             "type": "string",
-            "description": "Field: Low.All.Calc.Date",
-            "example": "example"
+            "description": "Field: Low.All.Calc.Date"
           },
           "Low.All.Date": {
             "type": "string",
-            "description": "Field: Low.All.Date",
-            "example": "example"
+            "description": "Field: Low.All.Date"
           },
           "Open.All.Calc": {
             "type": "number",
-            "description": "Field: Open.All.Calc",
-            "example": 123.45
+            "description": "Field: Open.All.Calc"
           },
           "Perf.10Y": {
             "type": "number",
-            "description": "Field: Perf.10Y",
-            "example": 123.45
+            "description": "Field: Perf.10Y"
           },
           "Perf.3Y": {
             "type": "number",
-            "description": "Field: Perf.3Y",
-            "example": 123.45
+            "description": "Field: Perf.3Y"
           },
           "Perf.5D": {
             "type": "number",
-            "description": "Field: Perf.5D",
-            "example": 123.45
+            "description": "Field: Perf.5D"
           },
           "all_time_high": {
             "type": "number",
-            "description": "Field: all_time_high",
-            "example": 123.45
+            "description": "Field: all_time_high"
           },
           "all_time_high_day": {
             "type": "string",
-            "description": "Field: all_time_high_day",
-            "example": "example"
+            "description": "Field: all_time_high_day"
           },
           "all_time_low": {
             "type": "number",
-            "description": "Field: all_time_low",
-            "example": 123.45
+            "description": "Field: all_time_low"
           },
           "all_time_low_day": {
             "type": "string",
-            "description": "Field: all_time_low_day",
-            "example": "example"
+            "description": "Field: all_time_low_day"
           },
           "all_time_open": {
             "type": "number",
-            "description": "Field: all_time_open",
-            "example": 123.45
+            "description": "Field: all_time_open"
           },
           "bars_count": {
             "type": "number",
-            "description": "Field: bars_count",
-            "example": 123.45
+            "description": "Field: bars_count"
           },
           "bars_count|1": {
             "type": "number",
-            "description": "Field: bars_count|1",
-            "example": 123.45
+            "description": "Field: bars_count|1"
           },
           "base_currency_kind": {
             "type": "string",
-            "description": "Field: base_currency_kind",
-            "example": "example"
+            "description": "Field: base_currency_kind"
           },
           "bid_ask_spread_pct": {
             "type": "number",
-            "description": "Field: bid_ask_spread_pct",
-            "example": 123.45
+            "description": "Field: bid_ask_spread_pct"
           },
           "change|1": {
             "type": "number",
-            "description": "Field: change|1",
-            "example": 123.45
+            "description": "Field: change|1"
           },
           "change_abs|1": {
             "type": "number",
-            "description": "Field: change_abs|1",
-            "example": 123.45
+            "description": "Field: change_abs|1"
           },
           "change_from_open|1": {
             "type": "number",
-            "description": "Field: change_from_open|1",
-            "example": 123.45
+            "description": "Field: change_from_open|1"
           },
           "change_from_open_abs|1": {
             "type": "number",
-            "description": "Field: change_from_open_abs|1",
-            "example": 123.45
+            "description": "Field: change_from_open_abs|1"
           },
           "close|1": {
             "type": "number",
-            "description": "Field: close|1",
-            "example": 123.45
+            "description": "Field: close|1"
           },
           "close_1_days_back": {
             "type": "number",
-            "description": "Field: close_1_days_back",
-            "example": 123.45
+            "description": "Field: close_1_days_back"
           },
           "close_30_days_back": {
             "type": "number",
-            "description": "Field: close_30_days_back",
-            "example": 123.45
+            "description": "Field: close_30_days_back"
           },
           "close_365_days_back": {
             "type": "number",
-            "description": "Field: close_365_days_back",
-            "example": 123.45
+            "description": "Field: close_365_days_back"
           },
           "country_code": {
             "type": "string",
             "description": "Field: country_code",
-            "example": "AT",
             "enum": [
               "AT",
               "AU",
@@ -610,7 +519,6 @@
           "country_code_fund": {
             "type": "string",
             "description": "Field: country_code_fund",
-            "example": "AT",
             "enum": [
               "AT",
               "AU",
@@ -664,23 +572,19 @@
           },
           "coupon": {
             "type": "number",
-            "description": "Field: coupon",
-            "example": 123.45
+            "description": "Field: coupon"
           },
           "cryptoasset-info.description": {
             "type": "string",
-            "description": "Field: cryptoasset-info.description",
-            "example": "example"
+            "description": "Field: cryptoasset-info.description"
           },
           "cryptoasset-info.id": {
             "type": "string",
-            "description": "Field: cryptoasset-info.id",
-            "example": "example"
+            "description": "Field: cryptoasset-info.id"
           },
           "currency_id": {
             "type": "string",
             "description": "Field: currency_id",
-            "example": "",
             "enum": [
               "",
               "BRL",
@@ -691,7 +595,6 @@
           "currency_kind": {
             "type": "string",
             "description": "Field: currency_kind",
-            "example": "fiat",
             "enum": [
               "fiat"
             ]
@@ -699,7 +602,6 @@
           "current_session": {
             "type": "string",
             "description": "Field: current_session",
-            "example": "market",
             "enum": [
               "market",
               "out_of_session"
@@ -707,38 +609,31 @@
           },
           "days_to_maturity": {
             "type": "number",
-            "description": "Field: days_to_maturity",
-            "example": 123.45
+            "description": "Field: days_to_maturity"
           },
           "description": {
             "type": "string",
-            "description": "Field: description",
-            "example": "example"
+            "description": "Field: description"
           },
           "expiration": {
             "type": "string",
-            "description": "Field: expiration",
-            "example": "example"
+            "description": "Field: expiration"
           },
           "first_bar_time": {
             "type": "string",
-            "description": "Field: first_bar_time",
-            "example": "example"
+            "description": "Field: first_bar_time"
           },
           "first_bar_time_1d": {
             "type": "number",
-            "description": "Field: first_bar_time_1d",
-            "example": 123.45
+            "description": "Field: first_bar_time_1d"
           },
           "forex_priority": {
             "type": "number",
-            "description": "Field: forex_priority",
-            "example": 123.45
+            "description": "Field: forex_priority"
           },
           "fractional": {
             "type": "string",
             "description": "Field: fractional",
-            "example": "false",
             "enum": [
               "false",
               "true"
@@ -746,201 +641,162 @@
           },
           "gap|1": {
             "type": "number",
-            "description": "Field: gap|1",
-            "example": 123.45
+            "description": "Field: gap|1"
           },
           "gap_down": {
             "type": "number",
-            "description": "Field: gap_down",
-            "example": 123.45
+            "description": "Field: gap_down"
           },
           "gap_down|1": {
             "type": "number",
-            "description": "Field: gap_down|1",
-            "example": 123.45
+            "description": "Field: gap_down|1"
           },
           "gap_down_abs": {
             "type": "number",
-            "description": "Field: gap_down_abs",
-            "example": 123.45
+            "description": "Field: gap_down_abs"
           },
           "gap_down_abs|1": {
             "type": "number",
-            "description": "Field: gap_down_abs|1",
-            "example": 123.45
+            "description": "Field: gap_down_abs|1"
           },
           "gap_up": {
             "type": "number",
-            "description": "Field: gap_up",
-            "example": 123.45
+            "description": "Field: gap_up"
           },
           "gap_up|1": {
             "type": "number",
-            "description": "Field: gap_up|1",
-            "example": 123.45
+            "description": "Field: gap_up|1"
           },
           "gap_up_abs": {
             "type": "number",
-            "description": "Field: gap_up_abs",
-            "example": 123.45
+            "description": "Field: gap_up_abs"
           },
           "gap_up_abs|1": {
             "type": "number",
-            "description": "Field: gap_up_abs|1",
-            "example": 123.45
+            "description": "Field: gap_up_abs|1"
           },
           "high|1": {
             "type": "number",
-            "description": "Field: high|1",
-            "example": 123.45
+            "description": "Field: high|1"
           },
           "index_priority": {
             "type": "number",
-            "description": "Field: index_priority",
-            "example": 123.45
+            "description": "Field: index_priority"
           },
           "indexes": {
             "type": "string",
-            "description": "Field: indexes",
-            "example": "example"
+            "description": "Field: indexes"
           },
           "indicators_bars_count": {
             "type": "number",
-            "description": "Field: indicators_bars_count",
-            "example": 123.45
+            "description": "Field: indicators_bars_count"
           },
           "indicators_bars_count|1": {
             "type": "number",
-            "description": "Field: indicators_bars_count|1",
-            "example": 123.45
+            "description": "Field: indicators_bars_count|1"
           },
           "is_blacklisted": {
             "type": "boolean",
-            "description": "Field: is_blacklisted",
-            "example": true
+            "description": "Field: is_blacklisted"
           },
           "is_shariah_compliant": {
             "type": "boolean",
-            "description": "Field: is_shariah_compliant",
-            "example": true
+            "description": "Field: is_shariah_compliant"
           },
           "last_bar_update_time": {
             "type": "number",
-            "description": "Field: last_bar_update_time",
-            "example": 123.45
+            "description": "Field: last_bar_update_time"
           },
           "last_bar_update_time|1": {
             "type": "number",
-            "description": "Field: last_bar_update_time|1",
-            "example": 123.45
+            "description": "Field: last_bar_update_time|1"
           },
           "logoid": {
             "type": "string",
-            "description": "Field: logoid",
-            "example": "example"
+            "description": "Field: logoid"
           },
           "low|1": {
             "type": "number",
-            "description": "Field: low|1",
-            "example": 123.45
+            "description": "Field: low|1"
           },
           "low_after_high_all_change": {
             "type": "number",
-            "description": "Field: low_after_high_all_change",
-            "example": 123.45
+            "description": "Field: low_after_high_all_change"
           },
           "low_after_high_all_change_abs": {
             "type": "number",
-            "description": "Field: low_after_high_all_change_abs",
-            "example": 123.45
+            "description": "Field: low_after_high_all_change_abs"
           },
           "market": {
             "type": "string",
             "description": "Field: market",
-            "example": "bonds",
             "enum": [
               "bonds"
             ]
           },
           "maturity_date": {
             "type": "string",
-            "description": "Field: maturity_date",
-            "example": "example"
+            "description": "Field: maturity_date"
           },
           "minmov": {
             "type": "number",
-            "description": "Field: minmov",
-            "example": 123.45
+            "description": "Field: minmov"
           },
           "minmove2": {
             "type": "number",
-            "description": "Field: minmove2",
-            "example": 123.45
+            "description": "Field: minmove2"
           },
           "name": {
             "type": "string",
-            "description": "Field: name",
-            "example": "example"
+            "description": "Field: name"
           },
           "open|1": {
             "type": "number",
-            "description": "Field: open|1",
-            "example": 123.45
+            "description": "Field: open|1"
           },
           "popularity_rank": {
             "type": "number",
-            "description": "Field: popularity_rank",
-            "example": 123.45
+            "description": "Field: popularity_rank"
           },
           "post_change": {
             "type": "number",
-            "description": "Field: post_change",
-            "example": 123.45
+            "description": "Field: post_change"
           },
           "post_change|1": {
             "type": "number",
-            "description": "Field: post_change|1",
-            "example": 123.45
+            "description": "Field: post_change|1"
           },
           "pre_change": {
             "type": "number",
-            "description": "Field: pre_change",
-            "example": 123.45
+            "description": "Field: pre_change"
           },
           "pre_change|1": {
             "type": "number",
-            "description": "Field: pre_change|1",
-            "example": 123.45
+            "description": "Field: pre_change|1"
           },
           "pre_change_abs": {
             "type": "number",
-            "description": "Field: pre_change_abs",
-            "example": 123.45
+            "description": "Field: pre_change_abs"
           },
           "pre_change_abs|1": {
             "type": "number",
-            "description": "Field: pre_change_abs|1",
-            "example": 123.45
+            "description": "Field: pre_change_abs|1"
           },
           "price_52_week_high_date": {
             "type": "string",
-            "description": "Field: price_52_week_high_date",
-            "example": "example"
+            "description": "Field: price_52_week_high_date"
           },
           "price_52_week_low_date": {
             "type": "string",
-            "description": "Field: price_52_week_low_date",
-            "example": "example"
+            "description": "Field: price_52_week_low_date"
           },
           "pricescale": {
             "type": "number",
-            "description": "Field: pricescale",
-            "example": 123.45
+            "description": "Field: pricescale"
           },
           "provider-id": {
             "type": "string",
             "description": "Field: provider-id",
-            "example": "refinitiv",
             "enum": [
               "refinitiv",
               "tvc"
@@ -948,99 +804,59 @@
           },
           "rates_cf": {
             "type": "object",
-            "description": "Field: rates_cf",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_cf"
           },
           "rates_current": {
             "type": "object",
-            "description": "Field: rates_current",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_current"
           },
           "rates_dividend_recent": {
             "type": "object",
-            "description": "Field: rates_dividend_recent",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_dividend_recent"
           },
           "rates_dividend_upcoming": {
             "type": "object",
-            "description": "Field: rates_dividend_upcoming",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_dividend_upcoming"
           },
           "rates_earnings_fq": {
             "type": "object",
-            "description": "Field: rates_earnings_fq",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_earnings_fq"
           },
           "rates_earnings_next_fq": {
             "type": "object",
-            "description": "Field: rates_earnings_next_fq",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_earnings_next_fq"
           },
           "rates_fh": {
             "type": "object",
-            "description": "Field: rates_fh",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_fh"
           },
           "rates_fq": {
             "type": "object",
-            "description": "Field: rates_fq",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_fq"
           },
           "rates_fy": {
             "type": "object",
-            "description": "Field: rates_fy",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_fy"
           },
           "rates_mc": {
             "type": "object",
-            "description": "Field: rates_mc",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_mc"
           },
           "rates_pt": {
             "type": "object",
-            "description": "Field: rates_pt",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_pt"
           },
           "rates_time_series": {
             "type": "object",
-            "description": "Field: rates_time_series",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_time_series"
           },
           "rates_ttm": {
             "type": "object",
-            "description": "Field: rates_ttm",
-            "example": {
-              "key": "value"
-            }
+            "description": "Field: rates_ttm"
           },
           "region": {
             "type": "string",
             "description": "Field: region",
-            "example": "Africa",
             "enum": [
               "Africa",
               "Americas",
@@ -1052,13 +868,11 @@
           },
           "rtc": {
             "type": "number",
-            "description": "Field: rtc",
-            "example": 123.45
+            "description": "Field: rtc"
           },
           "source-logoid": {
             "type": "string",
             "description": "Field: source-logoid",
-            "example": "provider/tvc",
             "enum": [
               "provider/tvc"
             ]
@@ -1066,7 +880,6 @@
           "subtype": {
             "type": "string",
             "description": "Field: subtype",
-            "example": "cfd",
             "enum": [
               "cfd",
               "government"
@@ -1075,7 +888,6 @@
           "term-to-maturity": {
             "type": "string",
             "description": "Field: term-to-maturity",
-            "example": "P10Y",
             "enum": [
               "P10Y",
               "P11Y",
@@ -1114,26 +926,19 @@
           },
           "time": {
             "type": "string",
-            "description": "Field: time",
-            "example": "example"
+            "description": "Field: time"
           },
           "time|1": {
             "type": "string",
-            "description": "Field: time|1",
-            "example": "example"
+            "description": "Field: time|1"
           },
           "time_business_day": {
             "type": "number",
-            "description": "Field: time_business_day",
-            "example": 123.45
+            "description": "Field: time_business_day"
           },
           "typespecs": {
             "type": "array",
             "description": "Field: typespecs",
-            "example": [
-              "item1",
-              "item2"
-            ],
             "enum": [
               "benchmark",
               "cfd",
@@ -1143,13 +948,11 @@
           },
           "update-time": {
             "type": "number",
-            "description": "Field: update-time",
-            "example": 123.45
+            "description": "Field: update-time"
           },
           "update_mode": {
             "type": "string",
             "description": "Field: update_mode",
-            "example": "streaming",
             "enum": [
               "streaming"
             ]
@@ -1157,244 +960,34 @@
           "update_mode|1": {
             "type": "string",
             "description": "Field: update_mode|1",
-            "example": "streaming",
             "enum": [
               "streaming"
             ]
           },
           "update_time": {
             "type": "string",
-            "description": "Field: update_time",
-            "example": "example"
+            "description": "Field: update_time"
           },
           "volume|1": {
             "type": "number",
-            "description": "Field: volume|1",
-            "example": 123.45
+            "description": "Field: volume|1"
           },
           "volume_change": {
             "type": "number",
-            "description": "Field: volume_change",
-            "example": 123.45
+            "description": "Field: volume_change"
           },
           "volume_change|1": {
             "type": "number",
-            "description": "Field: volume_change|1",
-            "example": 123.45
+            "description": "Field: volume_change|1"
           },
           "volume_change_abs": {
             "type": "number",
-            "description": "Field: volume_change_abs",
-            "example": 123.45
+            "description": "Field: volume_change_abs"
           },
           "volume_change_abs|1": {
             "type": "number",
-            "description": "Field: volume_change_abs|1",
-            "example": 123.45
+            "description": "Field: volume_change_abs|1"
           }
-        },
-        "example": {
-          "type": "bond",
-          "is_primary": true,
-          "active_symbol": true,
-          "change": 123.45,
-          "change_abs": 123.45,
-          "close": 123.45,
-          "sector": "example",
-          "volume": 123.45,
-          "High.1M": 123.45,
-          "Low.1M": 123.45,
-          "High.3M": 123.45,
-          "Low.3M": 123.45,
-          "Perf.3M": 123.45,
-          "Perf.5Y": 123.45,
-          "High.6M": 123.45,
-          "Low.6M": 123.45,
-          "Perf.6M": 123.45,
-          "price_52_week_high": 123.45,
-          "price_52_week_low": 123.45,
-          "High.All": 123.45,
-          "Low.All": 123.45,
-          "Perf.All": 123.45,
-          "change_from_open": 123.45,
-          "change_from_open_abs": 123.45,
-          "exchange": "TVC",
-          "gap": 123.45,
-          "high": 123.45,
-          "low": 123.45,
-          "Perf.1M": 123.45,
-          "open": 123.45,
-          "postmarket_change": 123.45,
-          "postmarket_change_abs": 123.45,
-          "premarket_change": 123.45,
-          "premarket_change_abs": 123.45,
-          "premarket_change_from_open": 123.45,
-          "premarket_change_from_open_abs": 123.45,
-          "premarket_gap": 123.45,
-          "submarket": "",
-          "Volatility.D": 123.45,
-          "Volatility.M": 123.45,
-          "Volatility.W": 123.45,
-          "Perf.W": 123.45,
-          "Perf.Y": 123.45,
-          "Perf.YTD": 123.45,
-          "currency": "BRL",
-          "ask": 123.45,
-          "bid": 123.45,
-          "Bond.Change": 123.45,
-          "Bond.Change|1": 123.45,
-          "Bond.Change.%": 123.45,
-          "Bond.Change.%|1": 123.45,
-          "Bond.Currency": "BRL",
-          "Bond.Price": 123.45,
-          "Bond.Price|1": 123.45,
-          "High.1M.Date": "example",
-          "High.3M.Date": "example",
-          "High.5D": 123.45,
-          "High.6M.Date": "example",
-          "High.All.Calc": 123.45,
-          "High.All.Calc.Date": "example",
-          "High.All.Date": "example",
-          "Low.1M.Date": "example",
-          "Low.3M.Date": "example",
-          "Low.5D": 123.45,
-          "Low.6M.Date": "example",
-          "Low.After.High.All": 123.45,
-          "Low.All.Calc": 123.45,
-          "Low.All.Calc.Date": "example",
-          "Low.All.Date": "example",
-          "Open.All.Calc": 123.45,
-          "Perf.10Y": 123.45,
-          "Perf.3Y": 123.45,
-          "Perf.5D": 123.45,
-          "all_time_high": 123.45,
-          "all_time_high_day": "example",
-          "all_time_low": 123.45,
-          "all_time_low_day": "example",
-          "all_time_open": 123.45,
-          "bars_count": 123.45,
-          "bars_count|1": 123.45,
-          "base_currency_kind": "example",
-          "bid_ask_spread_pct": 123.45,
-          "change|1": 123.45,
-          "change_abs|1": 123.45,
-          "change_from_open|1": 123.45,
-          "change_from_open_abs|1": 123.45,
-          "close|1": 123.45,
-          "close_1_days_back": 123.45,
-          "close_30_days_back": 123.45,
-          "close_365_days_back": 123.45,
-          "country_code": "AT",
-          "country_code_fund": "AT",
-          "coupon": 123.45,
-          "cryptoasset-info.description": "example",
-          "cryptoasset-info.id": "example",
-          "currency_id": "",
-          "currency_kind": "fiat",
-          "current_session": "market",
-          "days_to_maturity": 123.45,
-          "description": "example",
-          "expiration": "example",
-          "first_bar_time": "example",
-          "first_bar_time_1d": 123.45,
-          "forex_priority": 123.45,
-          "fractional": "false",
-          "gap|1": 123.45,
-          "gap_down": 123.45,
-          "gap_down|1": 123.45,
-          "gap_down_abs": 123.45,
-          "gap_down_abs|1": 123.45,
-          "gap_up": 123.45,
-          "gap_up|1": 123.45,
-          "gap_up_abs": 123.45,
-          "gap_up_abs|1": 123.45,
-          "high|1": 123.45,
-          "index_priority": 123.45,
-          "indexes": "example",
-          "indicators_bars_count": 123.45,
-          "indicators_bars_count|1": 123.45,
-          "is_blacklisted": true,
-          "is_shariah_compliant": true,
-          "last_bar_update_time": 123.45,
-          "last_bar_update_time|1": 123.45,
-          "logoid": "example",
-          "low|1": 123.45,
-          "low_after_high_all_change": 123.45,
-          "low_after_high_all_change_abs": 123.45,
-          "market": "bonds",
-          "maturity_date": "example",
-          "minmov": 123.45,
-          "minmove2": 123.45,
-          "name": "example",
-          "open|1": 123.45,
-          "popularity_rank": 123.45,
-          "post_change": 123.45,
-          "post_change|1": 123.45,
-          "pre_change": 123.45,
-          "pre_change|1": 123.45,
-          "pre_change_abs": 123.45,
-          "pre_change_abs|1": 123.45,
-          "price_52_week_high_date": "example",
-          "price_52_week_low_date": "example",
-          "pricescale": 123.45,
-          "provider-id": "refinitiv",
-          "rates_cf": {
-            "key": "value"
-          },
-          "rates_current": {
-            "key": "value"
-          },
-          "rates_dividend_recent": {
-            "key": "value"
-          },
-          "rates_dividend_upcoming": {
-            "key": "value"
-          },
-          "rates_earnings_fq": {
-            "key": "value"
-          },
-          "rates_earnings_next_fq": {
-            "key": "value"
-          },
-          "rates_fh": {
-            "key": "value"
-          },
-          "rates_fq": {
-            "key": "value"
-          },
-          "rates_fy": {
-            "key": "value"
-          },
-          "rates_mc": {
-            "key": "value"
-          },
-          "rates_pt": {
-            "key": "value"
-          },
-          "rates_time_series": {
-            "key": "value"
-          },
-          "rates_ttm": {
-            "key": "value"
-          },
-          "region": "Africa",
-          "rtc": 123.45,
-          "source-logoid": "provider/tvc",
-          "subtype": "cfd",
-          "term-to-maturity": "P10Y",
-          "time": "example",
-          "time|1": "example",
-          "time_business_day": 123.45,
-          "typespecs": "benchmark",
-          "update-time": 123.45,
-          "update_mode": "streaming",
-          "update_mode|1": "streaming",
-          "update_time": "example",
-          "volume|1": 123.45,
-          "volume_change": 123.45,
-          "volume_change|1": 123.45,
-          "volume_change_abs": 123.45,
-          "volume_change_abs|1": 123.45
         }
       },
       "ScanRequest": {
@@ -1405,26 +998,17 @@
             "items": {
               "$ref": "#/components/schemas/Filter"
             },
-            "description": "Array of filters to apply",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Array of filters to apply"
           },
           "options": {
-            "$ref": "#/components/schemas/Options",
-            "example": "example_value"
+            "$ref": "#/components/schemas/Options"
           },
           "columns": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "Columns to return",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Columns to return"
           },
           "range": {
             "type": "array",
@@ -1433,11 +1017,7 @@
             },
             "minItems": 2,
             "maxItems": 2,
-            "description": "Range of results [start, end]",
-            "example": [
-              "item1",
-              "item2"
-            ]
+            "description": "Range of results [start, end]"
           }
         },
         "required": [
@@ -1452,15 +1032,10 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MarketData"
-            },
-            "example": [
-              "item1",
-              "item2"
-            ]
+            }
           },
           "totalCount": {
-            "type": "integer",
-            "example": 123
+            "type": "integer"
           }
         }
       },
@@ -1469,8 +1044,7 @@
         "properties": {
           "left": {
             "type": "string",
-            "description": "Field name",
-            "example": "example_value"
+            "description": "Field name"
           },
           "operation": {
             "type": "string",
@@ -1483,13 +1057,11 @@
               "eq",
               "nz"
             ],
-            "description": "Filter operation",
-            "example": "example_value"
+            "description": "Filter operation"
           },
           "right": {
             "type": "string",
-            "description": "Filter value",
-            "example": "example_value"
+            "description": "Filter value"
           }
         },
         "required": [
@@ -1508,14 +1080,12 @@
               "ru",
               "zh"
             ],
-            "default": "en",
-            "example": "example_value"
+            "default": "en"
           },
           "decimal_places": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 8,
-            "example": 123
+            "maximum": 8
           }
         }
       }

@@ -21006,7 +21006,7 @@
       "apiKeyAuth": {
         "type": "apiKey",
         "in": "header",
-        "name": "Authorization",
+        "name": "X-API-Key",
         "description": "API key for authentication"
       }
     }

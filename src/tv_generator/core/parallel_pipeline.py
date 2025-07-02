@@ -5,13 +5,13 @@ Parallel pipeline for concurrent OpenAPI generation.
 import asyncio
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Callable
 
 from loguru import logger
 
 from ..types import OpenAPIGeneratorResult
 from .metrics import GenerationMetrics, MetricsCollector
-from .pipeline import OpenAPIPipeline
+from ..main import OpenAPIPipeline
 
 
 class ParallelOpenAPIPipeline(OpenAPIPipeline):
@@ -127,7 +127,7 @@ class ParallelOpenAPIPipeline(OpenAPIPipeline):
             )
 
     async def generate_specs_with_progress(
-        self, markets: list[str] | None = None, progress_callback: callable | None = None
+        self, markets: list[str] | None = None, progress_callback: Optional[Callable] = None
     ) -> OpenAPIGeneratorResult:
         """Generate specs with progress reporting."""
         if markets is None:
