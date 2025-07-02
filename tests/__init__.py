@@ -1,3 +1,3 @@
 """
-Тесты для TradingView OpenAPI Generator.
+Tests for TradingView OpenAPI Generator.
 """

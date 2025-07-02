@@ -4,19 +4,43 @@ __pycache__/
 *.egg-info/
 .env
 venv/
+.venv/
+.venv_new/
 .idea/
 *.log
+logs/
+
 # Build
 build/
 dist/
 *.egg
+
 # Coverage
 htmlcov/
 *.coverage
+.coverage
 .cache
+.pytest_cache/
+.mypy_cache/
+
 # OpenAPI
 openapi.yaml
 tv_generator.egg-info/
 results/
 tmp/
 docs/source/generated/
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+bandit-report.json

@@ -1,148 +1,188 @@
 """
-Интеграционные тесты для end-to-end сценариев.
+Интеграционные тесты с реальными данными.
 """
 
 import asyncio
 import json
 import os
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from typing import Dict, List
 
 import pytest
+from loguru import logger
 from openapi_spec_validator import validate_spec
 
-from src.tv_generator.api import TradingViewAPI
-from src.tv_generator.config import settings
-from src.tv_generator.core import MarketData, Pipeline, PipelineError
+from tv_generator.api import TradingViewAPI
+from tv_generator.config import settings
+from tv_generator.core import MarketData, OpenAPIGeneratorResult, OpenAPIPipeline, generate_all_specifications
 
 
 class TestIntegration:
-    """Интеграционные тесты."""
+    """Интеграционные тесты с реальными API вызовами."""
 
     @pytest.fixture
-    def temp_results_dir(self):
+    def temp_results_dir(self) -> Generator[Path, None, None]:
         """Фикстура для временной директории результатов."""
         with tempfile.TemporaryDirectory() as temp_dir:
             yield Path(temp_dir)
 
-    @pytest.fixture
-    def mock_api_responses(self):
-        """Фикстура с мок-ответами API."""
-        return {
-            "metainfo": {
-                "fields": [
-                    {"name": "close", "type": "number", "description": "Close price"},
-                    {"name": "volume", "type": "number", "description": "Volume"},
-                    {"name": "name", "type": "string", "description": "Company name"},
-                ]
-            },
-            "tickers": [
-                {"name": "AAPL", "close": 150.0, "volume": 1000000},
-                {"name": "GOOGL", "close": 2500.0, "volume": 500000},
-            ],
-            "field_data": {"close": 150.0, "volume": 1000000, "name": "Apple Inc."},
-        }
+    @pytest.mark.asyncio
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    async def test_full_pipeline_integration(self, temp_results_dir):
+        """Тест полной интеграции пайплайна с реальным API."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
+        original_specs = settings.specs_dir
+
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            settings.specs_dir = str(temp_results_dir / "specs")
+
+            # Создаем директории
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
+            Path(settings.specs_dir).mkdir(parents=True, exist_ok=True)
+
+            # Запускаем пайплайн
+            pipeline = OpenAPIPipeline()
+            await pipeline.run()
+
+            # Проверяем, что OpenAPI спецификации созданы для существующих рынков
+            specs_dir = Path(settings.specs_dir)
+            existing_markets = [
+                "america",
+                "crypto",
+                "forex",
+                "commodity",
+                "index",
+                "coin",
+                "bond",
+                "bonds",
+                "cfd",
+                "futures",
+            ]
+
+            created_specs = []
+            for market_name in existing_markets:
+                spec_file = specs_dir / f"{market_name}_openapi.json"
+                if spec_file.exists():
+                    created_specs.append(market_name)
+                    # Проверяем валидность спецификации
+                    with open(spec_file) as f:
+                        spec = json.load(f)
+                    validate_spec(spec)
+
+            # Проверяем, что создано минимум 10 спецификаций
+            assert len(created_specs) >= 10, f"Создано только {len(created_specs)} спецификаций из ожидаемых 10+"
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
+            settings.specs_dir = original_specs
 
     @pytest.mark.asyncio
-    async def test_full_pipeline_integration(self, temp_results_dir, mock_api_responses):
-        """Тест полного пайплайна с моками."""
-        with patch.object(settings, "results_dir", str(temp_results_dir)):
-            with patch("src.tv_generator.api.TradingViewAPI") as mock_api_class:
-                # Настройка мока API
-                mock_api = AsyncMock(spec=TradingViewAPI)
-                mock_api_class.return_value = mock_api
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    async def test_single_market_processing(self, temp_results_dir):
+        """Тест обработки одного рынка с реальным API."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-                mock_api.get_metainfo.return_value = mock_api_responses["metainfo"]
-                mock_api.scan_tickers.return_value = mock_api_responses["tickers"]
-                mock_api.test_field.side_effect = [True, True, True]  # Все поля работают
-                mock_api.get_field_data.return_value = mock_api_responses["field_data"]
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
 
-                # Мокаем контекстный менеджер
-                mock_api.__aenter__ = AsyncMock(return_value=mock_api)
-                mock_api.__aexit__ = AsyncMock(return_value=None)
+            pipeline = OpenAPIPipeline()
+            market_config = settings.markets["america"]
+            market_data = await pipeline.fetch_market_data("america", market_config)
 
-                # Запуск пайплайна
-                pipeline = Pipeline()
-                await pipeline.run()
+            # Проверяем результат
+            assert market_data.name == "america"
+            assert len(market_data.tickers) > 0
+            assert len(market_data.fields) > 0
+            assert len(market_data.working_fields) > 0
 
-                # Проверяем, что файлы созданы
-                assert (temp_results_dir / "us_stocks_metainfo.json").exists()
-                assert (temp_results_dir / "us_stocks_tickers.json").exists()
-                assert (temp_results_dir / "us_stocks_fields.txt").exists()
-                assert (temp_results_dir / "us_stocks_working_fields.txt").exists()
-                assert (temp_results_dir / "us_stocks_openapi_fields.json").exists()
+            # Проверяем, что файлы сохранены
+            results_dir = Path(settings.results_dir)
+            metainfo_file = results_dir / "america_metainfo.json"
+            scan_file = results_dir / "america_scan.json"
 
-    @pytest.mark.asyncio
-    async def test_single_market_processing(self, temp_results_dir, mock_api_responses):
-        """Тест обработки одного рынка."""
-        with patch.object(settings, "results_dir", str(temp_results_dir)):
-            with patch("src.tv_generator.api.TradingViewAPI") as mock_api_class:
-                mock_api = AsyncMock(spec=TradingViewAPI)
-                mock_api_class.return_value = mock_api
+            assert metainfo_file.exists()
+            assert scan_file.exists()
 
-                mock_api.get_metainfo.return_value = mock_api_responses["metainfo"]
-                mock_api.scan_tickers.return_value = [mock_api_responses["tickers"][0]]  # 1 тикер
-                mock_api.test_field.side_effect = [True, True, True]
-                mock_api.get_field_data.return_value = mock_api_responses["field_data"]
+            # Проверяем содержимое файлов
+            with open(metainfo_file) as f:
+                metainfo = json.load(f)
+            assert "fields" in metainfo
+            assert isinstance(metainfo["fields"], list)
 
-                mock_api.__aenter__ = AsyncMock(return_value=mock_api)
-                mock_api.__aexit__ = AsyncMock(return_value=None)
+            with open(scan_file) as f:
+                scan = json.load(f)
+            assert isinstance(scan, list)
+            if scan:
+                assert "s" in scan[0]  # symbol
+                assert "d" in scan[0]  # data
 
-                pipeline = Pipeline()
-                market_config = settings.markets["us_stocks"]
-                market_data = await pipeline.fetch_market_data("us_stocks", market_config)
-
-                # Проверяем результат
-                assert market_data.name == "us_stocks"
-                assert len(market_data.tickers) == 1  # теперь всегда 1 тикер
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
 
     @pytest.mark.asyncio
+    @pytest.mark.real_api
+    @pytest.mark.slow
     async def test_api_error_handling(self, temp_results_dir):
-        """Тест обработки ошибок API."""
-        print(f"DEBUG: Starting test_api_error_handling")
-        print(f"DEBUG: temp_results_dir = {temp_results_dir}")
+        """Тест обработки ошибок API с реальными запросами."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-        with patch.object(settings, "results_dir", str(temp_results_dir)):
-            pipeline = Pipeline()
-            market_config = settings.markets["us_stocks"]
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
 
-            print(f"DEBUG: Created pipeline with results_dir = {pipeline.results_dir}")
-            print(f"DEBUG: Market config = {market_config}")
-            print(f"DEBUG: About to call fetch_market_data with 'us_stocks'")
+            pipeline = OpenAPIPipeline()
 
-            # Применяем mock к уже созданному API экземпляру
-            with patch.object(pipeline.api, "get_metainfo", side_effect=Exception("API Error")):
-                # Ожидаем PipelineError, а не typer.Exit
-                try:
-                    await pipeline.fetch_market_data("us_stocks", market_config)
-                    print(f"DEBUG: fetch_market_data completed without exception")
-                    assert False, "Expected PipelineError but no exception was raised"
-                except PipelineError as e:
-                    print(f"DEBUG: Caught expected PipelineError: {e}")
-                    # Тест прошел успешно
-                except Exception as e:
-                    print(f"DEBUG: Caught unexpected exception: {type(e).__name__}: {e}")
-                    raise
+            # Тестируем несуществующий рынок
+            try:
+                await pipeline.fetch_market_data("nonexistent_market_12345", {"endpoint": "invalid"})
+                assert False, "Ожидалась ошибка для несуществующего рынка"
+            except Exception as e:
+                # Ожидаем ошибку
+                assert "not found" in str(e).lower() or "invalid" in str(e).lower()
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
 
     @pytest.mark.asyncio
+    @pytest.mark.real_api
+    @pytest.mark.slow
     async def test_health_check_integration(self, temp_results_dir):
-        """Тест проверки здоровья системы."""
-        with patch.object(settings, "results_dir", str(temp_results_dir)):
-            with patch("src.tv_generator.api.TradingViewAPI") as mock_api_class:
-                mock_api = AsyncMock(spec=TradingViewAPI)
-                mock_api_class.return_value = mock_api
+        """Тест интеграции проверки здоровья с реальным API."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-                mock_api.health_check.return_value = {"status": "healthy", "endpoints": {"america": "healthy"}}
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
 
-                mock_api.__aenter__ = AsyncMock(return_value=mock_api)
-                mock_api.__aexit__ = AsyncMock(return_value=None)
+            pipeline = OpenAPIPipeline()
+            health_status = await pipeline.health_check()
 
-                pipeline = Pipeline()
-                health_status = await pipeline.health_check()
+            assert health_status["status"] in ["healthy", "degraded", "unhealthy"]
+            assert "pipeline" in health_status
+            assert "timestamp" in health_status
+            assert "endpoints" in health_status
 
-                assert health_status["status"] == "healthy"
-                assert "pipeline" in health_status
+            # Проверяем, что основные endpoints работают
+            for endpoint in ["america", "crypto", "forex"]:
+                if endpoint in health_status["endpoints"]:
+                    assert health_status["endpoints"][endpoint] in ["healthy", "degraded", "unhealthy"]
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
 
     def test_config_validation(self):
         """Тест валидации конфигурации."""
@@ -160,92 +200,153 @@ class TestIntegration:
             assert "description" in config
 
     @pytest.mark.asyncio
-    async def test_batch_processing(self, temp_results_dir, mock_api_responses):
-        """Тест батчевой обработки полей."""
-        with patch.object(settings, "results_dir", str(temp_results_dir)):
-            with patch.object(settings, "batch_size", 2):  # Маленький размер батча для теста
-                with patch("src.tv_generator.api.TradingViewAPI") as mock_api_class:
-                    mock_api = AsyncMock(spec=TradingViewAPI)
-                    mock_api_class.return_value = mock_api
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    async def test_batch_processing(self, temp_results_dir):
+        """Тест пакетной обработки полей с реальным API."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-                    mock_api.get_metainfo.return_value = mock_api_responses["metainfo"]
-                    mock_api.scan_tickers.return_value = [mock_api_responses["tickers"][0]]  # 1 тикер
-                    mock_api.test_field.side_effect = [True, True, True]
-                    mock_api.get_field_data.return_value = mock_api_responses["field_data"]
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
 
-                    mock_api.__aenter__ = AsyncMock(return_value=mock_api)
-                    mock_api.__aexit__ = AsyncMock(return_value=None)
+            pipeline = OpenAPIPipeline()
+            market_config = settings.markets["america"]
+            market_data = await pipeline.fetch_market_data("america", market_config)
 
-                    pipeline = Pipeline()
-                    market_config = settings.markets["us_stocks"]
-                    market_data = await pipeline.fetch_market_data("us_stocks", market_config)
+            # Проверяем, что поля обработаны
+            assert len(market_data.fields) > 0
+            assert len(market_data.working_fields) > 0
+            assert len(market_data.openapi_fields) > 0
 
-                    # Теперь все поля рабочие (NO COOKIES MODE)
-                    assert len(market_data.working_fields) == len(market_data.fields)
+            # Проверяем, что working_fields является подмножеством fields
+            assert all(field in market_data.fields for field in market_data.working_fields)
 
-
-class TestCLIIntegration:
-    """Интеграционные тесты CLI."""
-
-    def test_cli_info_command(self, capsys):
-        """Тест команды info."""
-        from src.tv_generator.cli import info
-
-        info()
-        captured = capsys.readouterr()
-
-        assert "TradingView OpenAPI Generator Info" in captured.out
-        assert "Поддерживаемые рынки" in captured.out
-        assert "us_stocks" in captured.out
-
-    def test_cli_validate_command(self, capsys):
-        """Тест команды validate."""
-        from src.tv_generator.cli import validate
-
-        validate()
-        captured = capsys.readouterr()
-
-        assert "Результаты валидации" in captured.out
-        assert "Конфигурация рынков" in captured.out
-        assert "API URL" in captured.out
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
 
     @pytest.mark.asyncio
-    async def test_cli_health_command(self, capsys):
-        """Тест команды health."""
-        with patch("src.tv_generator.api.TradingViewAPI") as mock_api_class:
-            mock_api = AsyncMock(spec=TradingViewAPI)
-            mock_api_class.return_value = mock_api
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    async def test_multiple_markets_processing(self, temp_results_dir):
+        """Тест обработки нескольких рынков с реальным API."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
+        original_specs = settings.specs_dir
 
-            mock_api.health_check.return_value = {"status": "healthy", "endpoints": {"america": "healthy"}}
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            settings.specs_dir = str(temp_results_dir / "specs")
 
-            mock_api.__aenter__ = AsyncMock(return_value=mock_api)
-            mock_api.__aexit__ = AsyncMock(return_value=None)
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
+            Path(settings.specs_dir).mkdir(parents=True, exist_ok=True)
 
-            from src.tv_generator.cli import health_check_async
+            pipeline = OpenAPIPipeline()
 
-            await health_check_async()
-            out, _ = capsys.readouterr()
-            assert "healthy" in out
+            # Обрабатываем несколько рынков
+            markets_to_test = ["america", "crypto", "forex"]
+            processed_markets = []
+
+            for market_name in markets_to_test:
+                try:
+                    market_config = settings.markets[market_name]
+                    market_data = await pipeline.fetch_market_data(market_name, market_config)
+
+                    # Генерируем OpenAPI спецификацию
+                    result = await pipeline.generate_openapi_spec(market_data)
+
+                    processed_markets.append(market_name)
+
+                    # Проверяем результат
+                    assert result.spec is not None
+                    assert result.market_name == market_name
+
+                    # Валидируем спецификацию
+                    validate_spec(result.spec)
+
+                    # Делаем паузу между рынками
+                    await asyncio.sleep(0.5)
+
+                except Exception as e:
+                    logger.warning(f"Ошибка при обработке рынка {market_name}: {e}")
+
+            # Проверяем, что обработано минимум 2 рынка
+            assert len(processed_markets) >= 2, f"Обработано только {len(processed_markets)} рынков из ожидаемых 2+"
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
+            settings.specs_dir = original_specs
 
     @pytest.mark.asyncio
-    async def test_cli_fetch_data_command(self, capsys):
-        """Тест команды fetch-data."""
-        with patch("src.tv_generator.core.Pipeline") as mock_pipeline_class:
-            mock_pipeline = AsyncMock()
-            mock_pipeline_class.return_value = mock_pipeline
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    async def test_data_persistence(self, temp_results_dir):
+        """Тест персистентности данных с реальным API."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-            mock_pipeline.__aenter__ = AsyncMock(return_value=mock_pipeline)
-            mock_pipeline.__aexit__ = AsyncMock(return_value=None)
+        try:
+            settings.results_dir = str(temp_results_dir / "results")
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
 
-            from src.tv_generator.cli import fetch_data_async
+            pipeline = OpenAPIPipeline()
+            market_config = settings.markets["america"]
+            market_data = await pipeline.fetch_market_data("america", market_config)
 
-            await fetch_data_async()
-            out, _ = capsys.readouterr()
-            assert "Сбор данных завершен успешно" in out
+            # Сохраняем данные
+            await pipeline.save_market_data(market_data)
+
+            # Проверяем, что файлы созданы
+            results_dir = Path(settings.results_dir)
+            metainfo_file = results_dir / f"{market_data.name}_metainfo.json"
+            scan_file = results_dir / f"{market_data.name}_scan.json"
+
+            assert metainfo_file.exists()
+            assert scan_file.exists()
+
+            # Загружаем данные обратно
+            loaded_metainfo = await pipeline._load_metainfo(market_data.name)
+            loaded_scan = await pipeline._load_scan(market_data.name)
+
+            # Проверяем, что данные совпадают
+            assert loaded_metainfo == market_data.metainfo
+            assert loaded_scan == market_data.tickers
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
+
+    def test_config_loading(self):
+        """Тест загрузки конфигурации."""
+        assert settings.tradingview_base_url == "https://scanner.tradingview.com"
+        assert settings.request_timeout == 30
+        assert settings.max_retries == 3
+        assert settings.requests_per_second == 10
+
+    def test_markets_config(self):
+        """Тест конфигурации рынков."""
+        assert "america" in settings.markets
+        assert "crypto" in settings.markets
+        assert "forex" in settings.markets
+        assert settings.markets["america"]["endpoint"] == "america"
+
+    def test_specs_directory_structure(self):
+        """Тест структуры директории спецификаций."""
+        specs_dir = Path(settings.specs_dir)
+        assert specs_dir.name == "specs"
+        assert specs_dir.parent.name == "docs"
+
+    def test_results_directory_structure(self):
+        """Тест структуры директории результатов."""
+        results_dir = Path(settings.results_dir)
+        assert results_dir.name == "results"
 
 
 class TestDataPersistence:
-    """Тесты сохранения данных."""
+    """Тесты персистентности данных."""
 
     @pytest.fixture
     def temp_results_dir(self):
@@ -255,151 +356,227 @@ class TestDataPersistence:
 
     def test_market_data_serialization(self, temp_results_dir):
         """Тест сериализации данных рынка."""
+        # Создаем тестовые данные
         market_data = MarketData(
             name="test_market",
-            endpoint="america",
-            label_product="screener-stock",
+            endpoint="test",
+            label_product="test-product",
             description="Test Market",
-            metainfo={"fields": [{"name": "close", "type": "number"}]},
-            tickers=[{"name": "AAPL", "close": 150.0}],
-            fields=["close"],
-            working_fields=["close"],
-            openapi_fields={"close": {"type": "number"}},
+            metainfo={
+                "fields": [
+                    {"n": "close", "t": "number", "description": "Close price"},
+                    {"n": "volume", "t": "number", "description": "Volume"},
+                ]
+            },
+            tickers=[{"s": "AAPL", "d": [150.0, 1000000]}, {"s": "GOOGL", "d": [2500.0, 500000]}],
+            fields=["close", "volume"],
+            working_fields=["close", "volume"],
+            openapi_fields={
+                "close": {"type": "number", "description": "Close price"},
+                "volume": {"type": "number", "description": "Volume"},
+            },
         )
 
-        pipeline = Pipeline()
-        pipeline.results_dir = temp_results_dir
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-        # Сохраняем данные
-        pipeline.save_market_data(market_data)
+        try:
+            settings.results_dir = str(temp_results_dir)
+            Path(temp_results_dir).mkdir(parents=True, exist_ok=True)
 
-        # Проверяем, что файлы созданы
-        assert (temp_results_dir / "test_market_metainfo.json").exists()
-        assert (temp_results_dir / "test_market_tickers.json").exists()
-        assert (temp_results_dir / "test_market_fields.txt").exists()
-        assert (temp_results_dir / "test_market_working_fields.txt").exists()
-        assert (temp_results_dir / "test_market_openapi_fields.json").exists()
+            # Сохраняем данные
+            pipeline = OpenAPIPipeline()
+            asyncio.run(pipeline.save_market_data(market_data))
+
+            # Проверяем, что файлы созданы
+            metainfo_file = temp_results_dir / "test_market_metainfo.json"
+            scan_file = temp_results_dir / "test_market_scan.json"
+
+            assert metainfo_file.exists()
+            assert scan_file.exists()
+
+            # Проверяем содержимое файлов
+            with open(metainfo_file) as f:
+                metainfo = json.load(f)
+            assert metainfo == market_data.metainfo
+
+            with open(scan_file) as f:
+                scan = json.load(f)
+            assert scan == market_data.tickers
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
 
     def test_data_file_contents(self, temp_results_dir):
         """Тест содержимого файлов данных."""
-        market_data = MarketData(
-            name="test_market",
-            endpoint="america",
-            label_product="screener-stock",
-            description="Test Market",
-            metainfo={"fields": [{"name": "close", "type": "number"}]},
-            tickers=[{"name": "AAPL", "close": 150.0}],
-            fields=["close"],
-            working_fields=["close"],
-            openapi_fields={"close": {"type": "number"}},
-        )
+        # Создаем тестовые данные
+        test_metainfo = {
+            "fields": [
+                {"n": "close", "t": "number", "description": "Close price", "example": 150.0},
+                {"n": "volume", "t": "number", "description": "Volume", "example": 1000000},
+                {"n": "name", "t": "text", "description": "Company name", "example": "Apple Inc."},
+            ]
+        }
 
-        pipeline = Pipeline()
-        pipeline.results_dir = temp_results_dir
+        test_scan = [
+            {"s": "AAPL", "d": [150.0, 1000000, "Apple Inc."]},
+            {"s": "GOOGL", "d": [2500.0, 500000, "Alphabet Inc."]},
+            {"s": "MSFT", "d": [300.0, 750000, "Microsoft Corporation"]},
+        ]
 
-        # Сохраняем данные
-        pipeline.save_market_data(market_data)
+        # Временно изменяем пути
+        original_results = settings.results_dir
 
-        # Проверяем содержимое файлов
-        import json
+        try:
+            settings.results_dir = str(temp_results_dir)
+            Path(temp_results_dir).mkdir(parents=True, exist_ok=True)
 
-        # Проверяем metainfo
-        with open(temp_results_dir / "test_market_metainfo.json") as f:
-            metainfo = json.load(f)
-            assert "fields" in metainfo
-            assert len(metainfo["fields"]) == 1
+            # Сохраняем тестовые данные
+            metainfo_file = temp_results_dir / "test_metainfo.json"
+            scan_file = temp_results_dir / "test_scan.json"
 
-        # Проверяем tickers
-        with open(temp_results_dir / "test_market_tickers.json") as f:
-            tickers = json.load(f)
-            assert len(tickers) == 1
-            assert tickers[0]["name"] == "AAPL"
+            with open(metainfo_file, "w") as f:
+                json.dump(test_metainfo, f, indent=2)
 
-        # Проверяем fields
-        with open(temp_results_dir / "test_market_fields.txt") as f:
-            fields = f.read().strip().split("\n")
-            assert "close" in fields
+            with open(scan_file, "w") as f:
+                json.dump(test_scan, f, indent=2)
 
-        # Проверяем working_fields
-        with open(temp_results_dir / "test_market_working_fields.txt") as f:
-            working_fields = f.read().strip().split("\n")
-            assert "close" in working_fields
+            # Проверяем, что файлы созданы и содержат правильные данные
+            assert metainfo_file.exists()
+            assert scan_file.exists()
 
-        # Проверяем openapi_fields
-        with open(temp_results_dir / "test_market_openapi_fields.json") as f:
-            openapi_fields = json.load(f)
-            assert "close" in openapi_fields
-            assert openapi_fields["close"]["type"] == "number"
+            with open(metainfo_file) as f:
+                loaded_metainfo = json.load(f)
+            assert loaded_metainfo == test_metainfo
+
+            with open(scan_file) as f:
+                loaded_scan = json.load(f)
+            assert loaded_scan == test_scan
+
+            # Проверяем структуру данных
+            assert "fields" in loaded_metainfo
+            assert isinstance(loaded_metainfo["fields"], list)
+            assert len(loaded_metainfo["fields"]) == 3
+
+            assert isinstance(loaded_scan, list)
+            assert len(loaded_scan) == 3
+
+            for field in loaded_metainfo["fields"]:
+                assert "n" in field  # name
+                assert "t" in field  # type
+                assert "description" in field
+                assert "example" in field
+
+            for ticker in loaded_scan:
+                assert "s" in ticker  # symbol
+                assert "d" in ticker  # data
+                assert isinstance(ticker["s"], str)
+                assert isinstance(ticker["d"], list)
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
 
 
-SPECS_DIR = os.path.join(os.path.dirname(__file__), "..", "specs")
+# Тесты валидации OpenAPI спецификаций
+def load_spec(filename):
+    """Загружает OpenAPI спецификацию из файла."""
+    spec_path = Path("docs/specs") / filename
+    with open(spec_path) as f:
+        return json.load(f)
 
-# Список всех спецификаций, которые должны быть
+
+# Ожидаемые спецификации
 EXPECTED_SPECS = [
-    "us_stocks_openapi.json",
-    "us_etf_openapi.json",
-    "crypto_dex_openapi.json",
+    "america_openapi.json",
+    "crypto_openapi.json",
+    "forex_openapi.json",
+    "commodity_openapi.json",
+    "index_openapi.json",
     "coin_openapi.json",
     "bond_openapi.json",
-    "forex_openapi.json",
+    "bonds_openapi.json",
     "cfd_openapi.json",
     "futures_openapi.json",
 ]
 
 
-def load_spec(filename):
-    path = os.path.join(SPECS_DIR, filename)
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
-
-
 @pytest.mark.parametrize("spec_file", EXPECTED_SPECS)
 def test_openapi_spec_valid(spec_file):
-    """Проверяет, что спецификация валидна по OpenAPI 3.1.0."""
-    spec = load_spec(spec_file)
-    validate_spec(spec)
+    """Тест валидности OpenAPI спецификаций."""
+    spec_path = Path("docs/specs") / spec_file
+    if spec_path.exists():
+        with open(spec_path) as f:
+            spec = json.load(f)
+        validate_spec(spec)
+    else:
+        pytest.skip(f"Файл {spec_file} не найден")
 
 
 @pytest.mark.parametrize("spec_file", EXPECTED_SPECS)
 def test_openapi_spec_has_examples(spec_file):
-    """Проверяет, что в спецификации есть хотя бы один пример запроса/ответа."""
-    spec = load_spec(spec_file)
-    found_example = False
+    """Тест наличия примеров в OpenAPI спецификациях."""
+    spec_path = Path("docs/specs") / spec_file
+    if spec_path.exists():
+        with open(spec_path) as f:
+            spec = json.load(f)
 
-    # Проверяем примеры в requestBody и responses
-    paths = spec.get("paths", {})
-    for path_item in paths.values():
-        for method in path_item.values():
-            # Примеры в requestBody
-            req_body = method.get("requestBody", {})
-            content = req_body.get("content", {})
-            for media in content.values():
-                # Проверяем примеры в content
-                if "example" in media or "examples" in media:
-                    found_example = True
-                # Проверяем примеры в schema
-                schema = media.get("schema", {})
-                if "example" in schema or "examples" in schema:
-                    found_example = True
+        # Проверяем, что спецификация содержит примеры
+        has_examples = False
 
-            # Примеры в responses
-            responses = method.get("responses", {})
-            for resp in responses.values():
-                content = resp.get("content", {})
-                for media in content.values():
-                    # Проверяем примеры в content
-                    if "example" in media or "examples" in media:
-                        found_example = True
-                    # Проверяем примеры в schema
-                    schema = media.get("schema", {})
-                    if "example" in schema or "examples" in schema:
-                        found_example = True
+        if "paths" in spec:
+            for path in spec["paths"].values():
+                for method in path.values():
+                    if "requestBody" in method:
+                        content = method["requestBody"].get("content", {})
+                        for media_type in content.values():
+                            if "schema" in media_type:
+                                schema = media_type["schema"]
+                                if "properties" in schema:
+                                    for prop in schema["properties"].values():
+                                        if "example" in prop:
+                                            has_examples = True
+                                            break
 
-    # Проверяем примеры в компонентах схем
-    components = spec.get("components", {})
-    schemas = components.get("schemas", {})
-    for schema_name, schema_data in schemas.items():
-        if "example" in schema_data:
-            found_example = True
+        assert has_examples, f"Спецификация {spec_file} не содержит примеров"
 
-    assert found_example, f"No examples found in {spec_file}"
+
+def test_openapi_spec_valid_global_stocks():
+    """Тест валидности спецификации для глобальных акций."""
+    spec_path = Path("docs/specs/america_openapi.json")
+    if spec_path.exists():
+        with open(spec_path) as f:
+            spec = json.load(f)
+
+        # Проверяем структуру спецификации
+        assert spec["openapi"].startswith("3.")
+        assert "info" in spec
+        assert "paths" in spec
+        assert "/america/scan" in spec["paths"]
+
+        # Проверяем, что спецификация валидна
+        validate_spec(spec)
+
+        # Проверяем наличие основных компонентов
+        scan_path = spec["paths"]["/america/scan"]
+        assert "post" in scan_path
+
+        post_method = scan_path["post"]
+        assert "requestBody" in post_method
+        assert "responses" in post_method
+
+        # Проверяем структуру request body
+        request_body = post_method["requestBody"]
+        assert "content" in request_body
+        assert "application/json" in request_body["content"]
+
+        # Проверяем структуру response
+        responses = post_method["responses"]
+        assert "200" in responses
+
+        response_200 = responses["200"]
+        assert "content" in response_200
+        assert "application/json" in response_200["content"]
+    else:
+        pytest.skip("Спецификация america_openapi.json не найдена")

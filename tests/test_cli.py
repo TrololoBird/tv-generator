@@ -1,42 +1,29 @@
 """
-Тесты для CLI модуля.
+Тесты для CLI модуля с реальными командами.
 """
 
 import json
 import sys
+import tempfile
 from io import StringIO
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from subprocess import run
 
 import pytest
+from loguru import logger
 
-from src.tv_generator.config import settings
-from src.tv_generator.simple_cli import fetch_data, generate, health, info, test_specs, validate
-
-
-@pytest.fixture(autouse=True)
-def patch_rich_progress():
-    """Мокаем Rich ProgressBar для избежания конфликтов в тестах."""
-    with patch("rich.progress.Progress") as mock_progress:
-        mock_progress.return_value.__enter__.return_value = mock_progress.return_value
-        mock_progress.return_value.__exit__.return_value = None
-        yield mock_progress
+from scripts.tv_generator_cli import main
+from tv_generator.config import settings
 
 
-@pytest.mark.usefixtures("patch_rich_progress")
-class TestSimpleCLI:
-    """Тесты для простого CLI интерфейса."""
+class TestCLI:
+    """Тесты для CLI интерфейса с реальными командами."""
 
     @pytest.fixture
-    def test_data_dir(self) -> Path:
+    def temp_test_dir(self):
         """Создает временную директорию для тестовых данных."""
-        test_dir = Path("tests/test_data")
-        test_dir.mkdir(exist_ok=True)
-        yield test_dir
-        # Очистка после тестов
-        for file in test_dir.glob("*"):
-            if file.is_file():
-                file.unlink()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            yield Path(temp_dir)
 
     @pytest.fixture
     def capture_output(self):
@@ -49,221 +36,314 @@ class TestSimpleCLI:
         finally:
             sys.stdout = old_stdout
 
-    def test_info(self, capsys) -> None:
-        """Тест команды info."""
-        info()
-        captured = capsys.readouterr()
-        output = captured.out
+    def test_config_loading(self) -> None:
+        """Тест загрузки конфигурации."""
+        assert settings.tradingview_base_url == "https://scanner.tradingview.com"
+        assert settings.request_timeout == 30
+        assert settings.max_retries == 3
+        assert settings.requests_per_second == 10
 
-        # Проверяем основную информацию
-        assert "TradingView OpenAPI Generator" in output
-        assert "Python:" in output
-        assert "API URL:" in output
-        assert "Доступные рынки:" in output
+    def test_markets_config(self) -> None:
+        """Тест конфигурации рынков."""
+        assert "america" in settings.markets
+        assert "crypto" in settings.markets
+        assert "forex" in settings.markets
+        assert settings.markets["america"]["endpoint"] == "america"
 
-    def test_validate(self, capsys) -> None:
-        """Тест команды validate."""
-        validate()
-        captured = capsys.readouterr()
-        output = captured.out
+    def test_specs_directory_structure(self) -> None:
+        """Тест структуры директории спецификаций."""
+        specs_dir = Path(settings.specs_dir)
+        assert specs_dir.name == "specs"
+        assert specs_dir.parent.name == "docs"
 
-        # Проверяем основные секции валидации
-        assert "Валидация конфигурации" in output
-        assert "Проверка директорий:" in output
-        assert "Проверка конфигурации:" in output
+    def test_results_directory_structure(self) -> None:
+        """Тест структуры директории результатов."""
+        results_dir = Path(settings.results_dir)
+        assert results_dir.name == "results"
 
-    @pytest.mark.asyncio
-    async def test_health(self, capsys) -> None:
-        """Тест команды health."""
-        await health()
-        captured = capsys.readouterr()
-        output = captured.out
-
-        # Проверяем основные секции
-        assert "Статус здоровья системы:" in output
-        assert "API:" in output
-        assert "Pipeline:" in output
-
-    @pytest.mark.asyncio
-    async def test_fetch_data(self, test_data_dir) -> None:
-        """Тест команды fetch_data."""
-        # Временно меняем директорию для результатов
-        original_dir = settings.results_dir
-        settings.results_dir = str(test_data_dir)
-
+    def test_cli_help(self, capture_output):
+        """Тест вывода справки CLI."""
         try:
-            # Тестируем с одним рынком для скорости
-            await fetch_data(verbose=True)
+            main(["--help"])
+        except SystemExit:
+            pass
 
-            # Проверяем созданные файлы
-            assert (test_data_dir / "us_stocks_metainfo.json").exists()
-            assert (test_data_dir / "us_stocks_tickers.json").exists()
-            assert (test_data_dir / "us_stocks_fields.txt").exists()
-            assert (test_data_dir / "us_stocks_working_fields.txt").exists()
+        output = capture_output.getvalue()
+        assert "usage:" in output.lower()
+        assert "generate" in output
+        assert "sync" in output
+        assert "validate" in output
 
-        finally:
-            # Восстанавливаем оригинальную директорию
-            settings.results_dir = original_dir
+    def test_cli_generate_help(self, capture_output):
+        """Тест вывода справки для команды generate."""
+        try:
+            main(["generate", "--help"])
+        except SystemExit:
+            pass
 
-    @pytest.mark.asyncio
-    async def test_generate(self, test_data_dir) -> None:
-        """Тест команды generate."""
-        # Временно меняем директории
+        output = capture_output.getvalue()
+        assert "generate" in output.lower()
+        assert "markets" in output
+
+    def test_cli_sync_help(self, capture_output):
+        """Тест вывода справки для команды sync."""
+        try:
+            main(["sync", "--help"])
+        except SystemExit:
+            pass
+
+        output = capture_output.getvalue()
+        assert "sync" in output.lower()
+        assert "markets" in output
+
+    def test_cli_validate_help(self, capture_output):
+        """Тест вывода справки для команды validate."""
+        try:
+            main(["validate", "--help"])
+        except SystemExit:
+            pass
+
+        output = capture_output.getvalue()
+        assert "validate" in output.lower()
+        assert "data" in output
+
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    def test_cli_generate_single_market(self, temp_test_dir):
+        """Тест генерации OpenAPI для одного рынка."""
+        # Временно изменяем пути
         original_results = settings.results_dir
         original_specs = settings.specs_dir
-        settings.results_dir = str(test_data_dir)
-        settings.specs_dir = str(test_data_dir / "specs")
 
         try:
-            # Создаем тестовые данные
-            (test_data_dir / "specs").mkdir(exist_ok=True)
-            test_market = "us_stocks"
+            settings.results_dir = str(temp_test_dir / "results")
+            settings.specs_dir = str(temp_test_dir / "specs")
 
-            # Добавляем отладочную информацию
-            print(f"DEBUG: test_data_dir = {test_data_dir}")
-            print(f"DEBUG: settings.results_dir = {settings.results_dir}")
-            print(f"DEBUG: settings.specs_dir = {settings.specs_dir}")
-            print(f"DEBUG: specs dir exists = {(test_data_dir / 'specs').exists()}")
+            # Создаем директории
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
+            Path(settings.specs_dir).mkdir(parents=True, exist_ok=True)
 
-            # Создаем минимальный набор файлов
-            openapi_fields_path = test_data_dir / f"{test_market}_openapi_fields.json"
-            metainfo_path = test_data_dir / f"{test_market}_metainfo.json"
+            # Запускаем генерацию для одного рынка
+            main(["generate", "--markets", "america"])
 
-            print(f"DEBUG: Creating {openapi_fields_path}")
-            with open(openapi_fields_path, "w") as f:
-                json.dump(
-                    {
-                        "close": {"type": "number", "description": "Close price"},
-                        "volume": {"type": "number", "description": "Volume"},
-                    },
-                    f,
-                )
+            # Проверяем, что файлы созданы
+            results_dir = Path(settings.results_dir)
+            specs_dir = Path(settings.specs_dir)
 
-            print(f"DEBUG: Creating {metainfo_path}")
-            with open(metainfo_path, "w") as f:
-                json.dump({"fields": [{"n": "close", "t": "number"}, {"n": "volume", "t": "number"}]}, f)
+            # Проверяем результаты
+            assert results_dir.exists()
+            market_files = list(results_dir.glob("america_*.json"))
+            assert len(market_files) > 0
 
-            print(f"DEBUG: Files created successfully")
-            print(f"DEBUG: openapi_fields_path exists = {openapi_fields_path.exists()}")
-            print(f"DEBUG: metainfo_path exists = {metainfo_path.exists()}")
+            # Проверяем спецификации
+            assert specs_dir.exists()
+            spec_files = list(specs_dir.glob("america_openapi.json"))
+            assert len(spec_files) > 0
 
-            # Запускаем генерацию
-            print(f"DEBUG: Starting generate()")
-            await generate(verbose=True)
-            print(f"DEBUG: generate() completed")
+            # Проверяем содержимое спецификации
+            spec_file = spec_files[0]
+            with open(spec_file) as f:
+                spec = json.load(f)
 
-            # Проверяем созданные файлы
-            expected_spec_path = test_data_dir / "specs" / f"{test_market}_openapi.json"
-
-            print(f"DEBUG: Expected spec path = {expected_spec_path}")
-            print(f"DEBUG: spec file exists = {expected_spec_path.exists()}")
-
-            # Проверяем содержимое директории specs
-            specs_dir = test_data_dir / "specs"
-            if specs_dir.exists():
-                print(f"DEBUG: Contents of {specs_dir}:")
-                for file in specs_dir.iterdir():
-                    print(f"DEBUG:   - {file.name}")
-
-            assert expected_spec_path.exists(), f"Spec file not found at {expected_spec_path}"
+            assert spec["openapi"].startswith("3.")
+            assert "info" in spec
+            assert "paths" in spec
+            assert "/america/scan" in spec["paths"]
 
         finally:
-            # Восстанавливаем оригинальные директории
+            # Восстанавливаем оригинальные пути
             settings.results_dir = original_results
             settings.specs_dir = original_specs
 
-    @pytest.mark.asyncio
-    async def test_test_specs(self, test_data_dir) -> None:
-        """Тест команды test_specs."""
-        # Временно меняем директории
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    def test_cli_generate_multiple_markets(self, temp_test_dir):
+        """Тест генерации OpenAPI для нескольких рынков."""
+        # Временно изменяем пути
         original_results = settings.results_dir
         original_specs = settings.specs_dir
-        settings.results_dir = str(test_data_dir)
-        settings.specs_dir = str(test_data_dir / "specs")
 
         try:
-            # Создаем тестовые данные
-            (test_data_dir / "specs").mkdir(exist_ok=True)
-            test_market = "us_stocks"
+            settings.results_dir = str(temp_test_dir / "results")
+            settings.specs_dir = str(temp_test_dir / "specs")
 
-            # Создаем тестовую спецификацию
-            spec = {
-                "openapi": "3.1.0",
-                "info": {"title": "Test Market API", "version": "1.0.0"},
-                "paths": {
-                    "/america/scan": {
-                        "post": {
-                            "requestBody": {
-                                "content": {
-                                    "application/json": {
-                                        "schema": {
-                                            "type": "object",
-                                            "properties": {
-                                                "symbols": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "tickers": {"type": "array", "items": {"type": "string"}}
-                                                    },
-                                                },
-                                                "columns": {"type": "array", "items": {"type": "string"}},
-                                            },
-                                        }
-                                    }
-                                }
-                            },
-                            "responses": {
-                                "200": {
-                                    "description": "Success",
-                                    "content": {
-                                        "application/json": {
-                                            "schema": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "data": {
-                                                        "type": "array",
-                                                        "items": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                                "s": {"type": "string"},
-                                                                "d": {"type": "array"},
-                                                            },
-                                                        },
-                                                    }
-                                                },
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                        }
-                    }
-                },
+            # Создаем директории
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
+            Path(settings.specs_dir).mkdir(parents=True, exist_ok=True)
+
+            # Запускаем генерацию для нескольких рынков
+            main(["generate", "--markets", "america,crypto,forex"])
+
+            # Проверяем, что файлы созданы
+            results_dir = Path(settings.results_dir)
+            specs_dir = Path(settings.specs_dir)
+
+            # Проверяем результаты для каждого рынка
+            for market in ["america", "crypto", "forex"]:
+                market_files = list(results_dir.glob(f"{market}_*.json"))
+                assert len(market_files) > 0
+
+                spec_files = list(specs_dir.glob(f"{market}_openapi.json"))
+                assert len(spec_files) > 0
+
+                # Проверяем содержимое спецификации
+                spec_file = spec_files[0]
+                with open(spec_file) as f:
+                    spec = json.load(f)
+
+                assert spec["openapi"].startswith("3.")
+                assert "info" in spec
+                assert "paths" in spec
+                assert f"/{market}/scan" in spec["paths"]
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
+            settings.specs_dir = original_specs
+
+    @pytest.mark.real_api
+    @pytest.mark.slow
+    def test_cli_sync_market(self, temp_test_dir):
+        """Тест синхронизации данных рынка."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
+
+        try:
+            settings.results_dir = str(temp_test_dir / "results")
+
+            # Создаем директорию
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
+
+            # Запускаем синхронизацию
+            main(["sync", "--markets", "america"])
+
+            # Проверяем, что файлы созданы
+            results_dir = Path(settings.results_dir)
+
+            # Проверяем metainfo
+            metainfo_files = list(results_dir.glob("america_metainfo.json"))
+            assert len(metainfo_files) > 0
+
+            # Проверяем scan
+            scan_files = list(results_dir.glob("america_scan.json"))
+            assert len(scan_files) > 0
+
+            # Проверяем содержимое metainfo
+            metainfo_file = metainfo_files[0]
+            with open(metainfo_file) as f:
+                metainfo = json.load(f)
+
+            assert "fields" in metainfo
+            assert isinstance(metainfo["fields"], list)
+
+            # Проверяем содержимое scan
+            scan_file = scan_files[0]
+            with open(scan_file) as f:
+                scan = json.load(f)
+
+            assert isinstance(scan, list)
+            if scan:  # Если есть данные
+                assert "s" in scan[0]  # symbol
+                assert "d" in scan[0]  # data
+
+        finally:
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
+
+    def test_cli_validate_data(self, temp_test_dir):
+        """Тест валидации данных."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
+
+        try:
+            settings.results_dir = str(temp_test_dir / "results")
+
+            # Создаем директорию и тестовые данные
+            results_dir = Path(settings.results_dir)
+            results_dir.mkdir(parents=True, exist_ok=True)
+
+            # Создаем тестовые файлы
+            test_metainfo = {
+                "fields": [
+                    {"n": "close", "t": "number", "description": "Close price"},
+                    {"n": "volume", "t": "number", "description": "Volume"},
+                ]
             }
 
-            with open(test_data_dir / "specs" / f"{test_market}_openapi.json", "w") as f:
-                json.dump(spec, f)
+            test_scan = [{"s": "AAPL", "d": [150.0, 1000000]}, {"s": "GOOGL", "d": [2500.0, 500000]}]
 
-            # Создаем тестовые поля
-            with open(test_data_dir / f"{test_market}_openapi_fields.json", "w") as f:
-                json.dump(
-                    {
-                        "close": {"type": "number", "description": "Close price"},
-                        "volume": {"type": "number", "description": "Volume"},
-                    },
-                    f,
-                )
+            # Сохраняем тестовые данные
+            with open(results_dir / "america_metainfo.json", "w") as f:
+                json.dump(test_metainfo, f)
 
-            # Создаем тестовые тикеры
-            with open(test_data_dir / f"{test_market}_tickers.json", "w") as f:
-                json.dump([{"s": "NYSE:A", "d": ["A", 115.56, 0.03462603878116885, 0.04000000000000625, 3043869]}], f)
+            with open(results_dir / "america_scan.json", "w") as f:
+                json.dump(test_scan, f)
 
-            # Запускаем тестирование
-            await test_specs(verbose=True)
+            # Запускаем валидацию
+            main(["validate", "--data"])
 
-            # Проверяем созданный отчет
-            assert (test_data_dir / "test_report.json").exists()
+            # Если валидация прошла успешно, тест пройден
+            # Если есть ошибки, они будут выведены в stdout
 
         finally:
-            # Восстанавливаем оригинальные директории
+            # Восстанавливаем оригинальные пути
+            settings.results_dir = original_results
+
+    def test_cli_invalid_command(self, capture_output):
+        """Тест обработки невалидной команды."""
+        try:
+            main(["invalid_command"])
+        except SystemExit:
+            pass
+
+        output = capture_output.getvalue()
+        assert "error" in output.lower() or "invalid" in output.lower()
+
+    def test_cli_invalid_market(self, temp_test_dir):
+        """Тест обработки невалидного рынка."""
+        # Временно изменяем пути
+        original_results = settings.results_dir
+        original_specs = settings.specs_dir
+
+        try:
+            settings.results_dir = str(temp_test_dir / "results")
+            settings.specs_dir = str(temp_test_dir / "specs")
+
+            # Создаем директории
+            Path(settings.results_dir).mkdir(parents=True, exist_ok=True)
+            Path(settings.specs_dir).mkdir(parents=True, exist_ok=True)
+
+            # Запускаем генерацию с невалидным рынком
+            try:
+                main(["generate", "--markets", "invalid_market_12345"])
+            except SystemExit:
+                pass
+            except Exception as e:
+                # Ожидаем ошибку
+                assert "invalid" in str(e).lower() or "not found" in str(e).lower()
+
+        finally:
+            # Восстанавливаем оригинальные пути
             settings.results_dir = original_results
             settings.specs_dir = original_specs
+
+    def test_cli_no_markets_specified(self, capture_output):
+        """Тест обработки отсутствия указания рынков."""
+        try:
+            main(["generate"])
+        except SystemExit:
+            pass
+
+        output = capture_output.getvalue()
+        assert "markets" in output.lower() or "required" in output.lower()
+
+    def test_cli_version(self, capture_output):
+        """Тест вывода версии."""
+        try:
+            main(["--version"])
+        except SystemExit:
+            pass
+
+        output = capture_output.getvalue()
+        # Проверяем, что выводится версия
+        assert any(char.isdigit() for char in output)

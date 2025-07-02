@@ -78,3 +78,19 @@ repos:
         pass_filenames: false
         always_run: true
         args: [-c, "import os; [os.remove(f) for f in ['__pycache__', '.pytest_cache', '.mypy_cache'] if os.path.exists(f)]"]
+
+      - id: generate-specs
+        name: Generate OpenAPI Specs
+        entry: python
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [generate_openapi.py]
+
+      - id: check-specs
+        name: Check Generated Specs
+        entry: python
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [scripts/check_specs.py]

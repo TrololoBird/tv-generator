@@ -1,0 +1,311 @@
+{
+  "total_markets": 61,
+  "last_updated": "2024-01-01",
+  "markets": {
+    "america": {
+      "endpoint": "america",
+      "label_product": "america",
+      "description": "America - США"
+    },
+    "argentina": {
+      "endpoint": "argentina",
+      "label_product": "argentina",
+      "description": "Argentina - Аргентина"
+    },
+    "australia": {
+      "endpoint": "australia",
+      "label_product": "australia",
+      "description": "Australia - Австралия"
+    },
+    "austria": {
+      "endpoint": "austria",
+      "label_product": "austria",
+      "description": "Austria - Австрия"
+    },
+    "bahrain": {
+      "endpoint": "bahrain",
+      "label_product": "bahrain",
+      "description": "Bahrain - Бахрейн"
+    },
+    "belgium": {
+      "endpoint": "belgium",
+      "label_product": "belgium",
+      "description": "Belgium - Бельгия"
+    },
+    "bonds": {
+      "endpoint": "bonds",
+      "label_product": "bonds",
+      "description": "Bonds - Облигации"
+    },
+    "bond": {
+      "endpoint": "bond",
+      "label_product": "bond",
+      "description": "Bond - Облигации (альтернативный)"
+    },
+    "brazil": {
+      "endpoint": "brazil",
+      "label_product": "brazil",
+      "description": "Brazil - Бразилия"
+    },
+    "canada": {
+      "endpoint": "canada",
+      "label_product": "canada",
+      "description": "Canada - Канада"
+    },
+    "cfd": {
+      "endpoint": "cfd",
+      "label_product": "cfd",
+      "description": "CFD - Контракты на разность цен"
+    },
+    "chile": {
+      "endpoint": "chile",
+      "label_product": "chile",
+      "description": "Chile - Чили"
+    },
+    "china": {
+      "endpoint": "china",
+      "label_product": "china",
+      "description": "China - Китай"
+    },
+    "coin": {
+      "endpoint": "coin",
+      "label_product": "coin",
+      "description": "Coins - Монеты"
+    },
+    "colombia": {
+      "endpoint": "colombia",
+      "label_product": "colombia",
+      "description": "Colombia - Колумбия"
+    },
+    "crypto": {
+      "endpoint": "crypto",
+      "label_product": "crypto",
+      "description": "Cryptocurrencies - Криптовалюты"
+    },
+    "czech": {
+      "endpoint": "czech",
+      "label_product": "czech",
+      "description": "Czech Republic - Чехия"
+    },
+    "denmark": {
+      "endpoint": "denmark",
+      "label_product": "denmark",
+      "description": "Denmark - Дания"
+    },
+    "egypt": {
+      "endpoint": "egypt",
+      "label_product": "egypt",
+      "description": "Egypt - Египет"
+    },
+    "estonia": {
+      "endpoint": "estonia",
+      "label_product": "estonia",
+      "description": "Estonia - Эстония"
+    },
+    "finland": {
+      "endpoint": "finland",
+      "label_product": "finland",
+      "description": "Finland - Финляндия"
+    },
+    "forex": {
+      "endpoint": "forex",
+      "label_product": "forex",
+      "description": "Forex - Валютные пары"
+    },
+    "france": {
+      "endpoint": "france",
+      "label_product": "france",
+      "description": "France - Франция"
+    },
+    "futures": {
+      "endpoint": "futures",
+      "label_product": "futures",
+      "description": "Futures - Фьючерсы"
+    },
+    "germany": {
+      "endpoint": "germany",
+      "label_product": "germany",
+      "description": "Germany - Германия"
+    },
+    "global": {
+      "endpoint": "global",
+      "label_product": "global",
+      "description": "Global - global"
+    },
+    "greece": {
+      "endpoint": "greece",
+      "label_product": "greece",
+      "description": "Greece - Греция"
+    },
+    "hongkong": {
+      "endpoint": "hongkong",
+      "label_product": "hongkong",
+      "description": "Hong Kong - Гонконг"
+    },
+    "hungary": {
+      "endpoint": "hungary",
+      "label_product": "hungary",
+      "description": "Hungary - Венгрия"
+    },
+    "iceland": {
+      "endpoint": "iceland",
+      "label_product": "iceland",
+      "description": "Iceland - Исландия"
+    },
+    "india": {
+      "endpoint": "india",
+      "label_product": "india",
+      "description": "India - Индия"
+    },
+    "ireland": {
+      "endpoint": "ireland",
+      "label_product": "ireland",
+      "description": "Ireland - Ирландия"
+    },
+    "israel": {
+      "endpoint": "israel",
+      "label_product": "israel",
+      "description": "Israel - Израиль"
+    },
+    "italy": {
+      "endpoint": "italy",
+      "label_product": "italy",
+      "description": "Italy - Италия"
+    },
+    "japan": {
+      "endpoint": "japan",
+      "label_product": "japan",
+      "description": "Japan - Япония"
+    },
+    "kenya": {
+      "endpoint": "kenya",
+      "label_product": "kenya",
+      "description": "Kenya - Кения"
+    },
+    "kuwait": {
+      "endpoint": "kuwait",
+      "label_product": "kuwait",
+      "description": "Kuwait - Кувейт"
+    },
+    "latvia": {
+      "endpoint": "latvia",
+      "label_product": "latvia",
+      "description": "Latvia - Латвия"
+    },
+    "lithuania": {
+      "endpoint": "lithuania",
+      "label_product": "lithuania",
+      "description": "Lithuania - Литва"
+    },
+    "mexico": {
+      "endpoint": "mexico",
+      "label_product": "mexico",
+      "description": "Mexico - Мексика"
+    },
+    "morocco": {
+      "endpoint": "morocco",
+      "label_product": "morocco",
+      "description": "Morocco - Марокко"
+    },
+    "netherlands": {
+      "endpoint": "netherlands",
+      "label_product": "netherlands",
+      "description": "Netherlands - netherlands"
+    },
+    "newzealand": {
+      "endpoint": "newzealand",
+      "label_product": "newzealand",
+      "description": "New Zealand - Новая Зеландия"
+    },
+    "nigeria": {
+      "endpoint": "nigeria",
+      "label_product": "nigeria",
+      "description": "Nigeria - Нигерия"
+    },
+    "norway": {
+      "endpoint": "norway",
+      "label_product": "norway",
+      "description": "Norway - Норвегия"
+    },
+    "options": {
+      "endpoint": "options",
+      "label_product": "options",
+      "description": "Options - Опционы"
+    },
+    "peru": {
+      "endpoint": "peru",
+      "label_product": "peru",
+      "description": "Peru - Перу"
+    },
+    "poland": {
+      "endpoint": "poland",
+      "label_product": "poland",
+      "description": "Poland - Польша"
+    },
+    "portugal": {
+      "endpoint": "portugal",
+      "label_product": "portugal",
+      "description": "Portugal - Португалия"
+    },
+    "qatar": {
+      "endpoint": "qatar",
+      "label_product": "qatar",
+      "description": "Qatar - Катар"
+    },
+    "romania": {
+      "endpoint": "romania",
+      "label_product": "romania",
+      "description": "Romania - Румыния"
+    },
+    "russia": {
+      "endpoint": "russia",
+      "label_product": "russia",
+      "description": "Russia - Россия"
+    },
+    "singapore": {
+      "endpoint": "singapore",
+      "label_product": "singapore",
+      "description": "Singapore - Сингапур"
+    },
+    "slovakia": {
+      "endpoint": "slovakia",
+      "label_product": "slovakia",
+      "description": "Slovakia - Словакия"
+    },
+    "spain": {
+      "endpoint": "spain",
+      "label_product": "spain",
+      "description": "Spain - Испания"
+    },
+    "sweden": {
+      "endpoint": "sweden",
+      "label_product": "sweden",
+      "description": "Sweden - Швеция"
+    },
+    "switzerland": {
+      "endpoint": "switzerland",
+      "label_product": "switzerland",
+      "description": "Switzerland - Швейцария"
+    },
+    "tunisia": {
+      "endpoint": "tunisia",
+      "label_product": "tunisia",
+      "description": "Tunisia - Тунис"
+    },
+    "turkey": {
+      "endpoint": "turkey",
+      "label_product": "turkey",
+      "description": "Turkey - Турция"
+    },
+    "uae": {
+      "endpoint": "uae",
+      "label_product": "uae",
+      "description": "UAE - ОАЭ"
+    },
+    "uk": {
+      "endpoint": "uk",
+      "label_product": "uk",
+      "description": "United Kingdom - Великобритания"
+    }
+  }
+}

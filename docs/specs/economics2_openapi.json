@@ -1,0 +1,1290 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TradingView economics2 API",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for TradingView economics2 market scanner API.\n\n**Data Source**: tv-screener v0.4.0\n**Generator**: tv-generator v2.0.0\n**Generated**: 2025-06-25T15:39:47.095476\n\nThis specification is automatically generated from TradingView Scanner API metadata provided by the tv-screener library. All field definitions, types, and examples are sourced from official TradingView data structures.",
+    "contact": {
+      "name": "TradingView Scanner API",
+      "url": "https://scanner.tradingview.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "x-data-source": "tv-screener",
+    "x-data-version": "0.4.0",
+    "x-generator": "tv-generator",
+    "x-generator-version": "2.0.0",
+    "x-generated-date": "2025-06-25T15:39:47.095476",
+    "x-market": "economics2",
+    "x-field-count": 75
+  },
+  "servers": [
+    {
+      "url": "https://scanner.tradingview.com",
+      "description": "TradingView Scanner API"
+    }
+  ],
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "economics2",
+      "description": "Market: economics2"
+    }
+  ],
+  "paths": {
+    "/economics2/scan": {
+      "post": {
+        "summary": "Scan economics2 market",
+        "description": "Scan economics2 market with filters and options",
+        "operationId": "scanEconomics2",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful scan result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid",
+        "description": "TradingView session cookie for real-time data access"
+      }
+    },
+    "schemas": {
+      "MarketData": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Symbol Type",
+            "example": "economic",
+            "enum": [
+              "economic"
+            ]
+          },
+          "is_primary": {
+            "type": "boolean",
+            "description": "Primary Listing",
+            "example": true
+          },
+          "active_symbol": {
+            "type": "boolean",
+            "description": "Current trading day",
+            "example": true
+          },
+          "change": {
+            "type": "number",
+            "description": "Change %",
+            "example": 123.45
+          },
+          "change_abs": {
+            "type": "number",
+            "description": "Change",
+            "example": 123.45
+          },
+          "close": {
+            "type": "number",
+            "description": "Price",
+            "example": 123.45
+          },
+          "volume": {
+            "type": "number",
+            "description": "Volume",
+            "example": 123.45
+          },
+          "Perf.All": {
+            "type": "number",
+            "description": "All Time Performance",
+            "example": 123.45
+          },
+          "change_from_open": {
+            "type": "number",
+            "description": "Change from Open %",
+            "example": 123.45
+          },
+          "change_from_open_abs": {
+            "type": "number",
+            "description": "Change from Open",
+            "example": 123.45
+          },
+          "exchange": {
+            "type": "string",
+            "description": "Exchange",
+            "example": "ECONOMICS",
+            "enum": [
+              "ECONOMICS",
+              "FRED"
+            ]
+          },
+          "gap": {
+            "type": "number",
+            "description": "Gap %",
+            "example": 123.45
+          },
+          "high": {
+            "type": "number",
+            "description": "High",
+            "example": 123.45
+          },
+          "low": {
+            "type": "number",
+            "description": "Low",
+            "example": 123.45
+          },
+          "open": {
+            "type": "number",
+            "description": "Open",
+            "example": 123.45
+          },
+          "postmarket_change": {
+            "type": "number",
+            "description": "Post-market Change %",
+            "example": 123.45
+          },
+          "postmarket_change_abs": {
+            "type": "number",
+            "description": "Post-market Change",
+            "example": 123.45
+          },
+          "premarket_change": {
+            "type": "number",
+            "description": "Pre-market Change %",
+            "example": 123.45
+          },
+          "premarket_change_abs": {
+            "type": "number",
+            "description": "Pre-market Change",
+            "example": 123.45
+          },
+          "premarket_change_from_open": {
+            "type": "number",
+            "description": "Pre-market Change from Open %",
+            "example": 123.45
+          },
+          "premarket_change_from_open_abs": {
+            "type": "number",
+            "description": "Pre-market Change from Open",
+            "example": 123.45
+          },
+          "premarket_gap": {
+            "type": "number",
+            "description": "Pre-market Gap %",
+            "example": 123.45
+          },
+          "submarket": {
+            "type": "string",
+            "description": "Submarket",
+            "example": "",
+            "enum": [
+              ""
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "description": "Quote currency",
+            "example": "AED",
+            "enum": [
+              "AED",
+              "AFN",
+              "ALL",
+              "AMD",
+              "AOA",
+              "ARS",
+              "AUD",
+              "AWG",
+              "AZN",
+              "BAM",
+              "BBD",
+              "BDT",
+              "BGN",
+              "BHD",
+              "BIF",
+              "BMD",
+              "BND",
+              "BOB",
+              "BRL",
+              "BSD",
+              "BTN",
+              "BWP",
+              "BYN",
+              "BZD",
+              "CAD",
+              "CDF",
+              "CHF",
+              "CLP",
+              "CNY",
+              "COP",
+              "CRC",
+              "CUP",
+              "CVE",
+              "CZK",
+              "DJF",
+              "DKK",
+              "DOP",
+              "DZD",
+              "EGP",
+              "ETB",
+              "EUR",
+              "FJD",
+              "GBP",
+              "GEL",
+              "GHS",
+              "GMD",
+              "GNF",
+              "GTQ",
+              "GYD",
+              "HKD",
+              "HNL",
+              "HRK",
+              "HTG",
+              "HUF",
+              "IDR",
+              "ILS",
+              "INR",
+              "IQD",
+              "IRR",
+              "ISK",
+              "JMD",
+              "JOD",
+              "JPY",
+              "KES",
+              "KGS",
+              "KHR",
+              "KMF",
+              "KPW",
+              "KRW",
+              "KWD",
+              "KYD",
+              "KZT",
+              "LAK",
+              "LBP",
+              "LKR",
+              "LRD",
+              "LSL",
+              "LYD",
+              "MAD",
+              "MDL",
+              "MGA",
+              "MKD",
+              "MMK",
+              "MNT",
+              "MOP",
+              "MRU",
+              "MUR",
+              "MVR",
+              "MWK",
+              "MXN",
+              "MYR",
+              "MZN",
+              "NAD",
+              "NGN",
+              "NIO",
+              "NOK",
+              "NPR",
+              "NZD",
+              "OMR",
+              "PAB",
+              "PEN",
+              "PGK",
+              "PHP",
+              "PKR",
+              "PLN",
+              "PYG",
+              "QAR",
+              "RON",
+              "RSD",
+              "RUB",
+              "RWF",
+              "SAR",
+              "SCR",
+              "SDG",
+              "SEK",
+              "SGD",
+              "SLL",
+              "SRD",
+              "SSP",
+              "STN",
+              "SVC",
+              "SYP",
+              "SZL",
+              "THB",
+              "TJS",
+              "TND",
+              "TRY",
+              "TTD",
+              "TWD",
+              "TZS",
+              "UAH",
+              "UGX",
+              "USD",
+              "UYU",
+              "UZS",
+              "VES",
+              "VND",
+              "XAF",
+              "XOF",
+              "XPF",
+              "YER",
+              "ZAR",
+              "ZMW",
+              "ZWL"
+            ]
+          },
+          "bars_count": {
+            "type": "number",
+            "description": "Field: bars_count",
+            "example": 123.45
+          },
+          "base_currency_kind": {
+            "type": "string",
+            "description": "Field: base_currency_kind",
+            "example": "example"
+          },
+          "country_code": {
+            "type": "string",
+            "description": "Field: country_code",
+            "example": "AD",
+            "enum": [
+              "AD",
+              "AE",
+              "AF",
+              "AG",
+              "AL",
+              "AM",
+              "AO",
+              "AR",
+              "AT",
+              "AU",
+              "AW",
+              "AZ",
+              "BA",
+              "BB",
+              "BD",
+              "BE",
+              "BF",
+              "BG",
+              "BH",
+              "BI",
+              "BJ",
+              "BM",
+              "BN",
+              "BO",
+              "BR",
+              "BS",
+              "BT",
+              "BW",
+              "BY",
+              "BZ",
+              "CA",
+              "CD",
+              "CF",
+              "CG",
+              "CH",
+              "CI",
+              "CL",
+              "CM",
+              "CN",
+              "CO",
+              "CR",
+              "CU",
+              "CV",
+              "CY",
+              "CZ",
+              "DE",
+              "DJ",
+              "DK",
+              "DM",
+              "DO",
+              "DZ",
+              "EC",
+              "EE",
+              "EG",
+              "ER",
+              "ES",
+              "ET",
+              "EU",
+              "FI",
+              "FJ",
+              "FO",
+              "FR",
+              "GA",
+              "GB",
+              "GD",
+              "GE",
+              "GH",
+              "GL",
+              "GM",
+              "GN",
+              "GQ",
+              "GR",
+              "GT",
+              "GW",
+              "GY",
+              "HK",
+              "HN",
+              "HR",
+              "HT",
+              "HU",
+              "ID",
+              "IE",
+              "IL",
+              "IM",
+              "IN",
+              "IQ",
+              "IR",
+              "IS",
+              "IT",
+              "JM",
+              "JO",
+              "JP",
+              "KE",
+              "KG",
+              "KH",
+              "KI",
+              "KM",
+              "KP",
+              "KR",
+              "KW",
+              "KY",
+              "KZ",
+              "LA",
+              "LB",
+              "LC",
+              "LI",
+              "LK",
+              "LR",
+              "LS",
+              "LT",
+              "LU",
+              "LV",
+              "LY",
+              "MA",
+              "MC",
+              "MD",
+              "ME",
+              "MG",
+              "MK",
+              "ML",
+              "MM",
+              "MN",
+              "MO",
+              "MR",
+              "MT",
+              "MU",
+              "MV",
+              "MW",
+              "MX",
+              "MY",
+              "MZ",
+              "NA",
+              "NC",
+              "NE",
+              "NG",
+              "NI",
+              "NL",
+              "NO",
+              "NP",
+              "NZ",
+              "OM",
+              "PA",
+              "PE",
+              "PG",
+              "PH",
+              "PK",
+              "PL",
+              "PR",
+              "PS",
+              "PT",
+              "PY",
+              "QA",
+              "RO",
+              "RS",
+              "RU",
+              "RW",
+              "SA",
+              "SB",
+              "SC",
+              "SD",
+              "SE",
+              "SG",
+              "SI",
+              "SK",
+              "SL",
+              "SM",
+              "SN",
+              "SO",
+              "SR",
+              "SS",
+              "ST",
+              "SV",
+              "SY",
+              "SZ",
+              "TD",
+              "TG",
+              "TH",
+              "TJ",
+              "TL",
+              "TM",
+              "TN",
+              "TO",
+              "TR",
+              "TT",
+              "TW",
+              "TZ",
+              "UA",
+              "UG",
+              "US",
+              "UY",
+              "UZ",
+              "VC",
+              "VE",
+              "VN",
+              "VU",
+              "WS",
+              "WW",
+              "XK",
+              "YE",
+              "ZA",
+              "ZM",
+              "ZW"
+            ]
+          },
+          "coupon": {
+            "type": "number",
+            "description": "Field: coupon",
+            "example": 123.45
+          },
+          "cryptoasset-info.description": {
+            "type": "string",
+            "description": "Field: cryptoasset-info.description",
+            "example": "example"
+          },
+          "cryptoasset-info.id": {
+            "type": "string",
+            "description": "Field: cryptoasset-info.id",
+            "example": "example"
+          },
+          "currency_id": {
+            "type": "string",
+            "description": "Field: currency_id",
+            "example": "",
+            "enum": [
+              "",
+              "AED",
+              "AFN",
+              "ALL",
+              "AMD",
+              "AOA",
+              "ARS",
+              "AUD",
+              "AWG",
+              "AZN",
+              "BAM",
+              "BBD",
+              "BDT",
+              "BGN",
+              "BHD",
+              "BIF",
+              "BMD",
+              "BND",
+              "BOB",
+              "BRL",
+              "BSD",
+              "BTN",
+              "BWP",
+              "BYN",
+              "BZD",
+              "CAD",
+              "CDF",
+              "CHF",
+              "CLP",
+              "CNY",
+              "COP",
+              "CRC",
+              "CUP",
+              "CVE",
+              "CZK",
+              "DJF",
+              "DKK",
+              "DOP",
+              "DZD",
+              "EGP",
+              "ETB",
+              "EUR",
+              "FJD",
+              "GBP",
+              "GEL",
+              "GHS",
+              "GMD",
+              "GNF",
+              "GTQ",
+              "GYD",
+              "HKD",
+              "HNL",
+              "HRK",
+              "HTG",
+              "HUF",
+              "IDR",
+              "ILS",
+              "INR",
+              "IQD",
+              "IRR",
+              "ISK",
+              "JMD",
+              "JOD",
+              "JPY",
+              "KES",
+              "KGS",
+              "KHR",
+              "KMF",
+              "KPW",
+              "KRW",
+              "KWD",
+              "KYD",
+              "KZT",
+              "LAK",
+              "LBP",
+              "LKR",
+              "LRD",
+              "LSL",
+              "LYD",
+              "MAD",
+              "MDL",
+              "MGA",
+              "MKD",
+              "MMK",
+              "MNT",
+              "MOP",
+              "MRU",
+              "MUR",
+              "MVR",
+              "MWK",
+              "MXN",
+              "MYR",
+              "MZN",
+              "NAD",
+              "NGN",
+              "NIO",
+              "NOK",
+              "NPR",
+              "NZD",
+              "OMR",
+              "PAB",
+              "PEN",
+              "PGK",
+              "PHP",
+              "PKR",
+              "PLN",
+              "PYG",
+              "QAR",
+              "RON",
+              "RSD",
+              "RUB",
+              "RWF",
+              "SAR",
+              "SCR",
+              "SDG",
+              "SEK",
+              "SGD",
+              "SLL",
+              "SRD",
+              "SSP",
+              "STN",
+              "SVC",
+              "SYP",
+              "SZL",
+              "THB",
+              "TJS",
+              "TND",
+              "TRY",
+              "TTD",
+              "TWD",
+              "TZS",
+              "UAH",
+              "UGX",
+              "USD",
+              "UYU",
+              "UZS",
+              "VES",
+              "VND",
+              "XAF",
+              "XOF",
+              "XPF",
+              "YER",
+              "ZAR",
+              "ZMW",
+              "ZWL"
+            ]
+          },
+          "currency_kind": {
+            "type": "string",
+            "description": "Field: currency_kind",
+            "example": "fiat",
+            "enum": [
+              "fiat"
+            ]
+          },
+          "days_to_maturity": {
+            "type": "number",
+            "description": "Field: days_to_maturity",
+            "example": 123.45
+          },
+          "description": {
+            "type": "string",
+            "description": "Field: description",
+            "example": "example"
+          },
+          "economic-category-id": {
+            "type": "string",
+            "description": "Field: economic-category-id",
+            "example": "bsnss",
+            "enum": [
+              "bsnss",
+              "cnsm",
+              "gdp",
+              "gov",
+              "hlth",
+              "hse",
+              "lbr",
+              "mny",
+              "prce",
+              "trd",
+              "txs"
+            ]
+          },
+          "expiration": {
+            "type": "string",
+            "description": "Field: expiration",
+            "example": "example"
+          },
+          "gap_down": {
+            "type": "number",
+            "description": "Field: gap_down",
+            "example": 123.45
+          },
+          "gap_down_abs": {
+            "type": "number",
+            "description": "Field: gap_down_abs",
+            "example": 123.45
+          },
+          "gap_up": {
+            "type": "number",
+            "description": "Field: gap_up",
+            "example": 123.45
+          },
+          "gap_up_abs": {
+            "type": "number",
+            "description": "Field: gap_up_abs",
+            "example": 123.45
+          },
+          "indexes": {
+            "type": "string",
+            "description": "Field: indexes",
+            "example": "example"
+          },
+          "indicators_bars_count": {
+            "type": "number",
+            "description": "Field: indicators_bars_count",
+            "example": 123.45
+          },
+          "is_blacklisted": {
+            "type": "boolean",
+            "description": "Field: is_blacklisted",
+            "example": true
+          },
+          "is_shariah_compliant": {
+            "type": "boolean",
+            "description": "Field: is_shariah_compliant",
+            "example": true
+          },
+          "last_bar_update_time": {
+            "type": "number",
+            "description": "Field: last_bar_update_time",
+            "example": 123.45
+          },
+          "logoid": {
+            "type": "string",
+            "description": "Field: logoid",
+            "example": "example"
+          },
+          "market": {
+            "type": "string",
+            "description": "Field: market",
+            "example": "economics2",
+            "enum": [
+              "economics2"
+            ]
+          },
+          "maturity_date": {
+            "type": "string",
+            "description": "Field: maturity_date",
+            "example": "example"
+          },
+          "measure": {
+            "type": "string",
+            "description": "Field: measure",
+            "example": "currency",
+            "enum": [
+              "currency",
+              "price",
+              "unit"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "description": "Field: name",
+            "example": "example"
+          },
+          "post_change": {
+            "type": "number",
+            "description": "Field: post_change",
+            "example": 123.45
+          },
+          "pre_change": {
+            "type": "number",
+            "description": "Field: pre_change",
+            "example": 123.45
+          },
+          "pre_change_abs": {
+            "type": "number",
+            "description": "Field: pre_change_abs",
+            "example": 123.45
+          },
+          "rates_cf": {
+            "type": "object",
+            "description": "Field: rates_cf",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_current": {
+            "type": "object",
+            "description": "Field: rates_current",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_dividend_recent": {
+            "type": "object",
+            "description": "Field: rates_dividend_recent",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_dividend_upcoming": {
+            "type": "object",
+            "description": "Field: rates_dividend_upcoming",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_earnings_fq": {
+            "type": "object",
+            "description": "Field: rates_earnings_fq",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_earnings_next_fq": {
+            "type": "object",
+            "description": "Field: rates_earnings_next_fq",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_fh": {
+            "type": "object",
+            "description": "Field: rates_fh",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_fq": {
+            "type": "object",
+            "description": "Field: rates_fq",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_fy": {
+            "type": "object",
+            "description": "Field: rates_fy",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_mc": {
+            "type": "object",
+            "description": "Field: rates_mc",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_pt": {
+            "type": "object",
+            "description": "Field: rates_pt",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_time_series": {
+            "type": "object",
+            "description": "Field: rates_time_series",
+            "example": {
+              "key": "value"
+            }
+          },
+          "rates_ttm": {
+            "type": "object",
+            "description": "Field: rates_ttm",
+            "example": {
+              "key": "value"
+            }
+          },
+          "subtype": {
+            "type": "string",
+            "description": "Field: subtype",
+            "example": "",
+            "enum": [
+              ""
+            ]
+          },
+          "time": {
+            "type": "string",
+            "description": "Field: time",
+            "example": "example"
+          },
+          "typespecs": {
+            "type": "array",
+            "description": "Field: typespecs",
+            "example": [
+              "item1",
+              "item2"
+            ],
+            "enum": [
+              ""
+            ]
+          },
+          "unit-id": {
+            "type": "string",
+            "description": "Field: unit-id",
+            "example": "DAY",
+            "enum": [
+              "DAY",
+              "HOUR",
+              "LTR",
+              "MONTH",
+              "MTK",
+              "WEEK",
+              "YEAR"
+            ]
+          },
+          "update_mode": {
+            "type": "string",
+            "description": "Field: update_mode",
+            "example": "streaming",
+            "enum": [
+              "streaming"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "description": "Field: update_time",
+            "example": "example"
+          },
+          "value-unit-id": {
+            "type": "string",
+            "description": "Field: value-unit-id",
+            "example": "BLL",
+            "enum": [
+              "BLL",
+              "BUA",
+              "CAP",
+              "CMPNY",
+              "FTQ",
+              "GWH",
+              "HOUR",
+              "JOU",
+              "KGM",
+              "MTK",
+              "NBL",
+              "PCT",
+              "PCTGDP",
+              "PMP",
+              "POINT",
+              "PSN",
+              "PTP",
+              "RATIO",
+              "TIV",
+              "TNE",
+              "UNIT",
+              "YEAR"
+            ]
+          },
+          "volume_change": {
+            "type": "number",
+            "description": "Field: volume_change",
+            "example": 123.45
+          },
+          "volume_change_abs": {
+            "type": "number",
+            "description": "Field: volume_change_abs",
+            "example": 123.45
+          }
+        },
+        "example": {
+          "type": "economic",
+          "is_primary": true,
+          "active_symbol": true,
+          "change": 123.45,
+          "change_abs": 123.45,
+          "close": 123.45,
+          "volume": 123.45,
+          "Perf.All": 123.45,
+          "change_from_open": 123.45,
+          "change_from_open_abs": 123.45,
+          "exchange": "ECONOMICS",
+          "gap": 123.45,
+          "high": 123.45,
+          "low": 123.45,
+          "open": 123.45,
+          "postmarket_change": 123.45,
+          "postmarket_change_abs": 123.45,
+          "premarket_change": 123.45,
+          "premarket_change_abs": 123.45,
+          "premarket_change_from_open": 123.45,
+          "premarket_change_from_open_abs": 123.45,
+          "premarket_gap": 123.45,
+          "submarket": "",
+          "currency": "AED",
+          "bars_count": 123.45,
+          "base_currency_kind": "example",
+          "country_code": "AD",
+          "coupon": 123.45,
+          "cryptoasset-info.description": "example",
+          "cryptoasset-info.id": "example",
+          "currency_id": "",
+          "currency_kind": "fiat",
+          "days_to_maturity": 123.45,
+          "description": "example",
+          "economic-category-id": "bsnss",
+          "expiration": "example",
+          "gap_down": 123.45,
+          "gap_down_abs": 123.45,
+          "gap_up": 123.45,
+          "gap_up_abs": 123.45,
+          "indexes": "example",
+          "indicators_bars_count": 123.45,
+          "is_blacklisted": true,
+          "is_shariah_compliant": true,
+          "last_bar_update_time": 123.45,
+          "logoid": "example",
+          "market": "economics2",
+          "maturity_date": "example",
+          "measure": "currency",
+          "name": "example",
+          "post_change": 123.45,
+          "pre_change": 123.45,
+          "pre_change_abs": 123.45,
+          "rates_cf": {
+            "key": "value"
+          },
+          "rates_current": {
+            "key": "value"
+          },
+          "rates_dividend_recent": {
+            "key": "value"
+          },
+          "rates_dividend_upcoming": {
+            "key": "value"
+          },
+          "rates_earnings_fq": {
+            "key": "value"
+          },
+          "rates_earnings_next_fq": {
+            "key": "value"
+          },
+          "rates_fh": {
+            "key": "value"
+          },
+          "rates_fq": {
+            "key": "value"
+          },
+          "rates_fy": {
+            "key": "value"
+          },
+          "rates_mc": {
+            "key": "value"
+          },
+          "rates_pt": {
+            "key": "value"
+          },
+          "rates_time_series": {
+            "key": "value"
+          },
+          "rates_ttm": {
+            "key": "value"
+          },
+          "subtype": "",
+          "time": "example",
+          "typespecs": "",
+          "unit-id": "DAY",
+          "update_mode": "streaming",
+          "update_time": "example",
+          "value-unit-id": "BLL",
+          "volume_change": 123.45,
+          "volume_change_abs": 123.45
+        }
+      },
+      "ScanRequest": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            },
+            "description": "Array of filters to apply",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "options": {
+            "$ref": "#/components/schemas/Options",
+            "example": "example_value"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Columns to return",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "range": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "Range of results [start, end]",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          }
+        },
+        "required": [
+          "columns",
+          "range"
+        ]
+      },
+      "ScanResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketData"
+            },
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "totalCount": {
+            "type": "integer",
+            "example": 123
+          }
+        }
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "string",
+            "description": "Field name",
+            "example": "example_value"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "and",
+              "or",
+              "not",
+              "gt",
+              "lt",
+              "eq",
+              "nz"
+            ],
+            "description": "Filter operation",
+            "example": "example_value"
+          },
+          "right": {
+            "type": "string",
+            "description": "Filter value",
+            "example": "example_value"
+          }
+        },
+        "required": [
+          "left",
+          "operation",
+          "right"
+        ]
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "zh"
+            ],
+            "default": "en",
+            "example": "example_value"
+          },
+          "decimal_places": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8,
+            "example": 123
+          }
+        }
+      }
+    }
+  }
+}

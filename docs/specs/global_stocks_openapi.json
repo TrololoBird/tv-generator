@@ -1,0 +1,240 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TradingView Global Stocks API",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for TradingView global stocks market scanner API.\n\n**Data Source**: tv-screener v0.4.0\n**Generator**: tv-generator v2.0.0\n**Generated**: 2025-06-25T01:01:13.196722\n\nThis specification is automatically generated from TradingView Scanner API metadata provided by the tv-screener library. All field definitions, types, and examples are sourced from official TradingView data structures.",
+    "contact": {
+      "name": "TradingView Scanner API",
+      "url": "https://scanner.tradingview.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "x-data-source": "tv-screener",
+    "x-data-version": "0.4.0",
+    "x-generator": "tv-generator",
+    "x-generator-version": "2.0.0",
+    "x-generated-date": "2025-06-25T01:01:13.196722",
+    "x-market": "global_stocks",
+    "x-field-count": 2000
+  },
+  "servers": [
+    {
+      "url": "https://scanner.tradingview.com",
+      "description": "TradingView Scanner API"
+    }
+  ],
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "global_stocks",
+      "description": "Market: Global Stocks"
+    }
+  ],
+  "paths": {
+    "/global_stocks/scan": {
+      "post": {
+        "summary": "Scan global stocks market",
+        "description": "Scan global stocks market with filters and options",
+        "operationId": "scanGlobalStocks",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful scan result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid",
+        "description": "TradingView session cookie for real-time data access"
+      }
+    },
+    "schemas": {
+      "MarketData": {
+        "type": "object",
+        "properties": {
+          "close": {
+            "type": "number",
+            "description": "Close Price",
+            "example": 150.25
+          },
+          "volume": {
+            "type": "number",
+            "description": "Volume",
+            "example": 1000000
+          },
+          "name": {
+            "type": "string",
+            "description": "Company Name",
+            "example": "Samsung Electronics"
+          },
+          "change": {
+            "type": "number",
+            "description": "Change %",
+            "example": 2.5
+          },
+          "market_cap": {
+            "type": "number",
+            "description": "Market Cap",
+            "example": 2500000000000
+          },
+          "country": {
+            "type": "string",
+            "description": "Country",
+            "example": "South Korea"
+          }
+        }
+      },
+      "ScanRequest": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            },
+            "description": "Array of filters to apply",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "options": {
+            "$ref": "#/components/schemas/Options",
+            "example": "example_value"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Columns to return",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "range": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "Range of results [start, end]",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          }
+        },
+        "required": [
+          "columns",
+          "range"
+        ]
+      },
+      "ScanResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketData"
+            },
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "totalCount": {
+            "type": "integer",
+            "example": 123
+          }
+        }
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "string",
+            "description": "Field name",
+            "example": "example_value"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "and",
+              "or",
+              "not",
+              "gt",
+              "lt",
+              "eq",
+              "nz"
+            ],
+            "description": "Filter operation",
+            "example": "example_value"
+          },
+          "right": {
+            "type": "string",
+            "description": "Filter value",
+            "example": "example_value"
+          }
+        },
+        "required": [
+          "left",
+          "operation",
+          "right"
+        ]
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "zh"
+            ],
+            "default": "en",
+            "example": "example_value"
+          },
+          "decimal_places": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8,
+            "example": 123
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,694 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TradingView options API",
+    "version": "1.0.0",
+    "description": "OpenAPI specification for TradingView options market scanner API.\n\n**Data Source**: tv-screener v0.4.0\n**Generator**: tv-generator v2.0.0\n**Generated**: 2025-06-25T15:39:47.095476\n\nThis specification is automatically generated from TradingView Scanner API metadata provided by the tv-screener library. All field definitions, types, and examples are sourced from official TradingView data structures.",
+    "contact": {
+      "name": "TradingView Scanner API",
+      "url": "https://scanner.tradingview.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "x-data-source": "tv-screener",
+    "x-data-version": "0.4.0",
+    "x-generator": "tv-generator",
+    "x-generator-version": "2.0.0",
+    "x-generated-date": "2025-06-25T15:39:47.095476",
+    "x-market": "options",
+    "x-field-count": 68
+  },
+  "servers": [
+    {
+      "url": "https://scanner.tradingview.com",
+      "description": "TradingView Scanner API"
+    }
+  ],
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "options",
+      "description": "Market: options"
+    }
+  ],
+  "paths": {
+    "/options/scan": {
+      "post": {
+        "summary": "Scan options market",
+        "description": "Scan options market with filters and options",
+        "operationId": "scanOptions",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful scan result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid",
+        "description": "TradingView session cookie for real-time data access"
+      }
+    },
+    "schemas": {
+      "MarketData": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Symbol Type",
+            "example": "option",
+            "enum": [
+              "option"
+            ]
+          },
+          "is_primary": {
+            "type": "boolean",
+            "description": "Primary Listing",
+            "example": true
+          },
+          "active_symbol": {
+            "type": "boolean",
+            "description": "Current trading day",
+            "example": true
+          },
+          "change": {
+            "type": "number",
+            "description": "Change %",
+            "example": 123.45
+          },
+          "change_abs": {
+            "type": "number",
+            "description": "Change",
+            "example": 123.45
+          },
+          "close": {
+            "type": "number",
+            "description": "Price",
+            "example": 123.45
+          },
+          "volume": {
+            "type": "number",
+            "description": "Volume",
+            "example": 123.45
+          },
+          "Perf.All": {
+            "type": "number",
+            "description": "All Time Performance",
+            "example": 123.45
+          },
+          "change_from_open": {
+            "type": "number",
+            "description": "Change from Open %",
+            "example": 123.45
+          },
+          "change_from_open_abs": {
+            "type": "number",
+            "description": "Change from Open",
+            "example": 123.45
+          },
+          "exchange": {
+            "type": "string",
+            "description": "Exchange",
+            "example": "BSE",
+            "enum": [
+              "BSE",
+              "CBOT",
+              "CBOT_MINI",
+              "CME",
+              "CME_MINI",
+              "COMEX",
+              "NSE",
+              "NYMEX",
+              "OPRA"
+            ]
+          },
+          "gap": {
+            "type": "number",
+            "description": "Gap %",
+            "example": 123.45
+          },
+          "high": {
+            "type": "number",
+            "description": "High",
+            "example": 123.45
+          },
+          "low": {
+            "type": "number",
+            "description": "Low",
+            "example": 123.45
+          },
+          "open": {
+            "type": "number",
+            "description": "Open",
+            "example": 123.45
+          },
+          "postmarket_change": {
+            "type": "number",
+            "description": "Post-market Change %",
+            "example": 123.45
+          },
+          "postmarket_change_abs": {
+            "type": "number",
+            "description": "Post-market Change",
+            "example": 123.45
+          },
+          "premarket_change": {
+            "type": "number",
+            "description": "Pre-market Change %",
+            "example": 123.45
+          },
+          "premarket_change_abs": {
+            "type": "number",
+            "description": "Pre-market Change",
+            "example": 123.45
+          },
+          "premarket_change_from_open": {
+            "type": "number",
+            "description": "Pre-market Change from Open %",
+            "example": 123.45
+          },
+          "premarket_change_from_open_abs": {
+            "type": "number",
+            "description": "Pre-market Change from Open",
+            "example": 123.45
+          },
+          "premarket_gap": {
+            "type": "number",
+            "description": "Pre-market Gap %",
+            "example": 123.45
+          },
+          "submarket": {
+            "type": "string",
+            "description": "Submarket",
+            "example": "",
+            "enum": [
+              ""
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "description": "Quote currency",
+            "example": "CHF",
+            "enum": [
+              "CHF",
+              "CNH",
+              "EUR",
+              "GBP",
+              "INR",
+              "JPY",
+              "USD",
+              "USX"
+            ]
+          },
+          "ask": {
+            "type": "number",
+            "description": "Ask",
+            "example": 123.45
+          },
+          "bid": {
+            "type": "number",
+            "description": "Bid",
+            "example": 123.45
+          },
+          "bars_count": {
+            "type": "number",
+            "description": "Field: bars_count",
+            "example": 123.45
+          },
+          "base_currency_kind": {
+            "type": "string",
+            "description": "Field: base_currency_kind",
+            "example": "example"
+          },
+          "bid_ask_spread_pct": {
+            "type": "number",
+            "description": "Field: bid_ask_spread_pct",
+            "example": 123.45
+          },
+          "coupon": {
+            "type": "number",
+            "description": "Field: coupon",
+            "example": 123.45
+          },
+          "cryptoasset-info.description": {
+            "type": "string",
+            "description": "Field: cryptoasset-info.description",
+            "example": "example"
+          },
+          "cryptoasset-info.id": {
+            "type": "string",
+            "description": "Field: cryptoasset-info.id",
+            "example": "example"
+          },
+          "currency_id": {
+            "type": "string",
+            "description": "Field: currency_id",
+            "example": "CHF",
+            "enum": [
+              "CHF",
+              "EUR",
+              "GBP",
+              "INR",
+              "JPY",
+              "USD",
+              "XTVCNH",
+              "XTVUSX"
+            ]
+          },
+          "currency_kind": {
+            "type": "string",
+            "description": "Field: currency_kind",
+            "example": "fiat",
+            "enum": [
+              "fiat"
+            ]
+          },
+          "days_to_maturity": {
+            "type": "number",
+            "description": "Field: days_to_maturity",
+            "example": 123.45
+          },
+          "description": {
+            "type": "string",
+            "description": "Field: description",
+            "example": "example"
+          },
+          "expiration": {
+            "type": "string",
+            "description": "Field: expiration",
+            "example": "example"
+          },
+          "fractional": {
+            "type": "string",
+            "description": "Field: fractional",
+            "example": "false",
+            "enum": [
+              "false",
+              "true"
+            ]
+          },
+          "gap_down": {
+            "type": "number",
+            "description": "Field: gap_down",
+            "example": 123.45
+          },
+          "gap_down_abs": {
+            "type": "number",
+            "description": "Field: gap_down_abs",
+            "example": 123.45
+          },
+          "gap_up": {
+            "type": "number",
+            "description": "Field: gap_up",
+            "example": 123.45
+          },
+          "gap_up_abs": {
+            "type": "number",
+            "description": "Field: gap_up_abs",
+            "example": 123.45
+          },
+          "indexes": {
+            "type": "string",
+            "description": "Field: indexes",
+            "example": "example"
+          },
+          "indicators_bars_count": {
+            "type": "number",
+            "description": "Field: indicators_bars_count",
+            "example": 123.45
+          },
+          "is_blacklisted": {
+            "type": "boolean",
+            "description": "Field: is_blacklisted",
+            "example": true
+          },
+          "is_shariah_compliant": {
+            "type": "boolean",
+            "description": "Field: is_shariah_compliant",
+            "example": true
+          },
+          "last_bar_update_time": {
+            "type": "number",
+            "description": "Field: last_bar_update_time",
+            "example": 123.45
+          },
+          "logoid": {
+            "type": "string",
+            "description": "Field: logoid",
+            "example": "example"
+          },
+          "market": {
+            "type": "string",
+            "description": "Field: market",
+            "example": "options",
+            "enum": [
+              "options"
+            ]
+          },
+          "maturity_date": {
+            "type": "string",
+            "description": "Field: maturity_date",
+            "example": "example"
+          },
+          "minmov": {
+            "type": "number",
+            "description": "Field: minmov",
+            "example": 123.45
+          },
+          "minmove2": {
+            "type": "number",
+            "description": "Field: minmove2",
+            "example": 123.45
+          },
+          "name": {
+            "type": "string",
+            "description": "Field: name",
+            "example": "example"
+          },
+          "option-type": {
+            "type": "string",
+            "description": "Field: option-type",
+            "example": "call",
+            "enum": [
+              "call",
+              "put"
+            ]
+          },
+          "post_change": {
+            "type": "number",
+            "description": "Field: post_change",
+            "example": 123.45
+          },
+          "pre_change": {
+            "type": "number",
+            "description": "Field: pre_change",
+            "example": 123.45
+          },
+          "pre_change_abs": {
+            "type": "number",
+            "description": "Field: pre_change_abs",
+            "example": 123.45
+          },
+          "pricescale": {
+            "type": "number",
+            "description": "Field: pricescale",
+            "example": 123.45
+          },
+          "source-logoid": {
+            "type": "string",
+            "description": "Field: source-logoid",
+            "example": "source/BSE",
+            "enum": [
+              "source/BSE",
+              "source/CBOT",
+              "source/CBOT_MINI",
+              "source/CME",
+              "source/CME_MINI",
+              "source/COMEX",
+              "source/NSE",
+              "source/NYMEX",
+              "source/OPRA"
+            ]
+          },
+          "strike": {
+            "type": "number",
+            "description": "Field: strike",
+            "example": 123.45
+          },
+          "subtype": {
+            "type": "string",
+            "description": "Field: subtype",
+            "example": "",
+            "enum": [
+              ""
+            ]
+          },
+          "time": {
+            "type": "string",
+            "description": "Field: time",
+            "example": "example"
+          },
+          "typespecs": {
+            "type": "array",
+            "description": "Field: typespecs",
+            "example": [
+              "item1",
+              "item2"
+            ],
+            "enum": [
+              ""
+            ]
+          },
+          "update-time": {
+            "type": "number",
+            "description": "Field: update-time",
+            "example": 123.45
+          },
+          "update_mode": {
+            "type": "string",
+            "description": "Field: update_mode",
+            "example": "streaming",
+            "enum": [
+              "streaming"
+            ]
+          },
+          "update_time": {
+            "type": "string",
+            "description": "Field: update_time",
+            "example": "example"
+          },
+          "volume_change": {
+            "type": "number",
+            "description": "Field: volume_change",
+            "example": 123.45
+          },
+          "volume_change_abs": {
+            "type": "number",
+            "description": "Field: volume_change_abs",
+            "example": 123.45
+          }
+        },
+        "example": {
+          "type": "option",
+          "is_primary": true,
+          "active_symbol": true,
+          "change": 123.45,
+          "change_abs": 123.45,
+          "close": 123.45,
+          "volume": 123.45,
+          "Perf.All": 123.45,
+          "change_from_open": 123.45,
+          "change_from_open_abs": 123.45,
+          "exchange": "BSE",
+          "gap": 123.45,
+          "high": 123.45,
+          "low": 123.45,
+          "open": 123.45,
+          "postmarket_change": 123.45,
+          "postmarket_change_abs": 123.45,
+          "premarket_change": 123.45,
+          "premarket_change_abs": 123.45,
+          "premarket_change_from_open": 123.45,
+          "premarket_change_from_open_abs": 123.45,
+          "premarket_gap": 123.45,
+          "submarket": "",
+          "currency": "CHF",
+          "ask": 123.45,
+          "bid": 123.45,
+          "bars_count": 123.45,
+          "base_currency_kind": "example",
+          "bid_ask_spread_pct": 123.45,
+          "coupon": 123.45,
+          "cryptoasset-info.description": "example",
+          "cryptoasset-info.id": "example",
+          "currency_id": "CHF",
+          "currency_kind": "fiat",
+          "days_to_maturity": 123.45,
+          "description": "example",
+          "expiration": "example",
+          "fractional": "false",
+          "gap_down": 123.45,
+          "gap_down_abs": 123.45,
+          "gap_up": 123.45,
+          "gap_up_abs": 123.45,
+          "indexes": "example",
+          "indicators_bars_count": 123.45,
+          "is_blacklisted": true,
+          "is_shariah_compliant": true,
+          "last_bar_update_time": 123.45,
+          "logoid": "example",
+          "market": "options",
+          "maturity_date": "example",
+          "minmov": 123.45,
+          "minmove2": 123.45,
+          "name": "example",
+          "option-type": "call",
+          "post_change": 123.45,
+          "pre_change": 123.45,
+          "pre_change_abs": 123.45,
+          "pricescale": 123.45,
+          "source-logoid": "source/BSE",
+          "strike": 123.45,
+          "subtype": "",
+          "time": "example",
+          "typespecs": "",
+          "update-time": 123.45,
+          "update_mode": "streaming",
+          "update_time": "example",
+          "volume_change": 123.45,
+          "volume_change_abs": 123.45
+        }
+      },
+      "ScanRequest": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Filter"
+            },
+            "description": "Array of filters to apply",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "options": {
+            "$ref": "#/components/schemas/Options",
+            "example": "example_value"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Columns to return",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "range": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "Range of results [start, end]",
+            "example": [
+              "item1",
+              "item2"
+            ]
+          }
+        },
+        "required": [
+          "columns",
+          "range"
+        ]
+      },
+      "ScanResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MarketData"
+            },
+            "example": [
+              "item1",
+              "item2"
+            ]
+          },
+          "totalCount": {
+            "type": "integer",
+            "example": 123
+          }
+        }
+      },
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "left": {
+            "type": "string",
+            "description": "Field name",
+            "example": "example_value"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "and",
+              "or",
+              "not",
+              "gt",
+              "lt",
+              "eq",
+              "nz"
+            ],
+            "description": "Filter operation",
+            "example": "example_value"
+          },
+          "right": {
+            "type": "string",
+            "description": "Filter value",
+            "example": "example_value"
+          }
+        },
+        "required": [
+          "left",
+          "operation",
+          "right"
+        ]
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "lang": {
+            "type": "string",
+            "enum": [
+              "en",
+              "ru",
+              "zh"
+            ],
+            "default": "en",
+            "example": "example_value"
+          },
+          "decimal_places": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8,
+            "example": 123
+          }
+        }
+      }
+    }
+  }
+}

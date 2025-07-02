@@ -2,8 +2,9 @@
 Конфигурация pytest для тестов в корне проекта.
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture

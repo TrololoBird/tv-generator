@@ -1,19 +1,20 @@
 """
-Общие фикстуры для тестов.
+Общие фикстуры для тестов с реальными данными.
 """
 
+import asyncio
+import json
 import shutil
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from loguru import logger
 
-from src.tv_generator.api import APIResponse, TradingViewAPI
-
-# Обновленные импорты для новой структуры
-from src.tv_generator.config import Settings
-from src.tv_generator.core import MarketData, Pipeline
+from tv_generator.api import TradingViewAPI
+from tv_generator.config import Settings
+from tv_generator.core import OpenAPIPipeline
 
 
 @pytest.fixture
@@ -33,153 +34,68 @@ def temp_specs_dir():
 
 
 @pytest.fixture
-def mock_settings():
-    """Мока настроек для тестов."""
+def real_settings():
+    """Реальные настройки для тестов."""
     return Settings(
-        tradingview_base_url="https://test.example.com",
-        request_timeout=5,
-        max_retries=1,
-        retry_delay=0.1,
-        requests_per_second=100,  # Высокий rate limit для тестов
+        tradingview_base_url="https://scanner.tradingview.com",
+        request_timeout=30,
+        max_retries=3,
+        retry_delay=1.0,
+        requests_per_second=10,  # Низкий rate limit для тестов
         results_dir="test_results",
         specs_dir="test_specs",
-        log_level="DEBUG",
-        test_tickers_per_market=1,
-        batch_size=10,
+        log_level="INFO",
+        test_tickers_per_market=5,
+        batch_size=5,
     )
 
 
 @pytest.fixture
-def mock_api_response():
-    """Мока ответа API."""
-    return {"data": [{"s": "AAPL", "d": [150.0, 1000000, "Apple Inc."]}], "totalCount": 1}
+def real_tradingview_api(real_settings):
+    """Реальный экземпляр TradingView API."""
+    return TradingViewAPI(settings=real_settings)
 
 
 @pytest.fixture
-def mock_metainfo():
-    """Мока metainfo."""
-    return {
-        "fields": [
-            {"name": "close", "type": "number", "description": "Close price", "example": 150.0},
-            {"name": "volume", "type": "number", "description": "Volume", "example": 1000000},
-            {"name": "name", "type": "string", "description": "Company name", "example": "Apple Inc."},
-        ]
-    }
+def real_pipeline(real_settings, temp_results_dir, temp_specs_dir):
+    """Реальный экземпляр пайплайна."""
+    # Временно изменяем пути для тестов
+    real_settings.results_dir = str(temp_results_dir)
+    real_settings.specs_dir = str(temp_specs_dir)
+    return OpenAPIPipeline(settings=real_settings)
 
 
 @pytest.fixture
-def mock_tickers():
-    """Мока тикеров."""
-    return {
-        "data": [
-            {"s": "AAPL", "d": [150.0, 1000000]},
-            {"s": "GOOGL", "d": [2500.0, 500000]},
-            {"s": "MSFT", "d": [300.0, 750000]},
-        ],
-        "totalCount": 3,
-    }
-
-
-@pytest.fixture
-def sample_market_data():
-    """Образец данных рынка для тестов."""
-    return MarketData(
-        name="us_stocks",
-        endpoint="america",
-        label_product="screener-stock",
-        description="US Stocks",
-        metainfo={
-            "fields": [
-                {"name": "close", "type": "number"},
-                {"name": "volume", "type": "number"},
-                {"name": "name", "type": "string"},
-            ]
-        },
-        tickers=[{"name": "AAPL", "close": 150.0}, {"name": "GOOGL", "close": 2500.0}],
-        fields=["close", "volume", "name"],
-        working_fields=["close", "name"],
-        openapi_fields={
-            "close": {"type": "number", "description": "Close price"},
-            "name": {"type": "string", "description": "Company name"},
-        },
-    )
-
-
-@pytest.fixture
-def mock_tradingview_api():
-    """Мока TradingView API."""
-    api = AsyncMock(spec=TradingViewAPI)
-
-    # Мокаем методы API
-    api.get_metainfo.return_value = {
-        "fields": [{"name": "close", "type": "number"}, {"name": "volume", "type": "number"}]
-    }
-
-    api.scan_tickers.return_value = [{"name": "AAPL", "close": 150.0}, {"name": "GOOGL", "close": 2500.0}]
-
-    api.test_field.side_effect = [True, False]  # close работает, volume нет
-
-    # Мокаем контекстный менеджер
-    api.__aenter__ = AsyncMock(return_value=api)
-    api.__aexit__ = AsyncMock(return_value=None)
-
-    return api
-
-
-@pytest.fixture
-def mock_api_response_obj():
-    """Мока объекта APIResponse."""
-    return APIResponse(
-        data={"test": "data"},
-        status_code=200,
-        headers={"content-type": "application/json"},
-        url="https://test.example.com/api",
-    )
-
-
-@pytest.fixture
-def mock_pipeline():
-    """Мока пайплайна."""
-    pipeline = MagicMock(spec=Pipeline)
-    pipeline.results_dir = Path("test_results")
-    pipeline.api = mock_tradingview_api()
-    return pipeline
-
-
-@pytest.fixture
-def mock_httpx_client():
-    """Мока httpx клиента."""
-    with patch("httpx.AsyncClient") as mock_client:
-        client = AsyncMock()
-        mock_client.return_value = client
-        yield client
-
-
-@pytest.fixture
-def mock_logger():
-    """Мока логгера."""
-    with patch("loguru.logger") as mock_logger:
-        yield mock_logger
-
-
-@pytest.fixture
-def sample_markets_config():
-    """Образец конфигурации рынков."""
+def sample_markets():
+    """Реальные рынки для тестирования."""
     return {
         "us_stocks": {"endpoint": "america", "label_product": "screener-stock", "description": "US Stocks"},
         "crypto_coins": {"endpoint": "coin", "label_product": "screener-coin", "description": "Cryptocurrency Coins"},
+        "forex": {"endpoint": "forex", "label_product": "screener-forex", "description": "Forex Pairs"},
+        "commodities": {"endpoint": "commodity", "label_product": "screener-commodity", "description": "Commodities"},
+        "indices": {"endpoint": "index", "label_product": "screener-index", "description": "Indices"},
     }
 
 
 @pytest.fixture
-def mock_health_status():
-    """Мока статуса здоровья."""
-    return {
-        "status": "healthy",
-        "timestamp": 1234567890.0,
-        "endpoints": {"america": "healthy", "crypto": "healthy"},
-        "pipeline": "healthy",
-    }
+def real_metainfo_files():
+    """Пути к реальным файлам metainfo."""
+    data_dir = Path(__file__).parent.parent / "data" / "metainfo"
+    return [f for f in data_dir.glob("*.json") if f.is_file()]
+
+
+@pytest.fixture
+def real_scan_files():
+    """Пути к реальным файлам scan."""
+    data_dir = Path(__file__).parent.parent / "data" / "scan"
+    return [f for f in data_dir.glob("*.json") if f.is_file()]
+
+
+@pytest.fixture
+def real_raw_responses():
+    """Пути к реальным raw API responses."""
+    raw_dir = Path(__file__).parent.parent / "raw_api_responses"
+    return [f for f in raw_dir.glob("*_metainfo.json") if f.is_file()]
 
 
 @pytest.fixture
@@ -188,8 +104,22 @@ def spec_path():
     return Path(__file__).parent.parent / "specs"
 
 
+@pytest.fixture
+def openapi_validator():
+    """Импорт валидатора OpenAPI."""
+    try:
+        from openapi_spec_validator import validate_spec
+
+        return validate_spec
+    except ImportError:
+        pytest.skip("openapi-spec-validator not installed")
+
+
 def pytest_configure(config) -> None:
-    pass
+    """Конфигурация pytest."""
+    # Отключаем предупреждения о моках
+    config.addinivalue_line("filterwarnings", "ignore::DeprecationWarning:unittest.mock.*")
+    config.addinivalue_line("filterwarnings", "ignore::UserWarning:pytest_mock.*")
 
 
 def pytest_unconfigure(config) -> None:
@@ -197,36 +127,21 @@ def pytest_unconfigure(config) -> None:
 
 
 def pytest_addoption(parser) -> None:
-    pass
+    """Добавляем опции командной строки."""
+    parser.addoption("--real-api", action="store_true", default=False, help="Запускать тесты с реальными API вызовами")
+    parser.addoption("--skip-slow", action="store_true", default=False, help="Пропускать медленные тесты")
 
 
-def pytest_generate_tests(metafunc) -> None:
-    pass
+def pytest_collection_modifyitems(config, items):
+    """Модифицируем коллекцию тестов."""
+    if not config.getoption("--real-api"):
+        skip_real_api = pytest.mark.skip(reason="Требуется --real-api для запуска с реальными API")
+        for item in items:
+            if "real_api" in item.keywords:
+                item.add_marker(skip_real_api)
 
-
-def pytest_collection_modifyitems(session, config, items) -> None:
-    pass
-
-
-def pytest_runtest_setup(item) -> None:
-    pass
-
-
-def pytest_runtest_teardown(item, nextitem) -> None:
-    pass
-
-
-def pytest_runtest_makereport(item, call) -> None:
-    pass
-
-
-def pytest_sessionstart(session) -> None:
-    pass
-
-
-def pytest_sessionfinish(session, exitstatus) -> None:
-    pass
-
-
-def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:
-    pass
+    if config.getoption("--skip-slow"):
+        skip_slow = pytest.mark.skip(reason="Медленные тесты пропущены")
+        for item in items:
+            if "slow" in item.keywords:
+                item.add_marker(skip_slow)
